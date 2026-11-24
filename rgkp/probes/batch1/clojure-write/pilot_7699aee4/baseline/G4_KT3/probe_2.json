@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "Based on examples of `defsetting` usage in `src/metabase/system/settings.clj`, which of the following represents a valid minimal `defsetting` form for a `site-currency` setting with a string type, public visibility, and a default of \"USD\"?",
+    "options": {
+      "A": "`(defsetting :site-currency \"Default currency for the site\" {:type :string :default \"USD\" :visibility :public})`",
+      "B": "`(def site-currency (setting/make-setting :type :string :default \"USD\" :visibility :public))`",
+      "C": "`(defsetting site-currency (deferred-tru \"Default currency for the site\") :type :string :default \"USD\" :visibility :public)`",
+      "D": "`(defsetting site-currency {:type :string :default \"USD\" :visibility :public})`"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "Looking at the typical `defsetting` macro usage in Metabase:\n\nThe `defsetting` macro generally requires:\n1. A setting name (as a symbol, not a keyword)\n2. A docstring (using `deferred-tru` for i18n)\n3. Configuration options (type, default, visibility, etc.)\n\nAnalyzing each option:\n\n**A**: Uses a keyword `:site-currency` instead of a symbol, and the structure doesn't match typical `defsetting` macro patterns.\n\n**B**: Uses `setting/make-setting` which is not the `defsetting` macro approach.\n\n**C**: Has the correct structure:\n- Symbol name: `site-currency`\n- Docstring: `(deferred-tru \"Default currency for the site\")`\n- Configuration options: `:type :string :default \"USD\" :visibility :public`\n\nThis matches the standard `defsetting` pattern used in Metabase.\n\n**D**: Missing the docstring, which is typically required.\n\nThe answer is **C**.",
+  "answer": null,
+  "valid": false,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 2.390359124983661,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 256,
+    "output_tokens": 242,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

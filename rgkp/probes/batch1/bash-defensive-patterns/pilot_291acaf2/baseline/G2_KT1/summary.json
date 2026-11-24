@@ -1,0 +1,15 @@
+{
+  "target_id": "G2_KT1",
+  "question_id": "G2_KT1_Q1",
+  "reference_answer": "C",
+  "answers": [
+    null,
+    "C",
+    null
+  ],
+  "repetitions": 3,
+  "valid_count": 1,
+  "correct_count": 1,
+  "baseline_state": null,
+  "status": "unresolved"
+}

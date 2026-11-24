@@ -1,0 +1,502 @@
+{
+  "task_description": "# Task: Add Flux GitOps Demo Configuration and Verification Script\n\n## Background\n   在 Flux CD 仓库中新增一个完整的 GitOps 配置示例，展示 Flux 部署清单和 Kustomize Overlay 结构，并编写一个验证脚本来检查配置的正确性。\n\n## Files to Create/Modify\n   - `hack/gitops-demo/clusters/dev/flux-system/gotk-components.yaml` (Flux bootstrap 组件)\n   - `hack/gitops-demo/clusters/dev/flux-system/kustomization.yaml` (Flux kustomization)\n   - `hack/gitops-demo/apps/base/deployment.yaml` (基础 Deployment)\n   - `hack/gitops-demo/apps/base/service.yaml` (基础 Service)\n   - `hack/gitops-demo/apps/base/kustomization.yaml` (基础 kustomization)\n   - `hack/gitops-demo/apps/overlays/dev/kustomization.yaml` (dev overlay)\n   - `hack/gitops-demo/apps/overlays/dev/patch-replicas.yaml` (replicas patch)\n   - `hack/verify-gitops-demo.sh` (验证脚本)\n\n## Requirements\n\n   ### 目录结构\n   ```\n   hack/\n   ├── gitops-demo/\n   │   ├── clusters/\n   │   │   └── dev/\n   │   │       └── flux-system/\n   │   │           ├── gotk-components.yaml\n   │   │           └── kustomization.yaml\n   │   └── apps/\n   │       ├── base/\n   │       │   ├── deployment.yaml\n   │       │   ├── service.yaml\n   │       │   └── kustomization.yaml\n   │       └── overlays/\n   │           └── dev/\n   │               ├── kustomization.yaml\n   │               └── patch-replicas.yaml\n   └── verify-gitops-demo.sh\n   ```\n\n   ### Kustomize 配置要求\n   - base/deployment.yaml: 包含完整的 Kubernetes Deployment (apiVersion, kind, metadata.name, spec.replicas, spec.template)\n   - base/service.yaml: 包含完整的 Kubernetes Service 暴露端口\n   - base/kustomization.yaml: 引用 deployment.yaml 和 service.yaml\n   - overlays/dev/kustomization.yaml: 基于 ../../base，应用 patch-replicas.yaml 补丁\n   - overlays/dev/patch-replicas.yaml: Strategic Merge Patch，将 replicas 修改为 dev 环境值\n\n   ### 验证脚本要求 (hack/verify-gitops-demo.sh)\n   - 脚本必须可执行 (`chmod +x`)\n   - 检查 `hack/gitops-demo/` 下所有必要文件存在\n   - 使用 `kustomize build hack/gitops-demo/apps/overlays/dev` 验证 Kustomize 构建成功\n   - 验证生成的 manifest 包含 Deployment 和 Service 资源\n   - 验证 overlay patch 已正确应用\n   - 所有检查通过时以退出码 0 退出，任何检查失败以非零退出码退出\n\n## Acceptance Criteria\n   - `kustomize build hack/gitops-demo/apps/overlays/dev` 退出码为 0\n   - 生成的 manifest 包含 deployment 和 service\n   - Overlay patches 正确应用\n   - `bash hack/verify-gitops-demo.sh` 退出码为 0\n",
+  "execution_gaps": [
+    {
+      "gap_id": "G1",
+      "local_state": "The dev overlay kustomization.yaml was created with deprecated fields `bases:` and `patchesStrategicMerge:`",
+      "agent_action": "Agent wrote the overlay kustomization.yaml using the deprecated `bases:` and `patchesStrategicMerge:` fields instead of the current `resources:` and `patches:` fields",
+      "observed_problem": "Modern versions of kustomize have deprecated `bases` and `patchesStrategicMerge`, which can cause build failures or warnings. The acceptance criterion `kustomize build hack/gitops-demo/apps/overlays/dev` exit code 0 may fail depending on the kustomize version installed.",
+      "trajectory_evidence": [
+        {
+          "line": 33,
+          "description": "Agent wrote overlays/dev/kustomization.yaml using `bases:` (line 6-7) and `patchesStrategicMerge:` (line 9-10) which are deprecated in kustomize v4+"
+        },
+        {
+          "line": 52,
+          "description": "Reading the file confirms `bases: - ../../base` and `patchesStrategicMerge: - patch-replicas.yaml` are present in the final file"
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "hack/gitops-demo/apps/overlays/dev/kustomization.yaml"
+        ],
+        "file_names": [
+          "kustomization.yaml"
+        ],
+        "functions_or_classes": [],
+        "modules_or_packages": [
+          "kustomize"
+        ],
+        "commands": [
+          "kustomize build hack/gitops-demo/apps/overlays/dev"
+        ],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [
+          "bases",
+          "patchesStrategicMerge",
+          "resources",
+          "patches",
+          "kustomize.config.k8s.io/v1beta1"
+        ],
+        "other_keywords": [
+          "strategic merge patch",
+          "kustomize overlay",
+          "deprecated fields"
+        ]
+      }
+    },
+    {
+      "gap_id": "G2",
+      "local_state": "After creating the verification script and making it executable, the agent was denied Bash access to run `bash hack/verify-gitops-demo.sh`",
+      "agent_action": "Agent attempted to run `bash hack/verify-gitops-demo.sh` but it was denied. The agent then only read individual files to verify content but never validated that `kustomize build` actually succeeds or that the script exits with code 0.",
+      "observed_problem": "The core acceptance criteria (`kustomize build` exit code 0, `bash hack/verify-gitops-demo.sh` exit code 0) were never actually validated. The agent claimed all criteria were met without any execution evidence.",
+      "trajectory_evidence": [
+        {
+          "line": 44,
+          "description": "Agent attempted `bash hack/verify-gitops-demo.sh` to validate the script"
+        },
+        {
+          "line": 45,
+          "description": "Permission was denied for running the verification script"
+        },
+        {
+          "line": 47,
+          "description": "After denial, agent switched to only reading files rather than finding alternative validation methods"
+        },
+        {
+          "line": 79,
+          "description": "Agent's final summary claims all acceptance criteria are met without any execution proof"
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "hack/verify-gitops-demo.sh"
+        ],
+        "file_names": [
+          "verify-gitops-demo.sh"
+        ],
+        "functions_or_classes": [],
+        "modules_or_packages": [],
+        "commands": [
+          "bash hack/verify-gitops-demo.sh",
+          "kustomize build hack/gitops-demo/apps/overlays/dev"
+        ],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [],
+        "other_keywords": [
+          "exit code 0",
+          "acceptance criteria",
+          "verification"
+        ]
+      }
+    },
+    {
+      "gap_id": "G3",
+      "local_state": "The base/kustomization.yaml was created with a `metadata:` block including `name: demo-app`",
+      "agent_action": "Agent wrote the base kustomization.yaml with a `metadata.name` field that is not valid for kustomize Kustomization files (as opposed to Flux Kustomization CRD resources)",
+      "observed_problem": "The `kustomize.config.k8s.io/v1beta1` Kustomization resource used by the kustomize tool does not support a `metadata:` field. Including it may cause kustomize build errors or unexpected behavior.",
+      "trajectory_evidence": [
+        {
+          "line": 26,
+          "description": "Agent wrote base/kustomization.yaml with `metadata: name: demo-app` block"
+        },
+        {
+          "line": 61,
+          "description": "Reading the file confirms `metadata: name: demo-app` is present in the base kustomization"
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "hack/gitops-demo/apps/base/kustomization.yaml"
+        ],
+        "file_names": [
+          "kustomization.yaml"
+        ],
+        "functions_or_classes": [],
+        "modules_or_packages": [
+          "kustomize"
+        ],
+        "commands": [
+          "kustomize build"
+        ],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [
+          "kustomize.config.k8s.io/v1beta1",
+          "metadata",
+          "Kustomization"
+        ],
+        "other_keywords": [
+          "kustomize config",
+          "invalid field"
+        ]
+      }
+    }
+  ],
+  "environment_blockers": [
+    {
+      "description": "Bash tool access was denied in 'don't ask mode' for general shell commands, preventing the agent from running mkdir, bash verify-gitops-demo.sh, and other shell operations.",
+      "evidence_lines": [
+        9,
+        45
+      ]
+    }
+  ],
+  "repository_evidence": [
+    {
+      "gap_id": "G1",
+      "evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "manifests/openshift/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 17,
+          "retrieval_score": 24.322,
+          "matched_cues": [
+            "bases",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "patches",
+            "resources"
+          ],
+          "content": "1: apiVersion: kustomize.config.k8s.io/v1beta1\n2: kind: Kustomization\n3: namespace: flux-system\n4: resources:\n5:   - namespace.yaml\n6:   - scc.yaml\n7:   - ../bases/source-controller\n8:   - ../bases/source-watcher\n9:   - ../bases/kustomize-controller\n10:   - ../bases/notification-controller\n11:   - ../bases/helm-controller\n12:   - ../bases/image-reflector-controller\n13:   - ../bases/image-automation-controller\n14:   - ../rbac\n15:   - ../policies\n16: transformers:\n17:   - labels.yaml",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E2",
+          "file_path": "manifests/openshift/kustomization.yaml",
+          "start_line": 25,
+          "end_line": 41,
+          "retrieval_score": 24.322,
+          "matched_cues": [
+            "bases",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "patches",
+            "resources"
+          ],
+          "content": "25:   - name: fluxcd/helm-controller\n26:     newName: ghcr.io/fluxcd/helm-controller\n27:   - name: fluxcd/notification-controller\n28:     newName: ghcr.io/fluxcd/notification-controller\n29:   - name: fluxcd/image-reflector-controller\n30:     newName: ghcr.io/fluxcd/image-reflector-controller\n31:   - name: fluxcd/image-automation-controller\n32:     newName: ghcr.io/fluxcd/image-automation-controller\n33: patches:\n34:   - patch: |\n35:       apiVersion: apps/v1\n36:       kind: Deployment\n37:       metadata:\n38:         name: all\n39:       spec:\n40:         template:\n41:           spec:",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E3",
+          "file_path": "manifests/test/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 17,
+          "retrieval_score": 24.322,
+          "matched_cues": [
+            "bases",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "patches",
+            "resources"
+          ],
+          "content": "1: # This overlay is used in end-to-end tests and contains all optional controllers.\n2: apiVersion: kustomize.config.k8s.io/v1beta1\n3: kind: Kustomization\n4: namespace: flux-system\n5: resources:\n6:   - namespace.yaml\n7:   - ../bases/source-controller\n8:   - ../bases/source-watcher\n9:   - ../bases/kustomize-controller\n10:   - ../bases/notification-controller\n11:   - ../bases/helm-controller\n12:   - ../bases/image-reflector-controller\n13:   - ../bases/image-automation-controller\n14:   - ../rbac\n15:   - ../policies\n16: transformers:\n17:   - labels.yaml",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "manifests/test/kustomization.yaml",
+          "start_line": 25,
+          "end_line": 41,
+          "retrieval_score": 24.322,
+          "matched_cues": [
+            "bases",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "patches",
+            "resources"
+          ],
+          "content": "25:   - name: fluxcd/helm-controller\n26:     newName: ghcr.io/fluxcd/helm-controller\n27:   - name: fluxcd/notification-controller\n28:     newName: ghcr.io/fluxcd/notification-controller\n29:   - name: fluxcd/image-reflector-controller\n30:     newName: ghcr.io/fluxcd/image-reflector-controller\n31:   - name: fluxcd/image-automation-controller\n32:     newName: ghcr.io/fluxcd/image-automation-controller\n33: patches:\n34:   - target:\n35:       kind: Deployment\n36:       name: \"(kustomize-controller|helm-controller)\"\n37:     patch: |-\n38:       - op: add\n39:         path: /spec/template/spec/containers/0/args/-\n40:         value: --feature-gates=ExternalArtifact=true\n41: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "manifests/install/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 15,
+          "retrieval_score": 19.847,
+          "matched_cues": [
+            "bases",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "resources"
+          ],
+          "content": "1: apiVersion: kustomize.config.k8s.io/v1beta1\n2: kind: Kustomization\n3: namespace: flux-system\n4: resources:\n5:   - namespace.yaml\n6:   - ../bases/source-controller\n7:   - ../bases/kustomize-controller\n8:   - ../bases/notification-controller\n9:   - ../bases/helm-controller\n10:   - ../bases/image-reflector-controller\n11:   - ../bases/image-automation-controller\n12:   - ../rbac\n13:   - ../policies\n14: transformers:\n15:   - labels.yaml",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E6",
+          "file_path": "rfcs/0004-insecure-http/README.md",
+          "start_line": 64,
+          "end_line": 80,
+          "retrieval_score": 19.322,
+          "matched_cues": [
+            "bases",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "patches",
+            "resources"
+          ],
+          "content": "64:           - --enable-leader-election\n65:           - --storage-path=/data\n66:           - --storage-adv-addr=source-controller.$(RUNTIME_NAMESPACE).svc.cluster.local.\n67:           - --insecure-allow-http=false\n68: ```\n69: \n70: **Note:** The flag shall not be added to the following controllers:\n71: * kustomize-controller: This flag is excluded from this controller, as the upstream `kubenetes-sigs/kustomize` project\n72: does not support disabling HTTP connections while fetching resources from remote bases. We can revisit this if the\n73: upstream project adds support for this at a later point in time.\n74: * helm-controller: This flag does not serve a purpose in this controller, as the controller does not make any HTTP calls.\n75: Furthermore although both controllers can also do remote applies, serving `kube-apiserver` over plain\n76: HTTP is disabled by default. While technically this can be enabled, the option for this configuration was also disabled\n77: quite a while back (ref: https://github.com/kubernetes/kubernetes/pull/65830/).\n78: \n79: ### Objects\n80: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E7",
+          "file_path": "rfcs/0004-insecure-http/README.md",
+          "start_line": 148,
+          "end_line": 164,
+          "retrieval_score": 19.322,
+          "matched_cues": [
+            "bases",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "patches",
+            "resources"
+          ],
+          "content": "148:   - patch: |\n149:       - op: add\n150:         path: /spec/template/spec/containers/0/args/-\n151:         value: --insecure-allow-http=false\n152:     target:\n153:       kind: Deployment\n154:       name: \"(source-controller|notification-controller|image-reflector-controller|image-automation-controller)\"\n155:   # Since the above flag is not available in kustomize-controller for reasons explained in a previous section,\n156:   # we disable Kustomize remote builds by disallowing use of remote bases. This ensures that kustomize-controller\n157:   # won't initiate any plain HTTP connections.\n158:   - patch: |\n159:       - op: add\n160:         path: /spec/template/spec/containers/0/args/-\n161:         value: --no-remote-bases=true\n162:     target:\n163:       kind: Deployment\n164:       name: kustomize-controller",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E8",
+          "file_path": "rfcs/0004-insecure-http/README.md",
+          "start_line": 90,
+          "end_line": 106,
+          "retrieval_score": 19.322,
+          "matched_cues": [
+            "bases",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "patches",
+            "resources"
+          ],
+          "content": "90: Since the scheme part of the URL is used to specify the type of `HelmRepository`, there is no way for users to specify\n91: that the registry is hosted at a non-TLS endpoint.\n92: \n93: For such objects, we shall introduce a new boolean field `.spec.insecure`, which shall be `false` by default. Users that\n94: need their object to point to an HTTP endpoint, can set this to `true`.\n95: \n96: ### CLI\n97: \n98: The Flux CLI offers several commands for creating Flux specific resources. Some of these commands may involve specifying\n99: an endpoint such as creating an `OCIRepository`:\n100: \n101: ```sh\n102:  flux create source oci podinfo \\\n103:     --url=oci://ghcr.io/stefanprodan/manifests/podinfo \\\n104:     --tag=6.1.6 \\\n105:     --interval=10m\n106: ```",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "cmd/flux/create_secret_notation.go",
+          "start_line": 30,
+          "end_line": 46,
+          "retrieval_score": 4.575,
+          "matched_cues": [
+            "verification"
+          ],
+          "content": "30: \t\"github.com/notaryproject/notation-go/verifier/trustpolicy\"\n31: \t\"github.com/spf13/cobra\"\n32: \tcorev1 \"k8s.io/api/core/v1\"\n33: \t\"sigs.k8s.io/yaml\"\n34: )\n35: \n36: var createSecretNotationCmd = &cobra.Command{\n37: \tUse:   \"notation [name]\",\n38: \tShort: \"Create or update a Kubernetes secret for verifications of artifacts signed by Notation\",\n39: \tLong:  withPreviewNote(`The create secret notation command generates a Kubernetes secret with root ca certificates and trust policy.`),\n40: \tExample: ` # Create a Notation configuration secret on disk and encrypt it with Mozilla SOPS\n41:   flux create secret notation my-notation-cert \\\n42:     --namespace=my-namespace \\\n43:     --trust-policy-file=./my-trust-policy.json \\\n44:     --ca-cert-file=./my-cert.crt \\\n45:     --export > my-notation-cert.yaml\n46: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "cmd/flux/create_secret_notation.go",
+          "start_line": 95,
+          "end_line": 111,
+          "retrieval_score": 4.575,
+          "matched_cues": [
+            "verification"
+          ],
+          "content": "95: \t\treturn fmt.Errorf(\"failed to unmarshal trust policy %s: %w\", secretNotationArgs.trustPolicyFile, err)\n96: \t}\n97: \n98: \tif err := doc.Validate(); err != nil {\n99: \t\treturn fmt.Errorf(\"invalid trust policy: %w\", err)\n100: \t}\n101: \n102: \tvar (\n103: \t\tcaCerts []sourcesecret.VerificationCrt\n104: \t\tfileErr error\n105: \t)\n106: \tfor _, caCrtFile := range secretNotationArgs.caCrtFile {\n107: \t\tfileName := filepath.Base(caCrtFile)\n108: \t\tif !strings.HasSuffix(fileName, \".crt\") && !strings.HasSuffix(fileName, \".pem\") {\n109: \t\t\tfileErr = errors.Join(fileErr, fmt.Errorf(\"%s must end with either .crt or .pem\", fileName))\n110: \t\t\tcontinue\n111: \t\t}",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "cmd/flux/create_secret_notation.go",
+          "start_line": 124,
+          "end_line": 140,
+          "retrieval_score": 4.575,
+          "matched_cues": [
+            "verification"
+          ],
+          "content": "124: \tif len(caCerts) == 0 {\n125: \t\treturn fmt.Errorf(\"no CA certs found\")\n126: \t}\n127: \n128: \topts := sourcesecret.Options{\n129: \t\tName:             name,\n130: \t\tNamespace:        *kubeconfigArgs.Namespace,\n131: \t\tLabels:           labels,\n132: \t\tVerificationCrts: caCerts,\n133: \t\tTrustPolicy:      policy,\n134: \t}\n135: \tsecret, err := sourcesecret.GenerateNotation(opts)\n136: \tif err != nil {\n137: \t\treturn err\n138: \t}\n139: \n140: \tif createArgs.export {",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "cmd/flux/create_source_chart.go",
+          "start_line": 79,
+          "end_line": 95,
+          "retrieval_score": 4.575,
+          "matched_cues": [
+            "verification"
+          ],
+          "content": "79: var sourceChartArgs sourceChartFlags\n80: \n81: func init() {\n82: \tcreateSourceChartCmd.Flags().StringVar(&sourceChartArgs.chart, \"chart\", \"\", \"Helm chart name or path\")\n83: \tcreateSourceChartCmd.Flags().StringVar(&sourceChartArgs.chartVersion, \"chart-version\", \"\", \"Helm chart version, accepts a semver range (ignored for charts from GitRepository sources)\")\n84: \tcreateSourceChartCmd.Flags().Var(&sourceChartArgs.source, \"source\", sourceChartArgs.source.Description())\n85: \tcreateSourceChartCmd.Flags().StringVar(&sourceChartArgs.reconcileStrategy, \"reconcile-strategy\", \"ChartVersion\", \"the reconcile strategy for helm chart (accepted values: Revision and ChartRevision)\")\n86: \tcreateSourceChartCmd.Flags().Var(&sourceChartArgs.verifyProvider, \"verify-provider\", sourceOCIRepositoryArgs.verifyProvider.Description())\n87: \tcreateSourceChartCmd.Flags().StringVar(&sourceChartArgs.verifySecretRef, \"verify-secret-ref\", \"\", \"the name of a secret to use for signature verification\")\n88: \tcreateSourceChartCmd.Flags().StringVar(&sourceChartArgs.verifySubject, \"verify-subject\", \"\", \"regular expression to use for the OIDC subject during signature verification\")\n89: \tcreateSourceChartCmd.Flags().StringVar(&sourceChartArgs.verifyOIDCIssuer, \"verify-issuer\", \"\", \"regular expression to use for the OIDC issuer during signature verification\")\n90: \n91: \tcreateSourceCmd.AddCommand(createSourceChartCmd)\n92: }\n93: \n94: func createSourceChartCmdRun(cmd *cobra.Command, args []string) error {\n95: \tname := args[0]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "cmd/flux/create_source_chart.go",
+          "start_line": 125,
+          "end_line": 141,
+          "retrieval_score": 4.575,
+          "matched_cues": [
+            "verification"
+          ],
+          "content": "125: \t\t\tSourceRef: sourcev1.LocalHelmChartSourceReference{\n126: \t\t\t\tKind: sourceChartArgs.source.Kind,\n127: \t\t\t\tName: sourceChartArgs.source.Name,\n128: \t\t\t},\n129: \t\t},\n130: \t}\n131: \n132: \tif provider := sourceChartArgs.verifyProvider.String(); provider != \"\" {\n133: \t\thelmChart.Spec.Verify = &sourcev1.OCIRepositoryVerification{\n134: \t\t\tProvider: provider,\n135: \t\t}\n136: \t\tif secretName := sourceChartArgs.verifySecretRef; secretName != \"\" {\n137: \t\t\thelmChart.Spec.Verify.SecretRef = &meta.LocalObjectReference{\n138: \t\t\t\tName: secretName,\n139: \t\t\t}\n140: \t\t}\n141: \t\tverifyIssuer := sourceChartArgs.verifyOIDCIssuer",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "cmd/flux/create_source_chart.go",
+          "start_line": 142,
+          "end_line": 158,
+          "retrieval_score": 4.575,
+          "matched_cues": [
+            "verification"
+          ],
+          "content": "142: \t\tverifySubject := sourceChartArgs.verifySubject\n143: \t\tif verifyIssuer != \"\" || verifySubject != \"\" {\n144: \t\t\thelmChart.Spec.Verify.MatchOIDCIdentity = []sourcev1.OIDCIdentityMatch{{\n145: \t\t\t\tIssuer:  verifyIssuer,\n146: \t\t\t\tSubject: verifySubject,\n147: \t\t\t}}\n148: \t\t}\n149: \t} else if sourceChartArgs.verifySecretRef != \"\" {\n150: \t\treturn fmt.Errorf(\"a verification provider must be specified when a secret is specified\")\n151: \t} else if sourceChartArgs.verifyOIDCIssuer != \"\" || sourceOCIRepositoryArgs.verifySubject != \"\" {\n152: \t\treturn fmt.Errorf(\"a verification provider must be specified when OIDC issuer/subject is specified\")\n153: \t}\n154: \n155: \tif createArgs.export {\n156: \t\treturn printExport(exportHelmChart(helmChart))\n157: \t}\n158: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "cmd/flux/create_source_chart_test.go",
+          "start_line": 53,
+          "end_line": 69,
+          "retrieval_score": 4.575,
+          "matched_cues": [
+            "verification"
+          ],
+          "content": "53: \t\t\tassert: assertError(`invalid argument \"foobar/podinfo\" for \"--source\" flag: source kind 'foobar' is not supported, must be one of: HelmRepository, GitRepository, Bucket`),\n54: \t\t},\n55: \t\t{\n56: \t\t\tname:   \"basic chart\",\n57: \t\t\targs:   \"create source chart podinfo --source helmrepository/podinfo --chart podinfo --export\",\n58: \t\t\tassert: assertGoldenTemplateFile(\"testdata/create_source_chart/basic.yaml\", tmpl),\n59: \t\t},\n60: \t\t{\n61: \t\t\tname:   \"chart with basic signature verification\",\n62: \t\t\targs:   \"create source chart podinfo --source helmrepository/podinfo --chart podinfo --verify-provider cosign --export\",\n63: \t\t\tassert: assertGoldenTemplateFile(\"testdata/create_source_chart/verify_basic.yaml\", tmpl),\n64: \t\t},\n65: \t\t{\n66: \t\t\tname:   \"unknown signature verification provider\",\n67: \t\t\targs:   \"create source chart podinfo --source helmrepository/podinfo --chart podinfo --verify-provider foobar --export\",\n68: \t\t\tassert: assertError(`invalid argument \"foobar\" for \"--verify-provider\" flag: source OCI verify provider 'foobar' is not supported, must be one of: cosign`),\n69: \t\t},",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "cmd/flux/create_source_oci.go",
+          "start_line": 40,
+          "end_line": 56,
+          "retrieval_score": 4.575,
+          "matched_cues": [
+            "verification"
+          ],
+          "content": "40: \tShort: \"Create or update an OCIRepository\",\n41: \tLong:  withPreviewNote(`The create source oci command generates an OCIRepository resource and waits for it to be ready.`),\n42: \tExample: `  # Create an OCIRepository for a public container image\n43:   flux create source oci podinfo \\\n44:     --url=oci://ghcr.io/stefanprodan/manifests/podinfo \\\n45:     --tag=6.6.2 \\\n46:     --interval=10m\n47: \n48:   # Create an OCIRepository with OIDC signature verification\n49:   flux create source oci podinfo \\\n50:     --url=oci://ghcr.io/stefanprodan/manifests/podinfo \\\n51:     --tag=6.6.2 \\\n52:     --interval=10m \\\n53:     --verify-provider=cosign \\\n54:     --verify-subject=\"^https://github.com/stefanprodan/podinfo/.github/workflows/release.yml@refs/tags/6.6.2$\" \\\n55:     --verify-issuer=\"^https://token.actions.githubusercontent.com$\"\n56: `,",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G3",
+      "evidence": [
+        {
+          "evidence_id": "G3_E1",
+          "file_path": "manifests/openshift/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 16.743,
+          "matched_cues": [
+            "kustomization",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "metadata"
+          ],
+          "content": "1: apiVersion: kustomize.config.k8s.io/v1beta1\n2: kind: Kustomization\n3: namespace: flux-system\n4: resources:\n5:   - namespace.yaml\n6:   - scc.yaml\n7:   - ../bases/source-controller\n8:   - ../bases/source-watcher\n9:   - ../bases/kustomize-controller",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "manifests/openshift/kustomization.yaml",
+          "start_line": 15,
+          "end_line": 31,
+          "retrieval_score": 16.743,
+          "matched_cues": [
+            "kustomization",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1",
+            "metadata"
+          ],
+          "content": "15:   - ../policies\n16: transformers:\n17:   - labels.yaml\n18: images:\n19:   - name: fluxcd/source-controller\n20:     newName: ghcr.io/fluxcd/source-controller\n21:   - name: fluxcd/source-watcher\n22:     newName: ghcr.io/fluxcd/source-watcher\n23:   - name: fluxcd/kustomize-controller\n24:     newName: ghcr.io/fluxcd/kustomize-controller\n25:   - name: fluxcd/helm-controller\n26:     newName: ghcr.io/fluxcd/helm-controller\n27:   - name: fluxcd/notification-controller\n28:     newName: ghcr.io/fluxcd/notification-controller\n29:   - name: fluxcd/image-reflector-controller\n30:     newName: ghcr.io/fluxcd/image-reflector-controller\n31:   - name: fluxcd/image-automation-controller",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "cmd/flux/testdata/build-kustomization/delete-service/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 6,
+          "retrieval_score": 14.47,
+          "matched_cues": [
+            "kustomization",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1"
+          ],
+          "content": "1: apiVersion: kustomize.config.k8s.io/v1beta1\n2: kind: Kustomization\n3: resources:\n4: - ./deployment.yaml\n5: - ./hpa.yaml\n6: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E4",
+          "file_path": "cmd/flux/testdata/build-kustomization/podinfo-with-my-app/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 5,
+          "retrieval_score": 14.47,
+          "matched_cues": [
+            "kustomization",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1"
+          ],
+          "content": "1: apiVersion: kustomize.config.k8s.io/v1beta1\n2: kind: Kustomization\n3: resources:\n4: - ./my-app.yaml\n5: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E5",
+          "file_path": "cmd/flux/testdata/build-kustomization/podinfo/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 14.47,
+          "matched_cues": [
+            "kustomization",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1"
+          ],
+          "content": "1: apiVersion: kustomize.config.k8s.io/v1beta1\n2: kind: Kustomization\n3: resources:\n4: - ./deployment.yaml\n5: - ./hpa.yaml\n6: - ./service.yaml\n7: - ./dockerconfigjson-sops-secret.yaml\n8: - ./stringdata-secret.yaml\n9: secretGenerator:",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "cmd/flux/testdata/build-kustomization/var-substitution/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 14.47,
+          "matched_cues": [
+            "kustomization",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1"
+          ],
+          "content": "1: apiVersion: kustomize.config.k8s.io/v1beta1\n2: kind: Kustomization\n3: resources:\n4:   - ./deployment.yaml\n5: generatorOptions:\n6:   labels:\n7:     kustomize.toolkit.fluxcd.io/substitute: disabled\n8: configMapGenerator:\n9:   - name: flux-grafana-dashboards",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E7",
+          "file_path": "cmd/flux/testdata/diff-kustomization/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 14.47,
+          "matched_cues": [
+            "kustomization",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1"
+          ],
+          "content": "1: apiVersion: kustomize.config.k8s.io/v1beta1\n2: kind: Kustomization\n3: resources:\n4: - ./deployment.yaml\n5: - ./hpa.yaml\n6: - ./service.yaml\n7: secretGenerator:\n8:  - literals:\n9:    - username=admin",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E8",
+          "file_path": "manifests/bases/helm-controller/kustomization.yaml",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 14.47,
+          "matched_cues": [
+            "kustomization",
+            "kustomize",
+            "kustomize.config.k8s.io/v1beta1"
+          ],
+          "content": "1: apiVersion: kustomize.config.k8s.io/v1beta1\n2: kind: Kustomization\n3: resources:\n4: - https://github.com/fluxcd/helm-controller/releases/download/v1.5.3/helm-controller.crds.yaml\n5: - https://github.com/fluxcd/helm-controller/releases/download/v1.5.3/helm-controller.deployment.yaml\n6: - account.yaml\n7: transformers:\n8: - labels.yaml\n9: patches:",
+          "line_truncated": false
+        }
+      ]
+    }
+  ],
+  "max_targets_per_gap": 3
+}

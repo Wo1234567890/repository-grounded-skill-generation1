@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In Ghost's api-framework, a controller's `docName` field plays a critical role when `permissions: true` is set. What does the framework use `docName` for in this context?",
+    "options": {
+      "A": "It determines the database table name that the ORM queries when fetching records for that controller.",
+      "B": "It sets the HTTP route path prefix automatically so that no manual route registration is needed.",
+      "C": "It controls which response serializer is applied to format the JSON output returned to the client.",
+      "D": "It is used by the permission system to look up which roles are allowed to perform operations on that resource, by matching it against Ghost's internal permission registry."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "D",
+  "answer": "D",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.7041459999745712,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 199,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

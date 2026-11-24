@@ -1,0 +1,195 @@
+```json
+{
+  "gap_results": [
+    {
+      "gap_id": "G1",
+      "assessment": "grounded",
+      "assessment_reason": "The repository evidence clearly shows that the alert API is served from `metabase.pulse.api.alert` (ns marked `^:deprecated`), that `metabase.pulse.api/alert-routes` wires up that namespace, and that `src/metabase/api/alert.clj` does not exist in the repository. The agent needs to understand the existing routing structure to decide whether to create a new file at the task-specified path or modify the existing deprecated implementation.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G1_E1",
+          "type": "descriptive",
+          "reason": "Shows the existing `metabase.pulse.api.alert` namespace is deprecated and handles `/api/alert` endpoints — the actual location of alert API logic."
+        },
+        {
+          "evidence_id": "G1_E4",
+          "type": "descriptive",
+          "reason": "Shows `metabase.pulse.api` namespace that imports and routes both pulse and alert namespaces, clarifying the routing hierarchy."
+        },
+        {
+          "evidence_id": "G1_E5",
+          "type": "descriptive",
+          "reason": "Shows `alert-routes` is defined as `(api.macros/ns-handler 'metabase.pulse.api.alert)`, confirming the routing entry point for `/api/alert`."
+        },
+        {
+          "evidence_id": "G1_E6",
+          "type": "descriptive",
+          "reason": "Shows the existing test namespace for the alert API, confirming tests are co-located with `metabase.pulse.api.alert`."
+        },
+        {
+          "evidence_id": "G1_E2",
+          "type": "irrelevant",
+          "reason": "clj-kondo config entry for alert-test; not relevant to file location decisions."
+        },
+        {
+          "evidence_id": "G1_E3",
+          "type": "irrelevant",
+          "reason": "cljfmt formatting config; not relevant to file location decisions."
+        },
+        {
+          "evidence_id": "G1_E7",
+          "type": "irrelevant",
+          "reason": "Build utility code about file deletion; not relevant."
+        },
+        {
+          "evidence_id": "G1_E8",
+          "type": "irrelevant",
+          "reason": "Google Sheets API error handling; not relevant."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "The `/api/alert` endpoints in Metabase are implemented in `src/metabase/pulse/api/alert.clj` (namespace `metabase.pulse.api.alert`, marked `^:deprecated`). This namespace is wired into the application router via `metabase.pulse.api/alert-routes` using `(api.macros/ns-handler 'metabase.pulse.api.alert)`. There is no `src/metabase/api/alert.clj` file in the repository. Schema validation additions for alert endpoints must therefore be made to `src/metabase/pulse/api/alert.clj`.",
+          "target_descriptor": "Where the alert API endpoint implementation actually lives in the repository and how it is routed into the application",
+          "evidence_ids": ["G1_E1", "G1_E4", "G1_E5"],
+          "rationale": "The agent must know that `src/metabase/api/alert.clj` does not exist and that the alert API is served from the deprecated `metabase.pulse.api.alert` namespace, so schema modifications belong there rather than to a newly created file at the task-specified path."
+        },
+        {
+          "knowledge_target": "The existing tests for the deprecated alert API endpoints live in `test/metabase/pulse/api/alert_test.clj` (namespace `metabase.pulse.api.alert-test`). New Malli validation tests for the same endpoints should either extend this file or create a companion test file consistent with the `metabase.pulse.api.*` namespace convention.",
+          "target_descriptor": "The test namespace and file location convention used for the existing alert API tests",
+          "evidence_ids": ["G1_E6", "G1_E1"],
+          "rationale": "Understanding where existing alert tests live prevents the agent from placing new tests in an orphaned namespace that does not match the implementation file, and helps it follow the repository's established conventions."
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "assessment": "grounded",
+      "assessment_reason": "The repository test examples consistently show that `mt/user-http-request` calls are wrapped in `(is ...)` assertions within `deftest` bodies to actually verify status codes. The agent's test omitted the `is` assertions, leaving calls without verification.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G2_E1",
+          "type": "descriptive",
+          "reason": "Shows the canonical pattern where `mt/user-http-request` is wrapped in `(is ...)` and embedded in `testing` blocks inside a `deftest`, including both the expected status code as an argument and an `is` wrapper to assert the result."
+        },
+        {
+          "evidence_id": "G2_E2",
+          "type": "descriptive",
+          "reason": "Further examples of `mt/user-http-request` calls consistently wrapped in `(is (= ...))` or `(is (=? ...))` assertions."
+        },
+        {
+          "evidence_id": "G2_E3",
+          "type": "descriptive",
+          "reason": "Additional pattern showing `mt/user-http-request` results asserted with `is`."
+        },
+        {
+          "evidence_id": "G2_E4",
+          "type": "descriptive",
+          "reason": "Shows `mt/user-http-request` used both with an expected status code argument and wrapped in `is` assertions."
+        },
+        {
+          "evidence_id": "G2_E5",
+          "type": "descriptive",
+          "reason": "Shows `is (=? ...)` wrapping `mt/user-http-request` for status 400 assertions — directly relevant to the failing test pattern."
+        },
+        {
+          "evidence_id": "G2_E6",
+          "type": "descriptive",
+          "reason": "Same pattern as G2_E5, confirming the convention."
+        },
+        {
+          "evidence_id": "G2_E7",
+          "type": "irrelevant",
+          "reason": "Helper function definition, not a test assertion pattern example."
+        },
+        {
+          "evidence_id": "G2_E8",
+          "type": "irrelevant",
+          "reason": "Namespace/require boilerplate; not relevant to assertion patterns."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "In Metabase tests, `mt/user-http-request` accepts an expected HTTP status code as its third argument and will throw/fail if the actual status does not match. However, to record a test assertion that shows up in test results, the call must also be wrapped in `(is ...)` (or `(is (= ...) ...)` / `(is (=? ...) ...)`). A bare `mt/user-http-request` call without an `is` wrapper does not register as a test assertion even though it may throw on status mismatch. Every status-code verification in a `deftest` must use the pattern `(is (= expected-value (mt/user-http-request ...)))` or `(is (=? expected-map (mt/user-http-request ...)))`.",
+          "target_descriptor": "The required pattern for asserting HTTP response status codes using mt/user-http-request inside deftest bodies",
+          "evidence_ids": ["G2_E1", "G2_E2", "G2_E5"],
+          "rationale": "The agent wrote `mt/user-http-request` calls without `is` wrappers, meaning the test has no registered assertions. Repository examples consistently show `is` wrapping every call where a result is being verified."
+        },
+        {
+          "knowledge_target": "In Clojure's `clojure.test`, every `deftest` body forms a single top-level expression scope. Parenthesis mismatch that closes the `deftest` body early causes subsequent `is` forms to become top-level expressions evaluated at compile/load time rather than inside the test. The correct structure is: `(deftest my-test (is ...) (is ...))` where both `is` forms are inside the single outer `deftest` closing paren. When multiple `testing` or `is` blocks are needed, they must all appear before the final closing paren of `deftest`.",
+          "target_descriptor": "The correct parenthesis scoping rules for deftest bodies containing multiple is assertions",
+          "evidence_ids": ["G2_E1", "G2_E4"],
+          "rationale": "The agent's first version of the test had mismatched parens where the second `is` block fell outside the `deftest`. Understanding the required nesting prevents this structural error."
+        }
+      ]
+    },
+    {
+      "gap_id": "G3",
+      "assessment": "grounded",
+      "assessment_reason": "The repository contains a well-defined `create-notification!` function in `metabase.notification.api.notification` (also exported from `metabase.notification.api`) with a full implementation that performs permission checks, persists data, hydrates the result, sends emails, and publishes events. The existing POST endpoint in that namespace shows exactly how to call it. The alert API's POST endpoint should delegate to this infrastructure rather than returning a stub map.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G3_E1",
+          "type": "descriptive",
+          "reason": "Shows the namespace declaration of `metabase.notification.api.notification`, which contains the `create-notification!` function."
+        },
+        {
+          "evidence_id": "G3_E2",
+          "type": "descriptive",
+          "reason": "Shows the full implementation of `create-notification!` including permission check, model creation, hydration, email notification, and event publishing."
+        },
+        {
+          "evidence_id": "G3_E3",
+          "type": "descriptive",
+          "reason": "Shows the POST `/` endpoint in `notification.clj` that calls `create-notification!`, demonstrating the exact call pattern to follow."
+        },
+        {
+          "evidence_id": "G3_E4",
+          "type": "descriptive",
+          "reason": "Shows the existing `notification->pulse` conversion function in `metabase.pulse.api.alert` and its require of `notification.api`, showing how the alert namespace already integrates with the notification API."
+        },
+        {
+          "evidence_id": "G3_E5",
+          "type": "descriptive",
+          "reason": "Shows an existing GET endpoint in `metabase.pulse.api.alert` that calls `notification.api/list-notifications` and maps `notification->pulse`, establishing the pattern of delegating to notification API and converting results."
+        },
+        {
+          "evidence_id": "G3_E6",
+          "type": "descriptive",
+          "reason": "Shows `metabase.notification.api` exports `create-notification!`, making it available as `notification.api/create-notification!` from the alert namespace."
+        },
+        {
+          "evidence_id": "G3_E7",
+          "type": "descriptive",
+          "reason": "Namespace declaration of notification API tests; confirms the testing patterns exist."
+        },
+        {
+          "evidence_id": "G3_E8",
+          "type": "descriptive",
+          "reason": "Shows how `create-notification!` is tested via `mt/user-http-request` POST to `\"notification\"` endpoint, illustrating what a real creation request looks like."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "The `create-notification!` function in `metabase.notification.api.notification` (also exported from `metabase.notification.api`) performs the full alert/notification creation workflow: it calls `api/create-check`, invokes `models.notification/create-notification!` to persist the record, hydrates the result via `models.notification/hydrate-notification`, sends email notifications, and publishes a `:event/notification-create` event. The POST endpoint in `metabase.pulse.api.alert` should call `notification.api/create-notification!` with a properly shaped notification map (containing `:payload_type`, `:creator_id`, `:payload`, `:subscriptions`, `:handlers`) rather than returning a stub map.",
+          "target_descriptor": "The function responsible for persisting a new alert/notification and what it does, so POST endpoints delegate to it rather than returning stubs",
+          "evidence_ids": ["G3_E2", "G3_E3", "G3_E6"],
+          "rationale": "The agent returned a plain map from the POST endpoint instead of calling the existing persistence infrastructure. Knowing what `create-notification!` does and how the notification POST endpoint calls it provides the pattern to follow."
+        },
+        {
+          "knowledge_target": "The existing `metabase.pulse.api.alert` namespace already requires `metabase.notification.api` (aliased as `notification.api`) and uses it for read operations via `notification.api/list-notifications`. The `notification->pulse` function converts a fully-hydrated notification back to the legacy pulse wire format for backward compatibility. The POST endpoint for creating an alert should: (1) call `notification.api/create-notification!` with the notification data shaped appropriately, (2) convert the returned notification using `notification->pulse`, and (3) return the pulse-shaped map — mirroring how the GET list endpoint works.",
+          "target_descriptor": "How the alert API namespace integrates with the notification API for write operations, and the conversion pattern for returning legacy-format responses",
+          "evidence_ids": ["G3_E4", "G3_E5", "G3_E6"],
+          "rationale": "The agent needs to know that `notification.api` is already imported in the alert namespace and that the response must be converted through `notification->pulse` for backward compatibility, not returned as a raw notification or stub map."
+        },
+        {
+          "knowledge_target": "The `notification.api/create-notification!` function expects a `::models.notification/FullyHydratedNotification` shaped map, which includes `:payload_type` (keyword), `:creator_id` (user id), `:payload` (map with at minimum `:card_id`), `:subscriptions` (seq), and `:handlers` (seq). When constructing the input from an alert API request body (which uses fields like `card_id`, `channels`, `alert_condition`, `alert_first_only`), the alert POST endpoint must transform these fields into the notification shape before calling `create-notification!`.",
+          "target_descriptor": "The input shape required by create-notification! and how alert API request fields map to notification model fields",
+          "evidence_ids": ["G3_E2", "G3_E3", "G3_E8"],
+          "rationale": "The agent cannot simply pass the raw alert POST body to `create-notification!` — it must understand the expected notification shape to perform the necessary transformation, which is a prerequisite for a functioning (non-stub) implementation."
+        }
+      ]
+    }
+  ]
+}
+```

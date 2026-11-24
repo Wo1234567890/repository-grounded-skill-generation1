@@ -1,0 +1,117 @@
+```json
+{
+  "gap_results": [
+    {
+      "gap_id": "G1",
+      "assessment": "grounded",
+      "assessment_reason": "The repository evidence clearly shows the Jest configuration uses a testMatch pattern that only picks up files matching `*.unit.spec.{js,jsx,ts,tsx}`, and all existing test files in the same directory follow this naming convention. The agent's use of `.test.ts` deviates from this pattern and would cause the file to be ignored by the test runner.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G1_E1",
+          "type": "descriptive",
+          "reason": "Shows an existing test file `browser.unit.spec.ts` in the same directory, demonstrating the naming convention in practice."
+        },
+        {
+          "evidence_id": "G1_E2",
+          "type": "descriptive",
+          "reason": "Shows another existing test file `schema_metadata.unit.spec.ts` in the same directory, further confirming the naming convention."
+        },
+        {
+          "evidence_id": "G1_E3",
+          "type": "prescriptive",
+          "reason": "The jest.config.js `testMatch` configuration explicitly defines which file patterns are matched: `*.unit.spec.js` and `*.unit.spec.{js,jsx,ts,tsx}`. This directly determines whether a test file is picked up by Jest."
+        },
+        {
+          "evidence_id": "G1_E4",
+          "type": "prescriptive",
+          "reason": "Additional `testMatch` entries in jest.config.js for SDK projects also use the `*.unit.spec.{js,jsx,ts,tsx}` pattern, reinforcing the project-wide naming convention."
+        },
+        {
+          "evidence_id": "G1_E5",
+          "type": "prescriptive",
+          "reason": "The lint-rules project testMatch also uses `*.unit.spec.js`, confirming the uniform convention across all project configurations."
+        },
+        {
+          "evidence_id": "G1_E6",
+          "type": "descriptive",
+          "reason": "The package.json `test-unit` script runs `jest --maxWorkers=4`, which uses the jest.config.js testMatch patterns, confirming that only `*.unit.spec.*` files are discovered."
+        },
+        {
+          "evidence_id": "G1_E7",
+          "type": "descriptive",
+          "reason": "The timezone test configuration also uses `*.tz.unit.spec.{js,ts,jsx,tsx}` pattern, showing the project convention consistently uses `.unit.spec.` as a suffix segment."
+        },
+        {
+          "evidence_id": "G1_E8",
+          "type": "descriptive",
+          "reason": "Incidentally references `DashboardTabs.unit.spec.tsx` showing further use of the naming convention across the codebase."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "In this repository, unit test files must be named with the `.unit.spec.ts` (or `.unit.spec.{js,jsx,tsx}`) suffix rather than `.test.ts`. The Jest configuration in `jest.config.js` sets `testMatch` to `[\"<rootDir>/**/*.unit.spec.js\", \"<rootDir>/**/*.unit.spec.{js,jsx,ts,tsx}\"]`, which means files named `*.test.ts` are not discovered or executed by the test runner.",
+          "target_descriptor": "The required test file naming suffix convention and the Jest testMatch configuration that enforces it.",
+          "evidence_ids": ["G1_E1", "G1_E2", "G1_E3", "G1_E4", "G1_E5"],
+          "rationale": "The agent created the file as `analytics.test.ts` instead of `analytics.unit.spec.ts`. The jest.config.js testMatch patterns explicitly only match `*.unit.spec.*` files, so a `.test.ts` file will never be run. Existing test files in the same directory all use `.unit.spec.ts`, confirming the convention."
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "assessment": "grounded",
+      "assessment_reason": "The repository provides evidence of the correct commands for type-checking and running unit tests, as well as evidence that the implementation file imports from `@snowplow/browser-tracker` and `metabase/env`, which are real project dependencies. The skills documentation and CI workflow confirm the proper commands to use for verification.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G2_E1",
+          "type": "prescriptive",
+          "reason": "The package.json scripts define `type-check-pure` as `tsc --noEmit` and `type-check` as `bun run clean:cljs && bun run build:cljs && bun run type-check-pure`. These are the prescribed commands for TypeScript verification."
+        },
+        {
+          "evidence_id": "G2_E2",
+          "type": "descriptive",
+          "reason": "Confirms that `@snowplow/browser-tracker` is a declared project dependency at version `^3.1.6`, establishing it as a real importable module."
+        },
+        {
+          "evidence_id": "G2_E3",
+          "type": "descriptive",
+          "reason": "Shows `test-unit` and related test commands in package.json."
+        },
+        {
+          "evidence_id": "G2_E4",
+          "type": "descriptive",
+          "reason": "The existing `analytics.ts` file already imports from `@snowplow/browser-tracker`, `metabase/env`, and `metabase/lib/settings`, showing these modules are actively used in the analytics module and must be handled correctly in tests."
+        },
+        {
+          "evidence_id": "G2_E5",
+          "type": "prescriptive",
+          "reason": "The `.claude/skills` documentation explicitly prescribes using `bun run type-check-pure` for type checking and `bun run test-unit-keep-cljs path/to/file.unit.spec.js` to run a specific test file."
+        },
+        {
+          "evidence_id": "G2_E6",
+          "type": "prescriptive",
+          "reason": "The CI workflow runs `bun run type-check-pure` for type checking, confirming this is the standard verification command."
+        },
+        {
+          "evidence_id": "G2_E7",
+          "type": "prescriptive",
+          "reason": "The CI workflow runs `bun run test-unit --silent` for unit tests, confirming the proper test execution command."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "To verify TypeScript compilation without running the full type-check pipeline (which requires building CLJS), use `bun run type-check-pure` which runs `tsc --noEmit` directly. To run a specific unit test file, use `bun run test-unit-keep-cljs path/to/file.unit.spec.ts`.",
+          "target_descriptor": "The correct commands for type-checking and running specific unit test files in this repository.",
+          "evidence_ids": ["G2_E1", "G2_E5", "G2_E6", "G2_E7"],
+          "rationale": "The agent attempted `npm run type-check` which was denied. The repository prescribes `bun run type-check-pure` for a faster type-check and `bun run test-unit-keep-cljs` for running individual test files, which are the correct verification commands."
+        },
+        {
+          "knowledge_target": "The existing `frontend/src/metabase/lib/analytics.ts` file already imports from `@snowplow/browser-tracker`, `metabase/env`, and `metabase/lib/settings`. When writing unit tests for analytics functions, these module imports need to be properly mocked (e.g., using `jest.mock()`), because the test environment does not have a real browser Snowplow tracker or Metabase settings context available.",
+          "target_descriptor": "The external module dependencies in the existing analytics module that require mocking in unit tests.",
+          "evidence_ids": ["G2_E4", "G2_E2"],
+          "rationale": "The analytics implementation file imports from `@snowplow/browser-tracker` and `metabase/env`. Without mocking these in tests, the test suite may fail at import or runtime. This is relevant to whether the tests the agent wrote would actually pass."
+        }
+      ]
+    }
+  ]
+}
+```

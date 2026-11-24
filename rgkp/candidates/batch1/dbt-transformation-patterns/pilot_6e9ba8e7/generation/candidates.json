@@ -1,0 +1,6 @@
+{
+  "model": "claude-sonnet-4-6",
+  "candidates_per_target": 3,
+  "eligible_targets": 0,
+  "candidates": []
+}

@@ -1,0 +1,18 @@
+{
+  "candidate_id": "G4_KT1_C2",
+  "target_id": "G4_KT1",
+  "question_id": "G4_KT1_Q1",
+  "knowledge": "In this repository, `defsetting` is defined in the namespace `metabase.settings.models.setting` (file: `src/metabase/settings/models/setting.clj`) but is re-exported via `metabase.settings.core`. Existing settings files, such as `src/metabase/system/settings.clj`, import it with `[metabase.settings.core :as setting :refer [defsetting]]`. There is no file at `src/metabase/models/setting.clj`; that path is incorrect. A new `site-currency` defsetting placed in `src/metabase/system/settings.clj` is consistent with how other site-level settings (e.g., `startup-time-millis`) are defined there. To reference it from a new middleware namespace, require `metabase.system.settings` and call the generated getter/setter function (e.g., `(metabase.system.settings/site-currency)`).",
+  "baseline_state": 0,
+  "intervention_state": 0,
+  "delta": 0,
+  "answers": [
+    "B",
+    "C",
+    "C"
+  ],
+  "valid_count": 3,
+  "correct_count": 1,
+  "repetitions": 3,
+  "candidate_tokens": null
+}

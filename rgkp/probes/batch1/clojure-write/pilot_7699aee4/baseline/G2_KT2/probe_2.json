@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In the Metabase codebase, what is the purpose of the `supports-symbol?` function in `metabase.util.currency`, and how is it referenced elsewhere in the system?",
+    "options": {
+      "A": "It determines whether a given currency code should be displayed using its symbol (e.g., '$' for USD, 'CN¥' for CNY) rather than its code string, and is referenced during XLSX export to achieve parity in currency formatting.",
+      "B": "It validates whether a currency code is a recognized ISO 4217 code, returning false for unofficial currencies like BTC.",
+      "C": "It checks whether a currency supports fractional units (i.e., decimal_digits > 0), used to decide whether to show decimal places in exports.",
+      "D": "It determines whether a currency is supported for automatic exchange-rate conversion, returning true only for major currencies."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6560083330259658,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 247,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

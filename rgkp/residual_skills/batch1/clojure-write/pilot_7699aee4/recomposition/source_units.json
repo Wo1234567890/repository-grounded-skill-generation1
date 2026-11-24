@@ -1,0 +1,14 @@
+{
+  "source_units": [
+    {
+      "source_id": "G2_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "When implementing `format-currency-value` in `currency_formatter.clj`, use `metabase.util.currency` to apply formatting to numeric values. Require the namespace and use `currency/currency` map and `currency/supports-symbol?` to determine how to prefix the value. For example, for a currency code like \"USD\", look up `(get-in currency/currency [:USD :symbol])` to get \"$\" and produce a formatted string like \"$100.50\". Use `supports-symbol?` to decide whether to use `:symbol` or `:code` as the prefix. The `format-currency-value` function should return a formatted string (e.g., \"$100.50\" for USD, \"CN¥100.50\" for CNY), not the raw numeric value. Apply this inside the `currency-formatter-xform` where values are processed per row."
+    },
+    {
+      "source_id": "G2_KT2_EG1",
+      "type": "execution_guidance",
+      "content": "In `format-currency-value`, require `metabase.util.currency` and use `currency/supports-symbol?` to decide the display style: if the currency code (e.g., \"USD\", \"CNY\") is in the supported set, use `(get-in currency/currency [(keyword currency-code) :symbol])` to get the symbol (e.g., \"$\", \"CN¥\"); otherwise use the currency code string directly. Concatenate the identifier with the numeric value as a string. This matches the pattern already used in `streaming/common.clj`'s `currency-identifier` function. The result should be a formatted string like \"$100.50\" or \"CN¥100.50\"."
+    }
+  ]
+}

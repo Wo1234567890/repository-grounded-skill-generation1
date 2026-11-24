@@ -1,0 +1,369 @@
+{
+  "task_description": "# Task: Add Currency Field Conversion to Metabase Query Export\n\n## Background\n\nWe need to add currency field conversion functionality to Metabase's query result export module, allowing automatic currency formatting based on site settings.\n\n## Files to Create/Modify\n\n- `src/metabase/query_processor/middleware/currency_formatter.clj` (new)\n- `src/metabase/api/dataset.clj` (modify export paths)\n- `test/metabase/query_processor/middleware/currency_formatter_test.clj` (new)\n\n## Requirements\n\n### Currency Formatter Middleware\n\n- Read site-currency setting from `src/metabase/models/setting.clj`\n- Format columns with type `:type/Currency`\n- Apply conversion to result set\n\n### Integration Points\n\n- Call middleware in `POST /api/dataset/csv` export path\n- Call middleware in `POST /api/dataset/json` export path\n\n### Conversion Logic\n\n- Support common currency pairs (USD, EUR, CNY, etc.)\n- Handle null values gracefully\n- Non-currency columns should not be affected\n\n### Expected Functionality\n\n- Currency conversions work correctly (e.g., USD → CNY with proper exchange rate)\n- Null values are skipped without raising errors\n- Non-currency columns remain unchanged\n- Invalid currency configuration falls back to default behavior\n\n## Acceptance Criteria\n\n- Implementation compiles and runs without errors\n- All currency conversion scenarios work as specified\n- Edge cases are handled appropriately\n",
+  "knowledge_targets": [
+    {
+      "target_id": "G2_KT1",
+      "knowledge_target": "The `metabase.util.currency` namespace in `src/metabase/util/currency.cljc` provides currency metadata (symbol, name, decimal_digits, rounding, code, name_plural) for formatting purposes. It does not contain exchange rates or numeric conversion between currencies. The `format-currency-value` function should use this metadata to apply formatting (e.g., prefixing with currency symbol or code) rather than performing exchange-rate-based numeric conversion.",
+      "evidence_ids": [
+        "G2_E1",
+        "G2_E2",
+        "G2_E3",
+        "G2_E7",
+        "G2_E8"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "src/metabase/util/currency.cljc",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 27.423,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "metabase.util.currency",
+            "usd"
+          ],
+          "content": "1: (ns metabase.util.currency\n2:   \"The list of currencies, and associated metadata, used by Metabase for number formatting.\")\n3: \n4: (defn supports-symbol?\n5:   \"Currencies for which the Metabase frontend supports formatting with its symbol, rather than just\n6:   its code or name. This list is referenced during XLSX export to achieve parity in currency formatting.\"\n7:   [currency-code]\n8:   (contains?\n9:    #{:USD  ;; US dollar",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "src/metabase/util/currency.cljc",
+          "start_line": 58,
+          "end_line": 74,
+          "retrieval_score": 27.423,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "metabase.util.currency",
+            "usd"
+          ],
+          "content": "58:      [:BRL (make-currency \"R$\" \"Brazilian Real\" \"R$\" 2 0 \"BRL\" \"Brazilian reals\")]\n59:      [:BTC (make-currency \"₿\" \"Bitcoin\" \"BTC\" 8 0 \"BTC\" \"Bitcoins\")]\n60:      [:BWP (make-currency \"BWP\" \"Botswanan Pula\" \"P\" 2 0 \"BWP\" \"Botswanan pulas\")]\n61:      [:BYR (make-currency \"BYR\" \"Belarusian Ruble\" \"BYR\" 0 0 \"BYR\" \"Belarusian rubles\")]\n62:      [:BZD (make-currency \"BZ$\" \"Belize Dollar\" \"$\" 2 0 \"BZD\" \"Belize dollars\")]\n63:      [:CDF (make-currency \"CDF\" \"Congolese Franc\" \"FrCD\" 2 0 \"CDF\" \"Congolese francs\")]\n64:      [:CHF (make-currency \"CHF\" \"Swiss Franc\" \"CHF\" 2 0.05 \"CHF\" \"Swiss francs\")]\n65:      [:CLP (make-currency \"CL$\" \"Chilean Peso\" \"$\" 0 0 \"CLP\" \"Chilean pesos\")]\n66:      [:CNY (make-currency \"CN¥\" \"Chinese Yuan\" \"CN¥\" 2 0 \"CNY\" \"Chinese yuan\")]\n67:      [:COP (make-currency \"CO$\" \"Colombian Peso\" \"$\" 0 0 \"COP\" \"Colombian pesos\")]\n68:      [:CRC (make-currency \"₡\" \"Costa Rican Colón\" \"₡\" 0 0 \"CRC\" \"Costa Rican colóns\")]\n69:      [:CVE (make-currency \"CV$\" \"Cape Verdean Escudo\" \"CV$\" 2 0 \"CVE\" \"Cape Verdean escudos\")]\n70:      [:CZK (make-currency \"Kč\" \"Czech Republic Koruna\" \"Kč\" 2 0 \"CZK\" \"Czech Republic korunas\")]\n71:      [:DJF (make-currency \"Fdj\" \"Djiboutian Franc\" \"Fdj\" 0 0 \"DJF\" \"Djiboutian francs\")]\n72:      [:DKK (make-currency \"Dkr\" \"Danish Krone\" \"kr\" 2 0 \"DKK\" \"Danish kroner\")]\n73:      [:DOP (make-currency \"RD$\" \"Dominican Peso\" \"RD$\" 2 0 \"DOP\" \"Dominican pesos\")]\n74:      [:DZD (make-currency \"DA\" \"Algerian Dinar\" \"د.ج.‏\" 2 0 \"DZD\" \"Algerian dinars\")]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "src/metabase/util/currency.cljc",
+          "start_line": 31,
+          "end_line": 47,
+          "retrieval_score": 27.423,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "metabase.util.currency",
+            "usd"
+          ],
+          "content": "31:    :symbol_native  symbol_native\n32:    :decimal_digits decimal_digits\n33:    :rounding       rounding\n34:    :code           code\n35:    :name_plural    name_plural})\n36: \n37: (def ^:private currency-list\n38:   (concat\n39:    [[:USD (make-currency \"$\" \"US Dollar\" \"$\" 2 0 \"USD\" \"US dollars\")]\n40:     [:CAD (make-currency \"CA$\" \"Canadian Dollar\" \"$\" 2 0 \"CAD\" \"Canadian dollars\")]\n41:     [:EUR (make-currency \"€\" \"Euro\" \"€\" 2 0 \"EUR\" \"euros\")]]\n42:    (sort-by\n43:     #(-> % second :name)\n44:     [[:AED (make-currency \"AED\" \"United Arab Emirates Dirham\" \"د.إ.‏\" 2 0 \"AED\" \"UAE dirhams\")]\n45:      [:AFN (make-currency \"Af\" \"Afghan Afghani\" \"؋\" 0 0 \"AFN\" \"Afghan Afghanis\")]\n46:      [:ALL (make-currency \"ALL\" \"Albanian Lek\" \"Lek\" 0 0 \"ALL\" \"Albanian lekë\")]\n47:      [:AMD (make-currency \"AMD\" \"Armenian Dram\" \"դր.\" 0 0 \"AMD\" \"Armenian drams\")]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "frontend/test/metabase/lib/formatting.unit.spec.js",
+          "start_line": 213,
+          "end_line": 229,
+          "retrieval_score": 19.028,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "usd"
+          ],
+          "content": "213:         expect(formatNumber(0.001, options)).toEqual(\"$0.00\");\n214:         expect(formatNumber(7.24, options)).toEqual(\"$7.24\");\n215:         expect(formatNumber(7.249, options)).toEqual(\"$7.25\");\n216:         expect(formatNumber(724.9, options)).toEqual(\"$724.90\");\n217:         expect(formatNumber(1234.56, options)).toEqual(\"$1.2k\");\n218:         expect(formatNumber(1234567.89, options)).toEqual(\"$1.2M\");\n219:         expect(formatNumber(-1234567.89, options)).toEqual(\"-$1.2M\");\n220:         expect(\n221:           formatNumber(1234567.89, { ...options, currency: \"CNY\" }),\n222:         ).toEqual(\"CN¥1.2M\");\n223:         expect(\n224:           formatNumber(1234567.89, { ...options, currency_style: \"name\" }),\n225:         ).toEqual(\"$1.2M\");\n226:       });\n227:     });\n228: \n229:     it(\"should format to correct number of decimal places\", () => {",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "frontend/test/metabase/lib/formatting.unit.spec.js",
+          "start_line": 906,
+          "end_line": 922,
+          "retrieval_score": 19.028,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "usd"
+          ],
+          "content": "906:   });\n907: \n908:   describe(\"getCurrencySymbol\", () => {\n909:     const currencySymbols = [\n910:       [\"USD\", \"$\"],\n911:       [\"EUR\", \"€\"],\n912:       [\"GBP\", \"£\"],\n913:       [\"JPY\", \"¥\"],\n914:       [\"CNY\", \"CN¥\"],\n915:       [\"CAD\", \"CA$\"],\n916:       [\"AUD\", \"AU$\"],\n917:       [\"NZD\", \"NZ$\"],\n918:       [\"HKD\", \"HK$\"],\n919:       [\"BTC\", \"₿\"],\n920:       [\"OOPS\", \"OOPS\"],\n921:     ];\n922: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT2",
+      "knowledge_target": "Currency formatting in Metabase applies a symbol or code prefix to numeric values based on the currency code (e.g., USD → '$', CNY → 'CN¥', EUR → '€'). The `supports-symbol?` function in `metabase.util.currency` identifies which currencies display with their symbol vs. their code string.",
+      "evidence_ids": [
+        "G2_E1",
+        "G2_E5",
+        "G2_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "src/metabase/util/currency.cljc",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 27.423,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "metabase.util.currency",
+            "usd"
+          ],
+          "content": "1: (ns metabase.util.currency\n2:   \"The list of currencies, and associated metadata, used by Metabase for number formatting.\")\n3: \n4: (defn supports-symbol?\n5:   \"Currencies for which the Metabase frontend supports formatting with its symbol, rather than just\n6:   its code or name. This list is referenced during XLSX export to achieve parity in currency formatting.\"\n7:   [currency-code]\n8:   (contains?\n9:    #{:USD  ;; US dollar",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "frontend/src/metabase/visualizations/shared/settings/column.ts",
+          "start_line": 26,
+          "end_line": 42,
+          "retrieval_score": 19.028,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "usd"
+          ],
+          "content": "26: // not supported by GraalVM.\n27: const CURRENCIES_WITH_SYMBOLS = new Set([\n28:   \"USD\",\n29:   \"CAD\",\n30:   \"EUR\",\n31:   \"AUD\",\n32:   \"BRL\",\n33:   \"BTC\",\n34:   \"CNY\",\n35:   \"GBP\",\n36:   \"HKD\",\n37:   \"ILS\",\n38:   \"INR\",\n39:   \"JPY\",\n40:   \"KRW\",\n41:   \"MXN\",\n42:   \"NZD\",",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "frontend/src/metabase/visualizations/shared/settings/column.ts",
+          "start_line": 43,
+          "end_line": 59,
+          "retrieval_score": 19.028,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "usd"
+          ],
+          "content": "43:   \"TWD\",\n44:   \"VND\",\n45: ]);\n46: \n47: export function getDefaultCurrencyStyle(\n48:   _column: any,\n49:   columnSettings: ColumnSettings,\n50: ) {\n51:   const c = columnSettings[\"currency\"] || \"USD\";\n52:   return CURRENCIES_WITH_SYMBOLS.has(c) ? \"symbol\" : \"code\";\n53: }\n54: \n55: export function getDefaultCurrencyInHeader() {\n56:   return true;\n57: }\n58: \n59: export function getDefaultNumberSeparators() {",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT1",
+      "knowledge_target": "In `test-currency-formatter-with-null-values`, the test data has two rows: `[1 nil]` and `[2 150.00]`. The assertion verifying that nil values are skipped without error should check the first row (which contains nil) using `(nil? (nth (first @rows) 1))`, not `(nil? (nth (last @rows) 1))` which would check whether 150.00 is nil and would always fail.",
+      "evidence_ids": [
+        "G3_E4",
+        "G3_E5",
+        "G3_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E4",
+          "file_path": "test/metabase/metabot/agent/links_test.clj",
+          "start_line": 171,
+          "end_line": 187,
+          "retrieval_score": 9.406,
+          "matched_cues": [
+            "nil handling"
+          ],
+          "content": "171:       (is (= \"[B](/model/2)\" (-> result second :text))))))\n172: \n173: (deftest ^:parallel resolve-links-xf-nil-state-test\n174:   (testing \"transducer handles nil state maps\"\n175:     (let [parts [{:type :text :text \"[Link](metabase://model/123)\"}]\n176:           result (into [] (links/resolve-links-xf nil nil (atom {})) parts)]\n177:       (is (= \"[Link](/model/123)\" (-> result first :text))))))\n178: \n179: ;;; Nil handling tests - important for robustness against LLM edge cases\n180: \n181: (deftest ^:parallel resolve-metabase-uri-nil-uri-test\n182:   (testing \"handles nil URI gracefully\"\n183:     (is (nil? (links/resolve-metabase-uri nil {} {})))))\n184: \n185: (deftest ^:parallel resolve-metabase-uri-empty-string-test\n186:   (testing \"handles empty string URI\"\n187:     (is (nil? (links/resolve-metabase-uri \"\" {} {})))))",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E5",
+          "file_path": "test/metabase/metabot/table_utils_test.clj",
+          "start_line": 43,
+          "end_line": 59,
+          "retrieval_score": 9.406,
+          "matched_cues": [
+            "nil handling"
+          ],
+          "content": "43: \n44: (deftest similar?-different-strings-test\n45:   (testing \"similar? function with completely different strings\"\n46:     (is (not (table-utils/similar? \"users\" \"products\")))\n47:     (is (not (table-utils/similar? \"accounts\" \"inventory\")))\n48:     (is (not (table-utils/similar? \"people\" \"widgets\")))))\n49: \n50: (deftest similar?-empty-and-nil-test\n51:   (testing \"similar? function with empty and nil handling\"\n52:     (is (not (table-utils/similar? \"\" \"test\")))\n53:     (is (not (table-utils/similar? \"test\" \"\")))\n54:     (is (table-utils/similar? \"\" \"\"))))\n55: \n56: (deftest matching-tables?-test\n57:   (testing \"matching-tables? function with schema matching\"\n58:     (let [table1 {:name \"users\" :schema \"public\"}\n59:           table2 {:name \"USERS\" :schema \"PUBLIC\"}  ; case different",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "test/metabase/metabot/tools/util_test.clj",
+          "start_line": 321,
+          "end_line": 337,
+          "retrieval_score": 9.406,
+          "matched_cues": [
+            "nil handling"
+          ],
+          "content": "321:              (metabot.tools.util/resolve-column {:field-id \"t1-10\"} \"t1-\" columns))))\n322: \n323:       (testing \"throws when field ID prefix doesn't match expected prefix\"\n324:         (is (thrown-with-msg?\n325:              clojure.lang.ExceptionInfo\n326:              #\"does not match expected prefix\"\n327:              (metabot.tools.util/resolve-column {:field-id \"t999-0\"} \"t1-\" columns)))))))\n328: \n329: ;;; Nil handling tests - important for robustness against LLM edge cases\n330: \n331: (deftest parse-field-id-nil-handling-test\n332:   (testing \"returns nil for nil input (no NPE)\"\n333:     (is (nil? (metabot.tools.util/parse-field-id nil))))\n334: \n335:   (testing \"returns nil for empty string\"\n336:     (is (nil? (metabot.tools.util/parse-field-id \"\"))))\n337: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G4_KT1",
+      "knowledge_target": "The actual file path for the setting model in the repository is `src/metabase/settings/models/setting.clj` (namespace `metabase.settings.models.setting`), not `src/metabase/models/setting.clj` as the task description stated. The `defsetting` macro is accessed via `[metabase.settings.core :as setting :refer [defsetting]]` as shown in `src/metabase/system/settings.clj`.",
+      "evidence_ids": [
+        "G4_E1",
+        "G4_E4",
+        "G4_E5"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G4_E1",
+          "file_path": "src/metabase/settings/models/setting.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 47.292,
+          "matched_cues": [
+            "admin settings",
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "1: (ns metabase.settings.models.setting\n2:   (:refer-clojure :exclude [get])\n3:   (:require\n4:    [clojure.core :as core]\n5:    [clojure.data :as data]\n6:    [clojure.data.csv :as csv]\n7:    [clojure.string :as str]\n8:    [environ.core :as env]\n9:    [malli.core :as mc]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E4",
+          "file_path": "src/metabase/system/settings.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 42.566,
+          "matched_cues": [
+            "defsetting",
+            "metabase.system.settings",
+            "settings"
+          ],
+          "content": "1: (ns metabase.system.settings\n2:   (:require\n3:    [clojure.string :as str]\n4:    [java-time.api :as t]\n5:    [metabase.appearance.core :as appearance]\n6:    [metabase.settings.core :as setting :refer [defsetting]]\n7:    [metabase.util :as u]\n8:    [metabase.util.encryption :as encryption]\n9:    [metabase.util.fonts :as u.fonts]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E5",
+          "file_path": "src/metabase/system/settings.clj",
+          "start_line": 14,
+          "end_line": 30,
+          "retrieval_score": 42.566,
+          "matched_cues": [
+            "defsetting",
+            "metabase.system.settings",
+            "settings"
+          ],
+          "content": "14:   ;; Don't i18n this docstring because it's not user-facing! :)\n15:   \"Unique identifier used for this instance of {0}. This is set once and only once the first time it is fetched via\n16:   its magic getter. Nice!\"\n17:   :encryption :no\n18:   :visibility :authenticated\n19:   :base       setting/uuid-nonce-base\n20:   :doc        false)\n21: \n22: (defsetting startup-time-millis\n23:   (deferred-tru \"The startup time in milliseconds\")\n24:   :visibility :public\n25:   :type       :double\n26:   :audit      :never\n27:   :default    0.0\n28:   :doc        false)\n29: \n30: (defn- normalize-site-url [^String s]",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G4_KT2",
+      "knowledge_target": "The repository enforces via clj-kondo linting that all `defsetting` forms must be placed in namespaces matching the pattern `metabase[-enterprise].<module>.settings`. Therefore, a new `site-currency` setting should be defined in a `*.settings` namespace (e.g., `metabase.system.settings` or a dedicated `metabase.currency.settings`), not in `metabase.settings.models.setting` itself which is the framework definition file.",
+      "evidence_ids": [
+        "G4_E7",
+        "G4_E8",
+        "G4_E4"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G4_E7",
+          "file_path": ".clj-kondo/src/hooks/metabase/settings/models/setting.clj",
+          "start_line": 208,
+          "end_line": 224,
+          "retrieval_score": 21.244,
+          "matched_cues": [
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "208:          (list\n209:           (hooks/token-node 'let)\n210:           ;; include description and the options map so they can get validated as well.\n211:           (hooks/vector-node\n212:            [anon-binding docstring\n213:             anon-binding (hooks/map-node options-list)])\n214:           (hooks/reg-keyword! (-> (hooks/keyword-node (keyword (hooks/sexpr setting-name)))\n215:                                   (with-meta (meta setting-name)))\n216:                               'metabase.settings.models.setting/defsetting)\n217:           getter-node\n218:           setter-node))\n219:         (with-meta (meta node)))))\n220: \n221: (defn defsetting\n222:   \"Rewrite a [[metabase.models.defsetting]] form like\n223: \n224:     (defsetting my-setting \\\"Description\\\" :type :boolean)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E8",
+          "file_path": ".clj-kondo/src/hooks/metabase/settings/models/setting.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 21.244,
+          "matched_cues": [
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "1: (ns hooks.metabase.settings.models.setting\n2:   (:require\n3:    [clj-kondo.hooks-api :as hooks]\n4:    [hooks.common :as common]))\n5: \n6: (defn lint-defsetting-namespace [node context]\n7:   (when-not (re-matches #\"^metabase(?:-enterprise)?\\.[^\\.]+\\.settings$\" (name (:ns context)))\n8:     (hooks/reg-finding! (assoc (meta node)\n9:                                :message \"All defsettings should live in metabase[-enterprise].<module>.settings namespaces\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E4",
+          "file_path": "src/metabase/system/settings.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 42.566,
+          "matched_cues": [
+            "defsetting",
+            "metabase.system.settings",
+            "settings"
+          ],
+          "content": "1: (ns metabase.system.settings\n2:   (:require\n3:    [clojure.string :as str]\n4:    [java-time.api :as t]\n5:    [metabase.appearance.core :as appearance]\n6:    [metabase.settings.core :as setting :refer [defsetting]]\n7:    [metabase.util :as u]\n8:    [metabase.util.encryption :as encryption]\n9:    [metabase.util.fonts :as u.fonts]",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G4_KT3",
+      "knowledge_target": "A `defsetting` form in a `*.settings` namespace file accepts options including `:visibility` (`:public`, `:authenticated`, `:admin`, `:internal`), `:type` (`:string`, `:boolean`, `:double`, etc.), `:default`, `:audit`, `:doc`, `:encryption`, and `:getter`/`:setter`. For a `site-currency` setting, a minimal form would be `(defsetting site-currency (deferred-tru \"Default currency for the site\") :type :string :default \"USD\" :visibility :public)`.",
+      "evidence_ids": [
+        "G4_E5",
+        "G4_E6",
+        "G4_E2",
+        "G4_E3"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G4_E5",
+          "file_path": "src/metabase/system/settings.clj",
+          "start_line": 14,
+          "end_line": 30,
+          "retrieval_score": 42.566,
+          "matched_cues": [
+            "defsetting",
+            "metabase.system.settings",
+            "settings"
+          ],
+          "content": "14:   ;; Don't i18n this docstring because it's not user-facing! :)\n15:   \"Unique identifier used for this instance of {0}. This is set once and only once the first time it is fetched via\n16:   its magic getter. Nice!\"\n17:   :encryption :no\n18:   :visibility :authenticated\n19:   :base       setting/uuid-nonce-base\n20:   :doc        false)\n21: \n22: (defsetting startup-time-millis\n23:   (deferred-tru \"The startup time in milliseconds\")\n24:   :visibility :public\n25:   :type       :double\n26:   :audit      :never\n27:   :default    0.0\n28:   :doc        false)\n29: \n30: (defn- normalize-site-url [^String s]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E6",
+          "file_path": "src/metabase/system/settings.clj",
+          "start_line": 39,
+          "end_line": 55,
+          "retrieval_score": 42.566,
+          "matched_cues": [
+            "defsetting",
+            "metabase.system.settings",
+            "settings"
+          ],
+          "content": "39:       (throw (ex-info (tru \"Invalid site URL: {0}\" (pr-str s)) {:url (pr-str s)})))\n40:     s))\n41: \n42: ;;; This value is *guaranteed* to never have a trailing slash :D\n43: ;;;\n44: ;;; It will also prepend `http://` to the URL if there's no protocol when it comes in\n45: ;;;\n46: ;;; TODO -- consider whether this belongs here or in `server`\n47: (defsetting site-url\n48:   (deferred-tru\n49:    (str \"This URL is used for things like creating links in emails, auth redirects, and in some embedding scenarios, \"\n50:         \"so changing it could break functionality or get you locked out of this instance.\"))\n51:   :encryption :when-encryption-key-set\n52:   :visibility :public\n53:   :audit      :getter\n54:   :getter     (fn []\n55:                 (try",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E2",
+          "file_path": "src/metabase/settings/models/setting.clj",
+          "start_line": 181,
+          "end_line": 197,
+          "retrieval_score": 47.292,
+          "matched_cues": [
+            "admin settings",
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "181:   [reasons]\n182:   (if-let [reasons (seq (remove nil? reasons))]\n183:     (throw (ex-info \"Setting is not enabled for this database\" {:setting/disabled-reasons reasons}))\n184:     true))\n185: \n186: ;; This is called `LocalOption` rather than `DatabaseLocalOption` or something like that because we intend to also add\n187: ;; User-Local Settings at some point in the future. The will use the same options\n188: (def ^:private LocalOption\n189:   \"Schema for valid values of `:database-local`. See [[metabase.settings.models.setting]] docstring for description of what these\n190:   options mean.\"\n191:   [:enum :only :allowed :never])\n192: \n193: (def ^:private SettingDefinition\n194:   [:map\n195:    [:name        :keyword]\n196:    [:munged-name :string]\n197:    [:namespace   :symbol]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E3",
+          "file_path": "src/metabase/settings/models/setting.clj",
+          "start_line": 232,
+          "end_line": 248,
+          "retrieval_score": 47.292,
+          "matched_cues": [
+            "admin settings",
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "232:    [:export? :boolean]\n233: \n234:    ;; should the getter always fetch this value \"fresh\" from the DB? (default: false)\n235:    [:cache? :boolean]\n236: \n237:    ;; if non-nil, contains the Metabase version in which this setting was deprecated\n238:    [:deprecated [:maybe :string]]\n239: \n240:    ;; whether this Setting can be Database-local or User-local. See [[metabase.settings.models.setting]] docstring for more info.\n241:    [:database-local LocalOption]\n242:    [:user-local     LocalOption]\n243: \n244:    ;; should this setting be read from env vars?\n245:    [:can-read-from-env? :boolean]\n246: \n247:    ;; called whenever setting value changes, whether from update-setting! or a cache refresh. used to handle cases\n248:    ;; where a change to the cache necessitates a change to some value outside the cache, like when a change the",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

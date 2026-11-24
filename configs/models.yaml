@@ -1,0 +1,48 @@
+models:
+  target_agent:
+    name: claude_haiku_4_5
+    provider: anthropic
+    model_id: claude-haiku-4-5-20251001
+    temperature: 0
+  auxiliary_model:
+    name: claude_sonnet_4_6
+    provider: anthropic
+    model_id: claude-sonnet-4-6
+    temperature: 0
+  candidate_generator:
+    name: claude_sonnet_4_6
+    provider: anthropic
+    model_id: claude-sonnet-4-6
+    temperature: 0
+roles:
+  target_agent:
+    solve_tasks: true
+    answer_baseline_probes: true
+    answer_intervention_probes: true
+  auxiliary_model:
+    identify_execution_gaps: true
+    retrieve_or_filter_repository_evidence: true
+    construct_knowledge_targets: true
+    construct_target_descriptors: true
+    generate_diagnostic_questions: true
+    judge_repository_provides: true
+    generate_execution_guidance: true
+    recompose_residual_skill: true
+  candidate_generator:
+    generate_candidate_knowledge: true
+    candidates_per_target: 3
+information_separation:
+  candidate_generator_can_receive:
+  - task_context
+  - execution_gap
+  - target_descriptor
+  - relevant_repository_evidence
+  candidate_generator_cannot_receive:
+  - diagnostic_question
+  - answer_choices
+  - reference_answer
+  - target_agent_answers
+  - benchmark_verifier
+  - custom_verifier
+  - hidden_tests
+  - gold_or_oracle_solution

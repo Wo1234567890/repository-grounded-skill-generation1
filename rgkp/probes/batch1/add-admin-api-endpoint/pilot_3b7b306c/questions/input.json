@@ -1,0 +1,514 @@
+{
+  "task_description": "# Task: Create audit_logs Admin API Endpoint for Ghost CMS\n\n## Background\n\nWe need to add an `audit_logs` resource endpoint to the Ghost Admin API, allowing administrators to query recent user operation records for security and compliance purposes.\n\n## Files to Create/Modify\n\n* `ghost/core/core/server/api/endpoints/audit-logs.js` - API endpoint implementation\n* `ghost/core/core/server/models/audit-log.js` - Data model\n* `ghost/core/core/server/web/api/endpoints/admin/routes.js` - Register endpoint\n* `ghost/core/test/e2e-api/admin/audit-logs.test.js` - Test cases\n\n## Requirements\n\n### Model (audit-log.js)\n\n* `id`: ObjectId (Primary Key)\n* `userId`: ObjectId (Reference to User)\n* `action`: String (e.g., \"post.created\", \"user.login\")\n* `context`: JSON (Additional metadata)\n* `createdAt`: DateTime\n\n### API Endpoints\n\n* `GET /ghost/api/admin/audit_logs/` - Browse with pagination (limit/page)\n* `GET /ghost/api/admin/audit_logs/:id` - Read single record\n\n### Implementation (audit-logs.js)\n\n* **browse** : Support limit and page pagination parameters\n* **read** : Query single record by id\n* Proper permission checking (admin only)\n\n## Expected Functionality\n\n1. Authenticated owner/admin users receive 200 OK with audit_logs array in response body\n2. Unauthenticated requests return 401 Unauthorized\n3. Pagination parameters (limit, page) work correctly\n\n## Acceptance Criteria\n\n* API endpoints respond with correct status codes\n* Response body contains `audit_logs` field with proper structure\n* Permission checking works (admin-only access)\n* Pagination functions as specified\n",
+  "knowledge_targets": [
+    {
+      "target_id": "G1_KT1",
+      "knowledge_target": "In Ghost's api-framework, the `docName` field in a controller determines how the permission system looks up allowed roles for that resource. Setting `permissions: true` instructs the framework to use its default permission handling, which resolves permissions based on the `docName` value against Ghost's internal permission registry. For `permissions: true` to function correctly for a new resource like `audit_logs`, the `docName` must match a resource name that is registered in Ghost's permissions configuration (e.g., fixtures or app-actions files), otherwise the permission check will fail or be bypassed.",
+      "evidence_ids": [
+        "G1_E1",
+        "G1_E2",
+        "G1_E4",
+        "G1_E5"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": ".claude/skills/add-admin-api-endpoint/reference.md",
+          "start_line": 62,
+          "end_line": 78,
+          "retrieval_score": 21.105,
+          "matched_cues": [
+            "@tryghost/api-framework",
+            "docname",
+            "permissions",
+            "permissions: true"
+          ],
+          "content": "62: module.exports = {\n63:     docName: 'posts',  // Required: endpoint name\n64: \n65:     browse: {\n66:         headers: {},\n67:         options: [],\n68:         data: [],\n69:         validation: {},\n70:         permissions: true,\n71:         query(frame) {}\n72:     },\n73: \n74:     read: { /* ... */ },\n75:     add: { /* ... */ },\n76:     edit: { /* ... */ },\n77:     destroy: { /* ... */ }\n78: };",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E2",
+          "file_path": ".claude/skills/add-admin-api-endpoint/reference.md",
+          "start_line": 172,
+          "end_line": 188,
+          "retrieval_score": 21.105,
+          "matched_cues": [
+            "@tryghost/api-framework",
+            "docname",
+            "permissions",
+            "permissions: true"
+          ],
+          "content": "172: ```\n173: \n174: ### `permissions` (Boolean | Object | Function)\n175: \n176: **Required field** - you must always specify permissions to avoid security holes.\n177: \n178: ```javascript\n179: // Use default permission handling\n180: permissions: true,\n181: \n182: // Skip permission checking (use sparingly!)\n183: permissions: false,\n184: \n185: // With configuration\n186: permissions: {\n187:     // Attributes that require elevated permissions\n188:     unsafeAttrs: ['status', 'authors'],",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "ghost/core/core/server/api/endpoints/actions.js",
+          "start_line": 10,
+          "end_line": 26,
+          "retrieval_score": 21.105,
+          "matched_cues": [
+            "@tryghost/api-framework",
+            "docname",
+            "permissions",
+            "permissions: true"
+          ],
+          "content": "10:         },\n11:         options: [\n12:             'page',\n13:             'limit',\n14:             'fields',\n15:             'include',\n16:             'filter'\n17:         ],\n18:         permissions: true,\n19:         query(frame) {\n20:             return models.Action.findPage(frame.options);\n21:         }\n22:     }\n23: };\n24: \n25: module.exports = controller;\n26: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "ghost/core/core/server/api/endpoints/announcements.js",
+          "start_line": 3,
+          "end_line": 19,
+          "retrieval_score": 21.105,
+          "matched_cues": [
+            "@tryghost/api-framework",
+            "docname",
+            "permissions",
+            "permissions: true"
+          ],
+          "content": "3: /** @type {import('@tryghost/api-framework').Controller} */\n4: const controller = {\n5:     docName: 'announcement',\n6: \n7:     browse: {\n8:         headers: {\n9:             cacheInvalidate: false\n10:         },\n11:         permissions: true,\n12:         query(frame) {\n13:             return announcementBarSettings.getAnnouncementSettings(frame.options.context?.member);\n14:         }\n15:     }\n16: };\n17: \n18: module.exports = controller;\n19: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G1_KT2",
+      "knowledge_target": "Existing Ghost Admin API endpoints such as `actions` (actions.js) use `permissions: true` with a `docName` matching the resource name. The `docName` value used in the controller must correspond to a resource name defined in Ghost's permissions fixtures or configuration to enable proper role-based access control. For admin-only resources, the permissions configuration must list which roles (e.g., Owner, Administrator) are permitted to perform browse and read operations on that docName.",
+      "evidence_ids": [
+        "G1_E4",
+        "G1_E1",
+        "G1_E2"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "ghost/core/core/server/api/endpoints/actions.js",
+          "start_line": 10,
+          "end_line": 26,
+          "retrieval_score": 21.105,
+          "matched_cues": [
+            "@tryghost/api-framework",
+            "docname",
+            "permissions",
+            "permissions: true"
+          ],
+          "content": "10:         },\n11:         options: [\n12:             'page',\n13:             'limit',\n14:             'fields',\n15:             'include',\n16:             'filter'\n17:         ],\n18:         permissions: true,\n19:         query(frame) {\n20:             return models.Action.findPage(frame.options);\n21:         }\n22:     }\n23: };\n24: \n25: module.exports = controller;\n26: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E1",
+          "file_path": ".claude/skills/add-admin-api-endpoint/reference.md",
+          "start_line": 62,
+          "end_line": 78,
+          "retrieval_score": 21.105,
+          "matched_cues": [
+            "@tryghost/api-framework",
+            "docname",
+            "permissions",
+            "permissions: true"
+          ],
+          "content": "62: module.exports = {\n63:     docName: 'posts',  // Required: endpoint name\n64: \n65:     browse: {\n66:         headers: {},\n67:         options: [],\n68:         data: [],\n69:         validation: {},\n70:         permissions: true,\n71:         query(frame) {}\n72:     },\n73: \n74:     read: { /* ... */ },\n75:     add: { /* ... */ },\n76:     edit: { /* ... */ },\n77:     destroy: { /* ... */ }\n78: };",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E2",
+          "file_path": ".claude/skills/add-admin-api-endpoint/reference.md",
+          "start_line": 172,
+          "end_line": 188,
+          "retrieval_score": 21.105,
+          "matched_cues": [
+            "@tryghost/api-framework",
+            "docname",
+            "permissions",
+            "permissions: true"
+          ],
+          "content": "172: ```\n173: \n174: ### `permissions` (Boolean | Object | Function)\n175: \n176: **Required field** - you must always specify permissions to avoid security holes.\n177: \n178: ```javascript\n179: // Use default permission handling\n180: permissions: true,\n181: \n182: // Skip permission checking (use sparingly!)\n183: permissions: false,\n184: \n185: // With configuration\n186: permissions: {\n187:     // Attributes that require elevated permissions\n188:     unsafeAttrs: ['status', 'authors'],",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT1",
+      "knowledge_target": "In Ghost e2e tests, `matchBodySnapshot()` is a chained assertion method called before `await` resolves the full response. Therefore, any matcher object passed to `matchBodySnapshot()` must be a pre-defined static value or a matcher constant—it cannot reference a `body` variable from the same `const {body} = await agent.get(...).matchBodySnapshot({...})` expression because `body` does not yet exist when the chained method arguments are evaluated. The correct pattern is to define matcher objects before the agent call (e.g., `const matchAuditLog = {id: anyObjectId, ...}`) and pass them directly.",
+      "evidence_ids": [
+        "G2_E6",
+        "G2_E8",
+        "G2_E3"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "ghost/core/test/e2e-api/admin/automated-emails.test.js",
+          "start_line": 52,
+          "end_line": 68,
+          "retrieval_score": 33.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "52:         });\n53: \n54:         it('Can browse automated emails', async function () {\n55:             await createAutomatedEmail();\n56: \n57:             await agent\n58:                 .get('automated_emails')\n59:                 .expectStatus(200)\n60:                 .matchBodySnapshot({\n61:                     automated_emails: [matchAutomatedEmail]\n62:                 })\n63:                 .matchHeaderSnapshot({\n64:                     'content-version': anyContentVersion,\n65:                     etag: anyEtag\n66:                 });\n67:         });\n68:     });",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "ghost/core/test/e2e-api/admin/labels.test.js",
+          "start_line": 21,
+          "end_line": 37,
+          "retrieval_score": 33.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "21:     afterEach(function () {\n22:         sinon.restore();\n23:     });\n24: \n25:     it('Can browse with no labels', async function () {\n26:         await agent\n27:             .get('labels')\n28:             .expectStatus(200)\n29:             .matchBodySnapshot()\n30:             .matchHeaderSnapshot({\n31:                 'content-version': anyContentVersion,\n32:                 etag: anyEtag\n33:             });\n34:     });\n35: \n36:     it('Can add', async function () {\n37:         await agent",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "ghost/core/test/e2e-api/admin/emails.test.js",
+          "start_line": 169,
+          "end_line": 185,
+          "retrieval_score": 53.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "169:                     ...matchFailure,\n170:                     member: {\n171:                         id: anyObjectId,\n172:                         uuid: anyUuid\n173:                     },\n174:                     email_recipient: {\n175:                         id: anyObjectId,\n176:                         member_uuid: anyUuid,\n177:                         opened_at: nullable(anyISODateTime), // Can be null or string\n178:                         delivered_at: nullable(anyISODateTime), // Can be null or string\n179:                         failed_at: nullable(anyISODateTime), // Can be null or string\n180:                         processed_at: anyISODateTime,\n181:                         batch_id: anyObjectId\n182:                     }\n183:                 })\n184:             })\n185:             .matchHeaderSnapshot({",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT2",
+      "knowledge_target": "When a Ghost e2e test needs to match a response body with dynamic matchers (e.g., anyObjectId, anyISODateTime), the standard pattern is: (1) define a named matcher object before the test using the imported matcher constants, (2) pass that matcher object to `matchBodySnapshot()` in the chained call, and (3) only destructure `body` from the awaited result if it is needed for subsequent assertions in separate statements. For example: `const matchAuditLog = {id: anyObjectId, created_at: anyISODateTime}; await agent.get('audit_logs').expectStatus(200).matchBodySnapshot({audit_logs: [matchAuditLog]});`",
+      "evidence_ids": [
+        "G2_E6",
+        "G2_E7",
+        "G2_E4",
+        "G2_E1"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "ghost/core/test/e2e-api/admin/automated-emails.test.js",
+          "start_line": 52,
+          "end_line": 68,
+          "retrieval_score": 33.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "52:         });\n53: \n54:         it('Can browse automated emails', async function () {\n55:             await createAutomatedEmail();\n56: \n57:             await agent\n58:                 .get('automated_emails')\n59:                 .expectStatus(200)\n60:                 .matchBodySnapshot({\n61:                     automated_emails: [matchAutomatedEmail]\n62:                 })\n63:                 .matchHeaderSnapshot({\n64:                     'content-version': anyContentVersion,\n65:                     etag: anyEtag\n66:                 });\n67:         });\n68:     });",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "ghost/core/test/e2e-api/admin/labels.test.js",
+          "start_line": 1,
+          "end_line": 11,
+          "retrieval_score": 33.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "1: const logging = require('@tryghost/logging');\n2: const {agentProvider, fixtureManager, matchers} = require('../../utils/e2e-framework');\n3: const {anyContentVersion, anyObjectId, anyISODateTime, anyErrorId, anyEtag, anyLocationFor} = matchers;\n4: const sinon = require('sinon');\n5: \n6: const matchLabel = {\n7:     id: anyObjectId,\n8:     created_at: anyISODateTime,\n9:     updated_at: anyISODateTime\n10: };\n11: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "ghost/core/test/e2e-api/admin/automated-emails.test.js",
+          "start_line": 1,
+          "end_line": 10,
+          "retrieval_score": 33.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "1: const {agentProvider, fixtureManager, matchers, dbUtils} = require('../../utils/e2e-framework');\n2: const {anyContentVersion, anyObjectId, anyISODateTime, anyErrorId, anyEtag, anyLocationFor} = matchers;\n3: const sinon = require('sinon');\n4: const logging = require('@tryghost/logging');\n5: const mailService = require('../../../core/server/services/mail');\n6: \n7: const matchAutomatedEmail = {\n8:     id: anyObjectId,\n9:     created_at: anyISODateTime,\n10:     updated_at: anyISODateTime",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "ghost/core/test/e2e-api/admin/emails.test.js",
+          "start_line": 1,
+          "end_line": 10,
+          "retrieval_score": 53.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "1: const {agentProvider, fixtureManager, matchers, mockManager} = require('../../utils/e2e-framework');\n2: const {nullable, anyContentVersion, anyEtag, anyObjectId, anyUuid, anyISODateTime, anyString} = matchers;\n3: const assert = require('node:assert/strict');\n4: const sinon = require('sinon');\n5: const jobManager = require('../../../core/server/services/jobs/job-service');\n6: const models = require('../../../core/server/models');\n7: const settingsHelpers = require('../../../core/server/services/settings-helpers');\n8: \n9: const matchEmail = {\n10:     id: anyObjectId,",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT3",
+      "knowledge_target": "When a Ghost e2e browse test expects zero records (empty collection), `matchBodySnapshot()` can be called with no arguments or with `{audit_logs: []}` as the matcher, as demonstrated by the labels test `Can browse with no labels`. This avoids the need to conditionally check `Array.isArray(body.audit_logs)` inside the matcher argument—instead, test the empty case with a simple static matcher and test the non-empty case after explicitly creating test data.",
+      "evidence_ids": [
+        "G2_E8",
+        "G2_E6",
+        "G2_E5"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "ghost/core/test/e2e-api/admin/labels.test.js",
+          "start_line": 21,
+          "end_line": 37,
+          "retrieval_score": 33.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "21:     afterEach(function () {\n22:         sinon.restore();\n23:     });\n24: \n25:     it('Can browse with no labels', async function () {\n26:         await agent\n27:             .get('labels')\n28:             .expectStatus(200)\n29:             .matchBodySnapshot()\n30:             .matchHeaderSnapshot({\n31:                 'content-version': anyContentVersion,\n32:                 etag: anyEtag\n33:             });\n34:     });\n35: \n36:     it('Can add', async function () {\n37:         await agent",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "ghost/core/test/e2e-api/admin/automated-emails.test.js",
+          "start_line": 52,
+          "end_line": 68,
+          "retrieval_score": 33.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "52:         });\n53: \n54:         it('Can browse automated emails', async function () {\n55:             await createAutomatedEmail();\n56: \n57:             await agent\n58:                 .get('automated_emails')\n59:                 .expectStatus(200)\n60:                 .matchBodySnapshot({\n61:                     automated_emails: [matchAutomatedEmail]\n62:                 })\n63:                 .matchHeaderSnapshot({\n64:                     'content-version': anyContentVersion,\n65:                     etag: anyEtag\n66:                 });\n67:         });\n68:     });",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "ghost/core/test/e2e-api/admin/automated-emails.test.js",
+          "start_line": 24,
+          "end_line": 40,
+          "retrieval_score": 33.743,
+          "matched_cues": [
+            "agentprovider",
+            "anyisodatetime",
+            "anyobjectid",
+            "e2e-framework",
+            "getadminapiagent",
+            "matchbodysnapshot"
+          ],
+          "content": "24:                 lexical: JSON.stringify({root: {children: []}}),\n25:                 ...overrides\n26:             }]})\n27:             .expectStatus(201);\n28:         return body.automated_emails[0];\n29:     };\n30: \n31:     before(async function () {\n32:         agent = await agentProvider.getAdminAPIAgent();\n33:         await fixtureManager.init('users');\n34:         await agent.loginAsOwner();\n35:     });\n36: \n37:     beforeEach(async function () {\n38:         await dbUtils.truncate('brute');\n39:         await dbUtils.truncate('automated_emails');\n40:     });",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT1",
+      "knowledge_target": "Ghost e2e tests use `fixtureManager.init(...resourceNames)` to seed the test database with pre-defined fixture data. The string arguments passed to `fixtureManager.init()` correspond to named fixture sets defined in the fixtures system (e.g., 'users', 'posts', 'newsletters'). For a browse test to validate the response structure of a collection (non-empty), the fixture set for that resource must exist and be passed to `fixtureManager.init()`. If no named fixture set exists for `audit_logs`, the browse test will always receive an empty array and cannot validate audit log object structure using matchBodySnapshot matchers.",
+      "evidence_ids": [
+        "G3_E2",
+        "G3_E3",
+        "G3_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "ghost/core/test/e2e-api/admin/members.test.js",
+          "start_line": 212,
+          "end_line": 228,
+          "retrieval_score": 25.552,
+          "matched_cues": [
+            "datagenerator",
+            "fixturemanager",
+            "fixturemanager.init",
+            "fixtures",
+            "loginasowner"
+          ],
+          "content": "212: });\n213: \n214: // Tests specific for member attribution\n215: describe('Members API - member attribution', function () {\n216:     const signupAttributions = [];\n217: \n218:     before(async function () {\n219:         agent = await agentProvider.getAdminAPIAgent();\n220:         await fixtureManager.init('posts', 'newsletters', 'members:newsletters', 'comments');\n221:         await agent.loginAsOwner();\n222:         // This is required so that the only members in this test are created by this test, and not from fixtures.\n223:         await models.Member.query().del();\n224:     });\n225: \n226:     beforeEach(function () {\n227:         mockManager.mockStripe();\n228:         mockManager.mockMail();",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "ghost/core/test/e2e-api/admin/members.test.js",
+          "start_line": 468,
+          "end_line": 484,
+          "retrieval_score": 25.552,
+          "matched_cues": [
+            "datagenerator",
+            "fixturemanager",
+            "fixturemanager.init",
+            "fixtures",
+            "loginasowner"
+          ],
+          "content": "468: });\n469: \n470: describe('Members API', function () {\n471:     let newsletters;\n472:     let emailMockReceiver;\n473: \n474:     before(async function () {\n475:         agent = await agentProvider.getAdminAPIAgent();\n476:         await fixtureManager.init('posts', 'newsletters', 'members:newsletters', 'comments', 'redirects', 'clicks');\n477:         await agent.loginAsOwner();\n478: \n479:         newsletters = await getNewsletters();\n480:     });\n481: \n482:     beforeEach(function () {\n483:         mockManager.mockStripe();\n484:         emailMockReceiver = mockManager.mockMail();",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "ghost/core/test/utils/agents/admin-api-test-agent.js",
+          "start_line": 74,
+          "end_line": 90,
+          "retrieval_score": 25.552,
+          "matched_cues": [
+            "datagenerator",
+            "fixturemanager",
+            "fixturemanager.init",
+            "fixtures",
+            "loginasowner"
+          ],
+          "content": "74: \n75:         if (res.statusCode === 302) {\n76:             // This can happen if you already have an instance running e.g. if you've been using Ghost CLI recently\n77:             throw new errors.IncorrectUsageError({\n78:                 message: 'Ghost is redirecting, do you have an instance already running on port 2369?'\n79:             });\n80:         } else if (res.statusCode === 404 && role) {\n81:             throw new errors.IncorrectUsageError({\n82:                 message: `Unable to login as ${role} - user not found. Did you pass 'users' to fixtureManager.init() ?`\n83:             });\n84:         } else if (res.statusCode !== 200 && res.statusCode !== 201) {\n85:             throw new errors.IncorrectUsageError({\n86:                 message: res.body.errors[0].message\n87:             });\n88:         }\n89: \n90:         return res.headers['set-cookie'];",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT2",
+      "knowledge_target": "When a Ghost e2e test needs to browse records of a new resource that has no pre-defined fixture set, the test must programmatically create records before the browse assertion. The pattern seen in automated-emails tests is: create a record via API (e.g., POST endpoint) or directly via models in a helper function, then perform the GET/browse assertion. Alternatively, use `dbUtils.truncate()` in beforeEach to control state. For audit_logs with no add endpoint, records must be created via direct model insertion before browse tests can validate non-empty responses.",
+      "evidence_ids": [
+        "G3_E5",
+        "G3_E3",
+        "G3_E2"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E5",
+          "file_path": "ghost/core/test/legacy/api/admin/update-user-last-seen.test.js",
+          "start_line": 78,
+          "end_line": 94,
+          "retrieval_score": 25.552,
+          "matched_cues": [
+            "datagenerator",
+            "fixturemanager",
+            "fixturemanager.init",
+            "fixtures",
+            "loginasowner"
+          ],
+          "content": "78:         assert.deepEqual(ownerAfter.get('last_seen'), lastSeen);\n79:     });\n80: \n81:     it('Should always update last seen after login', async function () {\n82:         const user = await models.User.findOne({id: userId});\n83:         const lastSeen = user.get('last_seen');\n84:         assertExists(lastSeen);\n85: \n86:         await agent.loginAsOwner();\n87: \n88:         const ownerAfter = await models.User.findOne({id: userId});\n89:         assertExists(ownerAfter);\n90:         assert.notDeepEqual(ownerAfter.get('last_seen'), lastSeen);\n91:     });\n92: \n93:     it('Should not update last seen for suspended users', async function () {\n94:         // Fetching should work fine",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "ghost/core/test/e2e-api/admin/members.test.js",
+          "start_line": 468,
+          "end_line": 484,
+          "retrieval_score": 25.552,
+          "matched_cues": [
+            "datagenerator",
+            "fixturemanager",
+            "fixturemanager.init",
+            "fixtures",
+            "loginasowner"
+          ],
+          "content": "468: });\n469: \n470: describe('Members API', function () {\n471:     let newsletters;\n472:     let emailMockReceiver;\n473: \n474:     before(async function () {\n475:         agent = await agentProvider.getAdminAPIAgent();\n476:         await fixtureManager.init('posts', 'newsletters', 'members:newsletters', 'comments', 'redirects', 'clicks');\n477:         await agent.loginAsOwner();\n478: \n479:         newsletters = await getNewsletters();\n480:     });\n481: \n482:     beforeEach(function () {\n483:         mockManager.mockStripe();\n484:         emailMockReceiver = mockManager.mockMail();",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "ghost/core/test/e2e-api/admin/members.test.js",
+          "start_line": 212,
+          "end_line": 228,
+          "retrieval_score": 25.552,
+          "matched_cues": [
+            "datagenerator",
+            "fixturemanager",
+            "fixturemanager.init",
+            "fixtures",
+            "loginasowner"
+          ],
+          "content": "212: });\n213: \n214: // Tests specific for member attribution\n215: describe('Members API - member attribution', function () {\n216:     const signupAttributions = [];\n217: \n218:     before(async function () {\n219:         agent = await agentProvider.getAdminAPIAgent();\n220:         await fixtureManager.init('posts', 'newsletters', 'members:newsletters', 'comments');\n221:         await agent.loginAsOwner();\n222:         // This is required so that the only members in this test are created by this test, and not from fixtures.\n223:         await models.Member.query().del();\n224:     });\n225: \n226:     beforeEach(function () {\n227:         mockManager.mockStripe();\n228:         mockManager.mockMail();",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT3",
+      "knowledge_target": "In Ghost e2e tests, `loginAsOwner()` requires that the 'users' fixture set has been initialized via `fixtureManager.init('users')` or `fixtureManager.init()` (which includes users by default). The admin-api-test-agent explicitly throws an error if the user is not found, with the message 'Did you pass users to fixtureManager.init()?' This means the test setup for audit_logs must include 'users' in the fixtureManager.init() call, and any additional audit_log test data must be created separately since no 'audit_logs' fixture set exists in the repository.",
+      "evidence_ids": [
+        "G3_E6",
+        "G3_E7",
+        "G3_E1"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "ghost/core/test/utils/agents/admin-api-test-agent.js",
+          "start_line": 74,
+          "end_line": 90,
+          "retrieval_score": 25.552,
+          "matched_cues": [
+            "datagenerator",
+            "fixturemanager",
+            "fixturemanager.init",
+            "fixtures",
+            "loginasowner"
+          ],
+          "content": "74: \n75:         if (res.statusCode === 302) {\n76:             // This can happen if you already have an instance running e.g. if you've been using Ghost CLI recently\n77:             throw new errors.IncorrectUsageError({\n78:                 message: 'Ghost is redirecting, do you have an instance already running on port 2369?'\n79:             });\n80:         } else if (res.statusCode === 404 && role) {\n81:             throw new errors.IncorrectUsageError({\n82:                 message: `Unable to login as ${role} - user not found. Did you pass 'users' to fixtureManager.init() ?`\n83:             });\n84:         } else if (res.statusCode !== 200 && res.statusCode !== 201) {\n85:             throw new errors.IncorrectUsageError({\n86:                 message: res.body.errors[0].message\n87:             });\n88:         }\n89: \n90:         return res.headers['set-cookie'];",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E7",
+          "file_path": "ghost/core/test/utils/agents/admin-api-test-agent.js",
+          "start_line": 1,
+          "end_line": 11,
+          "retrieval_score": 25.552,
+          "matched_cues": [
+            "datagenerator",
+            "fixturemanager",
+            "fixturemanager.init",
+            "fixtures",
+            "loginasowner"
+          ],
+          "content": "1: const TestAgent = require('./test-agent');\n2: const errors = require('@tryghost/errors');\n3: const DataGenerator = require('../fixtures/data-generator');\n4: const jwt = require('jsonwebtoken');\n5: \n6: const roleMap = {\n7:     owner: 0,\n8:     admin: 1,\n9:     editor: 2,\n10:     author: 3,\n11:     contributor: 7",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E1",
+          "file_path": "ghost/core/test/e2e-api/admin/members.test.js",
+          "start_line": 168,
+          "end_line": 184,
+          "retrieval_score": 25.552,
+          "matched_cues": [
+            "datagenerator",
+            "fixturemanager",
+            "fixturemanager.init",
+            "fixtures",
+            "loginasowner"
+          ],
+          "content": "168:     return matcher;\n169: };\n170: \n171: let agent;\n172: \n173: describe('Members API without Stripe', function () {\n174:     before(async function () {\n175:         agent = await agentProvider.getAdminAPIAgent();\n176:         await fixtureManager.init();\n177:         await agent.loginAsOwner();\n178: \n179:         await agent\n180:             .delete('/settings/stripe/connect/')\n181:             .expectStatus(204);\n182:     });\n183: \n184:     beforeEach(function () {",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "knowledge_target": "The correct command to run TypeScript type checking in this project is `bun run type-check-pure` (which runs `tsc --noEmit`), not `npm run type-check`. The command `bun run type-check` additionally requires a CLJS build first. For running a specific unit test file, the command is `bun run test-unit-keep-cljs path/to/file.unit.spec.ts`.",
+  "prescriptive_evidence": [
+    {
+      "evidence_id": "G2_E1",
+      "file_path": "package.json",
+      "start_line": 528,
+      "end_line": 544,
+      "retrieval_score": 54.251,
+      "matched_cues": [
+        "@snowplow/browser-tracker",
+        "bun run test-unit",
+        "jest --maxworkers=4",
+        "tsc --noemit",
+        "type-check",
+        "type-check-pure"
+      ],
+      "content": "528:     \"test-unit-watch:cljs\": \"bun run concurrently -n 'cljs,tests' 'bun run build-watch:cljs' 'bun run test-unit-keep-cljs --watch'\",\n529:     \"test-visual:loki\": \"NODE_ENV=development loki test --chromeFlags='--headless --disable-gpu' \",\n530:     \"test-visual:loki:ci\": \"bun run build-storybook && bun run test-visual:loki --reactUri file:./storybook-static --verboseRenderer\",\n531:     \"test-visual:loki-approve-diff\": \"ls .loki/difference | xargs -I _ find .loki/current -name _ | xargs -I _ cp _ .loki/reference/\",\n532:     \"test-visual:loki-prune\": \"ls .loki/reference | grep -v \\\"$(ls .loki/current)\\\" | xargs -I {} rm .loki/reference/{}\",\n533:     \"test-visual:loki-report\": \"node frontend/test/generate-loki-report-json.js && reg-cli --from .loki/report.json --report .loki/report.html\",\n534:     \"test-visual:loki-report-open\": \"bun run test-visual:loki || (echo 'Visual test failed, opening report...' && bun run test-visual:loki-report && open-cli .loki/report.html)\",\n535:     \"type-check\": \"bun run clean:cljs && bun run build:cljs && bun run type-check-pure\",\n536:     \"type-check-pure\": \"NODE_OPTIONS=--max-old-space-size=8192 tsc --noEmit\",\n537:     \"types:generate\": \"openapi-ts -f ./frontend/build/openapi/openapi-ts.config.ts\",\n538:     \"types:generate:watch\": \"npx chokidar 'resources/openapi/openapi.json' --initial -c 'openapi-ts -f ./frontend/build/openapi/openapi-ts.config.ts' --debounce 1000\",\n539:     \"validate-e2e-filenames\": \"node e2e/validate-e2e-test-files.js\",\n540:     \"wait:cljs\": \"echo Waiting for first CLJS build; until [ -f target/cljs_dev/cljs.core.js ]; do sleep 1; done; echo CLJS build done\",\n541:     \"generate:expression-parser\": \"lezer-generator frontend/src/metabase/querying/expressions/tokenizer/grammar.lezer -o frontend/src/metabase/querying/expressions/tokenizer/lezer.js\",\n542:     \"generate-license-disclaimer\": \"node bin/generate-license-disclaimer.js\",\n543:     \"cloud:dev\": \"bun install && clojure -A:dev:drivers:drivers-dev:ee:ee-dev:cljs -P && bun run concurrently -n 'FE,BE' -c 'blue,green' 'bun run build-hot' 'clojure -M:dev:socket:dev-start:drivers:drivers-dev:ee:ee-dev'\"\n544:   },",
+      "line_truncated": false
+    },
+    {
+      "evidence_id": "G2_E5",
+      "file_path": ".claude/skills/_shared/typescript-commands.md",
+      "start_line": 1,
+      "end_line": 15,
+      "retrieval_score": 25.275,
+      "matched_cues": [
+        "bun run test-unit",
+        "type-check",
+        "type-check-pure"
+      ],
+      "content": "1: ## Linting and Formatting\n2: \n3: - **Lint:** `bun run lint-eslint-pure`\n4:   - Run ESLint on the codebase\n5: - **Format:** `bun run prettier`\n6:   - Format code using Prettier\n7: - **Type Check:** `bun run type-check-pure`\n8:   - Run TypeScript type checking\n9: \n10: ## Testing\n11: \n12: ### JavaScript/TypeScript Tests\n13: \n14: - **Test a specific file:** `bun run test-unit-keep-cljs path/to/file.unit.spec.js`\n15: - **Test by pattern:** `bun run test-unit-keep-cljs -t \"pattern\"`",
+      "line_truncated": false
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "When computing modified duration on a QuantLib Leg using CashFlows::duration, which parameter must be explicitly passed to select the modified duration type?",
+    "options": {
+      "A": "Duration is always modified by default; no extra parameter is needed",
+      "B": "A boolean flag 'true' for modified vs 'false' for Macaulay",
+      "C": "A string literal \"Modified\" as the last argument",
+      "D": "Duration::Modified as a named enum value in the argument list"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "Looking at QuantLib's CashFlows::duration function signature, the function requires explicit specification of the duration type through an enum parameter.\n\nThe correct parameter is `Duration::Modified`, which is a named enum value that must be passed to the function to select the modified duration calculation method (as opposed to other duration types like Macaulay or effective duration).\n\n**D**",
+  "answer": null,
+  "valid": false,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 1.4287687919859309,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 161,
+    "output_tokens": 82,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

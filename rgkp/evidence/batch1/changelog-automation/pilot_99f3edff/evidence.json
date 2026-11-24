@@ -1,0 +1,332 @@
+{
+  "instance_id": "batch1/changelog-automation",
+  "repository_url": "https://github.com/github-changelog-generator/github-changelog-generator",
+  "repository_commit": "5a0cbdb6860ffc449e838541faf3f24e10d75722",
+  "gap_evidence": [
+    {
+      "gap_id": "G1",
+      "evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "lib/github_changelog_generator/argv_parser.rb",
+          "start_line": 1,
+          "end_line": 15,
+          "retrieval_score": 38.903,
+          "matched_cues": [
+            "argvparser",
+            "github_changelog_generator",
+            "include-labels",
+            "include_labels"
+          ],
+          "content": "1: # frozen_string_literal: true\n2: \n3: require \"optparse\"\n4: require_relative \"version\"\n5: \n6: module GitHubChangelogGenerator\n7:   class ArgvParser\n8:     attr_reader :options\n9: \n10:     def initialize(options = {})\n11:       @options = options\n12:     end\n13: \n14:     def parse!(argv)\n15:       parser.parse(argv)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E2",
+          "file_path": "lib/github_changelog_generator/argv_parser.rb",
+          "start_line": 110,
+          "end_line": 126,
+          "retrieval_score": 38.903,
+          "matched_cues": [
+            "argvparser",
+            "github_changelog_generator",
+            "include-labels",
+            "include_labels"
+          ],
+          "content": "110:           options[:unreleased] = v\n111:         end\n112:         opts.on(\"--unreleased-label LABEL\", \"Set up custom label for unreleased closed issues section. Default is \\\"**Unreleased:**\\\".\") do |v|\n113:           options[:unreleased_label] = v\n114:         end\n115:         opts.on(\"--[no-]compare-link\", \"Include compare link (Full Changelog) between older version and newer version. Default is true.\") do |v|\n116:           options[:compare_link] = v\n117:         end\n118:         opts.on(\"--include-labels  x,y,z\", Array, \"Of the labeled issues, only include the ones with the specified labels.\") do |list|\n119:           options[:include_labels] = list\n120:         end\n121:         opts.on(\"--exclude-labels  x,y,z\", Array, \"Issues with the specified labels will be excluded from changelog. Default is 'duplicate,question,invalid,wontfix'.\") do |list|\n122:           options[:exclude_labels] = list\n123:         end\n124:         opts.on(\"--summary-labels x,y,z\", Array, 'Issues with these labels will be added to a new section, called \"Release Summary\". The section display only body of issues. Default is \\'release-summary,summary\\'.') do |list|\n125:           options[:summary_labels] = list\n126:         end",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E3",
+          "file_path": "lib/github_changelog_generator/argv_parser.rb",
+          "start_line": 188,
+          "end_line": 204,
+          "retrieval_score": 38.903,
+          "matched_cues": [
+            "argvparser",
+            "github_changelog_generator",
+            "include-labels",
+            "include_labels"
+          ],
+          "content": "188:           options[:http_cache] = http_cache\n189:         end\n190:         opts.on(\"--cache-file CACHE-FILE\", \"Filename to use for cache. Default is github-changelog-http-cache in a temporary directory.\") do |cache_file|\n191:           options[:cache_file] = cache_file\n192:         end\n193:         opts.on(\"--cache-log CACHE-LOG\", \"Filename to use for cache log. Default is github-changelog-logger.log in a temporary directory.\") do |cache_log|\n194:           options[:cache_log] = cache_log\n195:         end\n196:         opts.on(\"--config-file CONFIG-FILE\", \"Path to configuration file. Default is .github_changelog_generator.\") do |config_file|\n197:           options[:config_file] = config_file\n198:         end\n199:         opts.on(\"--ssl-ca-file PATH\", \"Path to cacert.pem file. Default is a bundled lib/github_changelog_generator/ssl_certs/cacert.pem. Respects SSL_CA_PATH.\") do |ssl_ca_file|\n200:           options[:ssl_ca_file] = ssl_ca_file\n201:         end\n202:         opts.on(\"--require x,y,z\", Array, \"Path to Ruby file(s) to require before generating changelog.\") do |paths|\n203:           options[:require] = paths\n204:         end",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": ".github_changelog_generator",
+          "start_line": 1,
+          "end_line": 4,
+          "retrieval_score": 25.0,
+          "matched_cues": [],
+          "content": "1: project=github-changelog-generator\n2: user=github-changelog-generator\n3: exclude-labels=duplicate,question,invalid,wontfix,weekly-digest,dependencies\n4: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "lib/github_changelog_generator/parser.rb",
+          "start_line": 4,
+          "end_line": 20,
+          "retrieval_score": 6.637,
+          "matched_cues": [
+            "argvparser",
+            "github_changelog_generator"
+          ],
+          "content": "4: require_relative \"argv_parser\"\n5: require_relative \"parser_file\"\n6: require_relative \"file_parser_chooser\"\n7: \n8: module GitHubChangelogGenerator\n9:   class Parser\n10:     class << self\n11:       PARSERS = [\n12:         ArgvParser, # Parse arguments first to get initial options populated\n13:         FileParserChooser, # Then parse possible configuration files\n14:         ArgvParser # Lastly parse arguments again to keep the given arguments the strongest\n15:       ].freeze\n16: \n17:       def parse_options(argv = ARGV)\n18:         options = default_options\n19: \n20:         PARSERS.each do |parser|",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E6",
+          "file_path": "lib/github_changelog_generator/parser.rb",
+          "start_line": 28,
+          "end_line": 44,
+          "retrieval_score": 6.637,
+          "matched_cues": [
+            "argvparser",
+            "github_changelog_generator"
+          ],
+          "content": "28:         options\n29:       end\n30: \n31:       def abort_if_user_and_project_not_given!(options)\n32:         return if options[:user] && options[:project]\n33: \n34:         warn \"Configure which user and project to work on.\"\n35:         warn \"Options --user and --project, or settings to that effect. See --help for more.\"\n36:         warn ArgvParser.banner\n37: \n38:         Kernel.abort\n39:       end\n40: \n41:       # @return [Options] Default options\n42:       def default_options\n43:         Options.new(\n44:           date_format: \"%Y-%m-%d\",",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E7",
+          "file_path": "lib/github_changelog_generator/parser.rb",
+          "start_line": 76,
+          "end_line": 90,
+          "retrieval_score": 6.637,
+          "matched_cues": [
+            "argvparser",
+            "github_changelog_generator"
+          ],
+          "content": "76:           breaking_prefix: \"**Breaking changes:**\",\n77:           enhancement_prefix: \"**Implemented enhancements:**\",\n78:           bug_prefix: \"**Fixed bugs:**\",\n79:           deprecated_prefix: \"**Deprecated:**\",\n80:           removed_prefix: \"**Removed:**\",\n81:           security_prefix: \"**Security fixes:**\",\n82:           http_cache: true,\n83:           require: [],\n84:           config_file: \".github_changelog_generator\"\n85:         )\n86:       end\n87:     end\n88:   end\n89: end\n90: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E8",
+          "file_path": "man/git-generate-changelog.1.html",
+          "start_line": 204,
+          "end_line": 220,
+          "retrieval_score": 6.126,
+          "matched_cues": [
+            "github_changelog_generator",
+            "include-labels"
+          ],
+          "content": "204: <p>  --unreleased-label LABEL</p>\n205: \n206: <p>  Set up custom label for unreleased closed issues section. Default is \"<strong>Unreleased:</strong>\".</p>\n207: \n208: <p>  --[no-]compare-link</p>\n209: \n210: <p>  Include compare link (Full Changelog) between older version and newer version. Default is true.</p>\n211: \n212: <p>  --include-labels x,y,z</p>\n213: \n214: <p>  Of the labeled issues, only include the ones with the specified labels.</p>\n215: \n216: <p>  --exclude-labels x,y,z</p>\n217: \n218: <p>  Issues with the specified labels will be excluded from changelog. Default is 'duplicate,question,invalid,wontfix'.</p>\n219: \n220: <p>  --summary-labels x,y,z</p>",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": ".github_changelog_generator",
+          "start_line": 1,
+          "end_line": 4,
+          "retrieval_score": 25.0,
+          "matched_cues": [],
+          "content": "1: project=github-changelog-generator\n2: user=github-changelog-generator\n3: exclude-labels=duplicate,question,invalid,wontfix,weekly-digest,dependencies\n4: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "lib/github_changelog_generator/parser.rb",
+          "start_line": 5,
+          "end_line": 21,
+          "retrieval_score": 16.336,
+          "matched_cues": [
+            "config_file",
+            "fileparserchooser",
+            "github_changelog_generator",
+            "parse_options",
+            "parser"
+          ],
+          "content": "5: require_relative \"parser_file\"\n6: require_relative \"file_parser_chooser\"\n7: \n8: module GitHubChangelogGenerator\n9:   class Parser\n10:     class << self\n11:       PARSERS = [\n12:         ArgvParser, # Parse arguments first to get initial options populated\n13:         FileParserChooser, # Then parse possible configuration files\n14:         ArgvParser # Lastly parse arguments again to keep the given arguments the strongest\n15:       ].freeze\n16: \n17:       def parse_options(argv = ARGV)\n18:         options = default_options\n19: \n20:         PARSERS.each do |parser|\n21:           parser.new(options).parse!(argv)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "lib/github_changelog_generator/parser.rb",
+          "start_line": 76,
+          "end_line": 90,
+          "retrieval_score": 16.336,
+          "matched_cues": [
+            "config_file",
+            "fileparserchooser",
+            "github_changelog_generator",
+            "parse_options",
+            "parser"
+          ],
+          "content": "76:           breaking_prefix: \"**Breaking changes:**\",\n77:           enhancement_prefix: \"**Implemented enhancements:**\",\n78:           bug_prefix: \"**Fixed bugs:**\",\n79:           deprecated_prefix: \"**Deprecated:**\",\n80:           removed_prefix: \"**Removed:**\",\n81:           security_prefix: \"**Security fixes:**\",\n82:           http_cache: true,\n83:           require: [],\n84:           config_file: \".github_changelog_generator\"\n85:         )\n86:       end\n87:     end\n88:   end\n89: end\n90: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "lib/github_changelog_generator/parser.rb",
+          "start_line": 28,
+          "end_line": 44,
+          "retrieval_score": 16.336,
+          "matched_cues": [
+            "config_file",
+            "fileparserchooser",
+            "github_changelog_generator",
+            "parse_options",
+            "parser"
+          ],
+          "content": "28:         options\n29:       end\n30: \n31:       def abort_if_user_and_project_not_given!(options)\n32:         return if options[:user] && options[:project]\n33: \n34:         warn \"Configure which user and project to work on.\"\n35:         warn \"Options --user and --project, or settings to that effect. See --help for more.\"\n36:         warn ArgvParser.banner\n37: \n38:         Kernel.abort\n39:       end\n40: \n41:       # @return [Options] Default options\n42:       def default_options\n43:         Options.new(\n44:           date_format: \"%Y-%m-%d\",",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "spec/unit/parser_spec.rb",
+          "start_line": 8,
+          "end_line": 24,
+          "retrieval_score": 16.336,
+          "matched_cues": [
+            "config-file",
+            "config_file",
+            "github_changelog_generator",
+            "parse_options",
+            "parser"
+          ],
+          "content": "8:     allow(Kernel).to receive(:abort)\n9:   end\n10: \n11:   describe \".parse_options\" do\n12:     context \"when required arguments are given\" do\n13:       let(:argv) { [\"--user\", \"the user\", \"--project\", \"the_project\"] }\n14: \n15:       it \"executes and prints the configuration\" do\n16:         expect { described_class.parse_options(argv) }.to output(/config_file=>\".github_changelog_generator\"/).to_stdout\n17:       end\n18:     end\n19: \n20:     context \"when --config-file is overridden to something that is not there\" do\n21:       let(:argv) { [\"--config-file\", \"does_not_exist\"] }\n22: \n23:       it \"aborts the execution\" do\n24:         expect(Kernel).to receive(:abort)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "spec/unit/parser_spec.rb",
+          "start_line": 31,
+          "end_line": 47,
+          "retrieval_score": 16.336,
+          "matched_cues": [
+            "config-file",
+            "config_file",
+            "github_changelog_generator",
+            "parse_options",
+            "parser"
+          ],
+          "content": "31: \n32:       it \"aborts the execution with error message from parser\" do\n33:         expect(Kernel).to receive(:abort)\n34:         expect { described_class.parse_options(argv) }.to output(/invalid argument: --max-issues X/).to_stderr\n35:       end\n36:     end\n37: \n38:     context \"when path to configuration file is given\" do\n39:       let(:argv) { [\"--config-file\", File.join(__dir__, \"..\", \"files\", \"config_example\")] }\n40: \n41:       it \"uses the values from the configuration file\" do\n42:         expect { described_class.parse_options(argv) }.to output(/spec_project/).to_stdout\n43:       end\n44:     end\n45: \n46:     context \"when configuration file and parameters are given\" do\n47:       let(:argv) { [\"--project\", \"stronger_project\", \"--config-file\", File.join(__dir__, \"..\", \"files\", \"config_example\")] }",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "CHANGELOG.md",
+          "start_line": 52,
+          "end_line": 68,
+          "retrieval_score": 13.028,
+          "matched_cues": [
+            "config-file",
+            "fileparserchooser",
+            "github_changelog_generator",
+            "parser"
+          ],
+          "content": "52: - Fix GitHub spelling [\\#1021](https://github.com/github-changelog-generator/github-changelog-generator/pull/1021) ([friederbluemle](https://github.com/friederbluemle))\n53: - docs: Fix filename in option to gh release command [\\#1009](https://github.com/github-changelog-generator/github-changelog-generator/pull/1009) ([olleolleolle](https://github.com/olleolleolle))\n54: - document how to create release notes [\\#999](https://github.com/github-changelog-generator/github-changelog-generator/pull/999) ([bruce-szalwinski](https://github.com/bruce-szalwinski))\n55: - Fixed typo [\\#997](https://github.com/github-changelog-generator/github-changelog-generator/pull/997) ([hsbt](https://github.com/hsbt))\n56: - Extract find\\_tag\\_for\\_milestone method [\\#990](https://github.com/github-changelog-generator/github-changelog-generator/pull/990) ([MatteoPierro](https://github.com/MatteoPierro))\n57: - Add tests for GitHubChangelogGenerator::Generator\\#remove\\_issues\\_in\\_milestones [\\#989](https://github.com/github-changelog-generator/github-changelog-generator/pull/989) ([MatteoPierro](https://github.com/MatteoPierro))\n58: - Add coverage to parser file spec [\\#988](https://github.com/github-changelog-generator/github-changelog-generator/pull/988) ([MatteoPierro](https://github.com/MatteoPierro))\n59: - refactor: Unnest conditionals in tag-related methods, deprecate an ill-named method [\\#985](https://github.com/github-changelog-generator/github-changelog-generator/pull/985) ([anakinj](https://github.com/anakinj))\n60: - Extract GitHubChangelogGenerator::FileParserChooser to its own file [\\#984](https://github.com/github-changelog-generator/github-changelog-generator/pull/984) ([anakinj](https://github.com/anakinj))\n61: - Bump the minor version for development environment [\\#983](https://github.com/github-changelog-generator/github-changelog-generator/pull/983) ([anakinj](https://github.com/anakinj))\n62: - README: Link to GitHub Issue type chooser [\\#976](https://github.com/github-changelog-generator/github-changelog-generator/pull/976) ([olleolleolle](https://github.com/olleolleolle))\n63: \n64: ## [v1.16.4](https://github.com/github-changelog-generator/github-changelog-generator/tree/v1.16.4) (2021-06-03)\n65: \n66: [Full Changelog](https://github.com/github-changelog-generator/github-changelog-generator/compare/v1.16.3...v1.16.4)\n67: \n68: **Closed issues:**",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "CHANGELOG.md",
+          "start_line": 109,
+          "end_line": 125,
+          "retrieval_score": 13.028,
+          "matched_cues": [
+            "config-file",
+            "fileparserchooser",
+            "github_changelog_generator",
+            "parser"
+          ],
+          "content": "109: - Add Ruby 3 to CI, make it pass [\\#928](https://github.com/github-changelog-generator/github-changelog-generator/issues/928)\n110: - SSL error on Windows with docker [\\#894](https://github.com/github-changelog-generator/github-changelog-generator/issues/894)\n111: \n112: **Merged pull requests:**\n113: \n114: - Fix: always return an Array from \\#commits\\_in\\_branch [\\#957](https://github.com/github-changelog-generator/github-changelog-generator/pull/957) ([olleolleolle](https://github.com/olleolleolle))\n115: - Use the githubchangeloggenerator Docker Hub org [\\#955](https://github.com/github-changelog-generator/github-changelog-generator/pull/955) ([ferrarimarco](https://github.com/ferrarimarco))\n116: - Update help output to reflect required args. [\\#946](https://github.com/github-changelog-generator/github-changelog-generator/pull/946) ([spark-c](https://github.com/spark-c))\n117: - Add --config-file command line parameter [\\#917](https://github.com/github-changelog-generator/github-changelog-generator/pull/917) ([anakinj](https://github.com/anakinj))\n118: \n119: ## [v1.16.1](https://github.com/github-changelog-generator/github-changelog-generator/tree/v1.16.1) (2021-03-22)\n120: \n121: [Full Changelog](https://github.com/github-changelog-generator/github-changelog-generator/compare/v1.16.0...v1.16.1)\n122: \n123: **Fixed bugs:**\n124: \n125: - Release 1.16: If you give a specifc name to the GitHubChangelogGenerator::RakeTask, it breaks. [\\#942](https://github.com/github-changelog-generator/github-changelog-generator/issues/942)",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G3",
+      "evidence": [
+        {
+          "evidence_id": "G3_E1",
+          "file_path": ".github_changelog_generator",
+          "start_line": 1,
+          "end_line": 4,
+          "retrieval_score": 28.531,
+          "matched_cues": [
+            "exclude-labels"
+          ],
+          "content": "1: project=github-changelog-generator\n2: user=github-changelog-generator\n3: exclude-labels=duplicate,question,invalid,wontfix,weekly-digest,dependencies\n4: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "lib/github_changelog_generator/argv_parser.rb",
+          "start_line": 119,
+          "end_line": 135,
+          "retrieval_score": 15.358,
+          "matched_cues": [
+            "breaking-labels",
+            "bug-labels",
+            "enhancement-labels",
+            "exclude-labels"
+          ],
+          "content": "119:           options[:include_labels] = list\n120:         end\n121:         opts.on(\"--exclude-labels  x,y,z\", Array, \"Issues with the specified labels will be excluded from changelog. Default is 'duplicate,question,invalid,wontfix'.\") do |list|\n122:           options[:exclude_labels] = list\n123:         end\n124:         opts.on(\"--summary-labels x,y,z\", Array, 'Issues with these labels will be added to a new section, called \"Release Summary\". The section display only body of issues. Default is \\'release-summary,summary\\'.') do |list|\n125:           options[:summary_labels] = list\n126:         end\n127:         opts.on(\"--breaking-labels x,y,z\", Array, 'Issues with these labels will be added to a new section, called \"Breaking changes\". Default is \\'backwards-incompatible,breaking\\'.') do |list|\n128:           options[:breaking_labels] = list\n129:         end\n130:         opts.on(\"--enhancement-labels  x,y,z\", Array, 'Issues with the specified labels will be added to \"Implemented enhancements\" section. Default is \\'enhancement,Enhancement\\'.') do |list|\n131:           options[:enhancement_labels] = list\n132:         end\n133:         opts.on(\"--bug-labels  x,y,z\", Array, 'Issues with the specified labels will be added to \"Fixed bugs\" section. Default is \\'bug,Bug\\'.') do |list|\n134:           options[:bug_labels] = list\n135:         end",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "man/git-generate-changelog.1.html",
+          "start_line": 216,
+          "end_line": 232,
+          "retrieval_score": 15.358,
+          "matched_cues": [
+            "breaking-labels",
+            "bug-labels",
+            "enhancement-labels",
+            "exclude-labels"
+          ],
+          "content": "216: <p>  --exclude-labels x,y,z</p>\n217: \n218: <p>  Issues with the specified labels will be excluded from changelog. Default is 'duplicate,question,invalid,wontfix'.</p>\n219: \n220: <p>  --summary-labels x,y,z</p>\n221: \n222: <p>  Issues with these labels will be added to a new section, called \"Release Summary\". The section display only body of issues. Default is 'Release summary,release-summary,Summary,summary'.</p>\n223: \n224: <p>  --breaking-labels x,y,z</p>\n225: \n226: <p>  Issues with these labels will be added to a new section, called \"Breaking changes\". Default is 'backwards-incompatible,breaking'.</p>\n227: \n228: <p>  --enhancement-labels x,y,z</p>\n229: \n230: <p>  Issues with the specified labels will be added to \"Implemented enhancements\" section. Default is 'enhancement,Enhancement'.</p>\n231: \n232: <p>  --bug-labels x,y,z</p>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E4",
+          "file_path": "man/git-generate-changelog.md",
+          "start_line": 142,
+          "end_line": 158,
+          "retrieval_score": 15.358,
+          "matched_cues": [
+            "breaking-labels",
+            "bug-labels",
+            "enhancement-labels",
+            "exclude-labels"
+          ],
+          "content": "142:   --exclude-labels x,y,z\n143: \n144:   Issues with the specified labels will be excluded from changelog. Default is 'duplicate,question,invalid,wontfix'.\n145: \n146:   --summary-labels x,y,z\n147: \n148:   Issues with these labels will be added to a new section, called \"Release Summary\". The section display only body of issues. Default is 'Release summary,release-summary,Summary,summary'.\n149: \n150:   --breaking-labels x,y,z\n151: \n152:   Issues with these labels will be added to a new section, called \"Breaking changes\". Default is 'backwards-incompatible,breaking'.\n153: \n154:   --enhancement-labels x,y,z\n155: \n156:   Issues with the specified labels will be added to \"Implemented enhancements\" section. Default is 'enhancement,Enhancement'.\n157: \n158:   --bug-labels x,y,z",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E5",
+          "file_path": "man/git-generate-changelog.html",
+          "start_line": 171,
+          "end_line": 187,
+          "retrieval_score": 11.267,
+          "matched_cues": [
+            "bug-labels",
+            "enhancement-labels",
+            "exclude-labels"
+          ],
+          "content": "171: <p>   --include-labels x,y,z</p>\n172: \n173: <p>   Only issues with the specified labels will be included in the changelog.</p>\n174: \n175: <p>   --exclude-labels x,y,z</p>\n176: \n177: <p>   Issues with the specified labels will be always excluded from changelog. Default is 'duplicate,question,invalid,wontfix'</p>\n178: \n179: <p>   --bug-labels x,y,z</p>\n180: \n181: <p>   Issues with the specified labels will be always added to \"Fixed bugs\" section. Default is 'bug,Bug'</p>\n182: \n183: <p>   --enhancement-labels x,y,z</p>\n184: \n185: <p>   Issues with the specified labels will be always added to \"Implemented enhancements\" section. Default is 'enhancement,Enhancement'</p>\n186: \n187: <p>   --exclude-tags x,y,z</p>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "spec/unit/parser_file_spec.rb",
+          "start_line": 64,
+          "end_line": 80,
+          "retrieval_score": 3.531,
+          "matched_cues": [
+            "exclude-labels"
+          ],
+          "content": "64:           .from(options_before_change)\n65:           .to(options_before_change.merge(unreleased_label: \"staging\",\n66:                                           unreleased: false,\n67:                                           header: \"=== Changelog ===\",\n68:                                           max_issues: 123,\n69:                                           simple_list: true))\n70:       end\n71: \n72:       context \"turns exclude-labels into an Array\", bug: \"#327\" do\n73:         let(:file) do\n74:           <<~FILE\n75:             exclude-labels=73a91042-da6f-11e5-9335-1040f38d7f90,7adf83b4-da6f-11e5-ae18-1040f38d7f90\n76:             header_label=# My changelog\n77:           FILE\n78:         end\n79: \n80:         it \"reads exclude_labels into an Array\" do",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

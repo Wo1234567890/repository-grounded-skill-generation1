@@ -1,0 +1,64 @@
+{
+  "diagnostic_questions": [
+    {
+      "target_id": "G1_KT1",
+      "status": "ready",
+      "question": "In a kustomize `kustomize.config.k8s.io/v1beta1` Kustomization file, which field should be used to reference both local resource files and base directories (such as `../../base`)?",
+      "options": {
+        "A": "`resources:`",
+        "B": "`overlays:`",
+        "C": "`refs:`",
+        "D": "`bases:`"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The repository's kustomization files (e.g., manifests/openshift/kustomization.yaml, manifests/test/kustomization.yaml, manifests/install/kustomization.yaml) consistently use the `resources:` field to reference both local files (like `namespace.yaml`) and base directories (like `../bases/source-controller`). The `bases:` field is deprecated in favor of `resources:`.",
+      "evidence_ids": [
+        "G1_E1",
+        "G1_E3",
+        "G1_E5"
+      ],
+      "question_id": "G1_KT1_Q1"
+    },
+    {
+      "target_id": "G1_KT2",
+      "status": "ready",
+      "question": "In a kustomize `kustomize.config.k8s.io/v1beta1` Kustomization file, which field is used to apply patches (including both strategic merge patches and JSON patches)?",
+      "options": {
+        "A": "`patchesJson6902:`",
+        "B": "`patches:`",
+        "C": "`overlays:`",
+        "D": "`patchesStrategicMerge:`"
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The repository's kustomization files (e.g., manifests/openshift/kustomization.yaml and manifests/test/kustomization.yaml) use the `patches:` field to apply patches. This field supports both strategic merge patch style (inline or file reference) and JSON patch operations, as seen in both evidence files. The `patchesStrategicMerge:` and `patchesJson6902:` fields are deprecated.",
+      "evidence_ids": [
+        "G1_E2",
+        "G1_E4"
+      ],
+      "question_id": "G1_KT2_Q1"
+    },
+    {
+      "target_id": "G3_KT1",
+      "status": "ready",
+      "question": "When writing a kustomize tool configuration file with `apiVersion: kustomize.config.k8s.io/v1beta1` and `kind: Kustomization`, which of the following top-level fields is NOT valid according to the repository's usage patterns?",
+      "options": {
+        "A": "`resources:`",
+        "B": "`namespace:`",
+        "C": "`transformers:`",
+        "D": "`metadata:`"
+      },
+      "correct_answer": "D",
+      "reference_explanation": "All kustomize Kustomization files in the repository (e.g., manifests/openshift/kustomization.yaml, cmd/flux/testdata/build-kustomization/delete-service/kustomization.yaml, manifests/bases/helm-controller/kustomization.yaml) use fields like `apiVersion`, `kind`, `namespace`, `resources`, `patches`, `transformers`, `images`, `generatorOptions`, `configMapGenerator`, and `secretGenerator` — but never include a `metadata:` block. The `metadata:` field is not a valid top-level field in a kustomize Kustomization file and may cause build errors.",
+      "evidence_ids": [
+        "G3_E1",
+        "G3_E3",
+        "G3_E4",
+        "G3_E5",
+        "G3_E6",
+        "G3_E7",
+        "G3_E8"
+      ],
+      "question_id": "G3_KT1_Q1"
+    }
+  ]
+}

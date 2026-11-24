@@ -1,0 +1,7 @@
+```json
+{
+  "repository_provides": false,
+  "supporting_evidence_ids": [],
+  "reason": "The evidence shows a clj-kondo hook file at `.clj-kondo/src/hooks/metabase/settings/models/setting.clj` and references to `metabase.settings.models.setting/defsetting`, but does not explicitly confirm that the actual setting model source file is located at `src/metabase/settings/models/setting.clj`. The evidence also does not show that `defsetting` is accessed via `[metabase.settings.core :as setting :refer [defsetting]]` as described in `src/metabase/system/settings.clj`. The clj-kondo hook file is a linting tool, not the actual model file, and neither piece of evidence prescriptively establishes the file path of the production source or the import alias used."
+}
+```

@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In a Bazel project using the legacy WORKSPACE approach, which of the following correctly configures a hermetic Python 3.11 toolchain via `rules_python`?",
+    "options": {
+      "A": "load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\")\npython_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")",
+      "B": "load(\"@rules_python//python:defs.bzl\", \"python_toolchain\")\npython_toolchain(version = \"3.11\")",
+      "C": "load(\"@bazel_tools//tools/python:toolchain.bzl\", \"python_toolchain\")\npython_toolchain(name = \"py311\", python_version = \"3.11\")",
+      "D": "load(\"@rules_python//python/extensions:python.bzl\", \"python\")\npython.toolchain(python_version = \"3.11\")"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.5810432089783717,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 291,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

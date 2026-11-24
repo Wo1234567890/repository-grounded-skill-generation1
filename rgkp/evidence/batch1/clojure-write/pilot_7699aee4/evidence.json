@@ -1,0 +1,459 @@
+{
+  "instance_id": "batch1/clojure-write",
+  "repository_url": "https://github.com/metabase/metabase",
+  "repository_commit": "d8bb291939a60c44d8ba6eb7bb132a5e0f271cf1",
+  "gap_evidence": [
+    {
+      "gap_id": "G1",
+      "evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "test/metabase/public_sharing_rest/api_test.clj",
+          "start_line": 1685,
+          "end_line": 1701,
+          "retrieval_score": 21.457,
+          "matched_cues": [
+            "csv export",
+            "dataset",
+            "json export"
+          ],
+          "content": "1685:                                                  {:request-options {:headers {\"content-type\" \"application/x-www-form-urlencoded\"}}}\n1686:                                                  {:format_rows true})\n1687:                                   \"ID,State,Latitude,Longitude\\n\")))\n1688:           (testing \"Invalid id throws 404\"\n1689:             (client/client :post 404 (format \"public/dashboard/%s/dashcard/%d/card/%d/csv\"\n1690:                                              uuid\n1691:                                              dashcard-id\n1692:                                              9998889978)))\n1693:           (testing \"JSON export\"\n1694:             (is (= 1 (-> (client/client :post 200 (format \"public/dashboard/%s/dashcard/%d/card/%d/json\"\n1695:                                                           uuid\n1696:                                                           dashcard-id\n1697:                                                           card-id))\n1698:                          first\n1699:                          :ID))))\n1700:           (testing \"API export\"\n1701:             (is (= 1 (-> (client/client :post 202 (format \"public/dashboard/%s/dashcard/%d/card/%d/api\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E2",
+          "file_path": "test/metabase/public_sharing_rest/api_test.clj",
+          "start_line": 1666,
+          "end_line": 1682,
+          "retrieval_score": 21.457,
+          "matched_cues": [
+            "csv export",
+            "dataset",
+            "json export"
+          ],
+          "content": "1666: (deftest dashcard-card-export-test\n1667:   (testing \"POST /dashboard/:uuid/dashcard/:dashcard-id/card/:card-id/:export-format\"\n1668:     (let [uuid (str (random-uuid))]\n1669:       (mt/with-temporary-setting-values [enable-public-sharing true]\n1670:         (mt/with-temp [:model/Dashboard {dashboard-id :id} {:public_uuid uuid}\n1671:                        :model/Card {card-id :id} {:dataset_query (venues-query)}\n1672:                        :model/DashboardCard {dashcard-id :id} {:card_id      card-id\n1673:                                                                :dashboard_id dashboard-id}]\n1674:           (testing \"CSV export\"\n1675:             (is (str/starts-with? (client/client :post 200 (format \"public/dashboard/%s/dashcard/%d/card/%d/csv\"\n1676:                                                                    uuid\n1677:                                                                    dashcard-id\n1678:                                                                    card-id))\n1679:                                   \"ID,State,Latitude,Longitude\\n\")))\n1680:           (testing \"urlencoded requests\"\n1681:             (is (str/starts-with? (client/client :post 200 (format \"public/dashboard/%s/dashcard/%d/card/%d/csv\"\n1682:                                                                    uuid",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E3",
+          "file_path": "test/metabase/public_sharing_rest/api_test.clj",
+          "start_line": 35,
+          "end_line": 51,
+          "retrieval_score": 21.457,
+          "matched_cues": [
+            "csv export",
+            "dataset",
+            "json export"
+          ],
+          "content": "35: \n36: ;;; --------------------------------------------------- Helper Fns ---------------------------------------------------\n37: \n38: (defn- shared-obj []\n39:   {:public_uuid       (str (random-uuid))\n40:    :made_public_by_id (mt/user->id :crowberto)})\n41: \n42: (defn do-with-temp-public-card [m f]\n43:   (let [m (merge (when-not (:dataset_query m)\n44:                    {:dataset_query (mt/mbql-query venues {:aggregation [[:count]]})})\n45:                  (when-not (:parameters m)\n46:                    {:parameters [{:name                 \"Static Category\",\n47:                                   :slug                 \"static_category\"\n48:                                   :id                   \"_STATIC_CATEGORY_\",\n49:                                   :type                 \"category\",\n50:                                   :values_source_type   \"static-list\"\n51:                                   :values_source_config {:values [\"African\" \"American\" \"Asian\"]}}]})",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "test/metabase/api/downloads_exports_test.clj",
+          "start_line": 400,
+          "end_line": 416,
+          "retrieval_score": 11.764,
+          "matched_cues": [
+            "csv export",
+            "dataset"
+          ],
+          "content": "400:                     :subscription-attachment\n401:                     :public-question-download :public-dashcard-download}]\n402:                  (->> (all-outputs! card {:export-format :csv :format-rows true :pivot true})\n403:                       (group-by second)\n404:                       ((fn [m] (update-vals m #(into #{} (mapv first %)))))\n405:                       (apply concat)))))))))\n406: \n407: (deftest simple-pivot-export-row-col-totals-test\n408:   (testing \"Pivot table csv exports respect row/column totals viz-settings\"\n409:     (doseq [row-totals? [#_true false]\n410:             col-totals? [#_true false]]\n411:       (mt/dataset test-data\n412:         (mt/with-temp [:model/Card card\n413:                        {:display                :pivot\n414:                         :visualization_settings {:pivot_table.column_split\n415:                                                  {:rows    [\"CATEGORY\"]\n416:                                                   :columns [\"CREATED_AT\"]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "test/metabase/api/downloads_exports_test.clj",
+          "start_line": 548,
+          "end_line": 564,
+          "retrieval_score": 11.764,
+          "matched_cues": [
+            "csv export",
+            "dataset"
+          ],
+          "content": "548:                                               {:aggregation  [[:sum [:field \"MEASURE\" {:base-type :type/Integer}]]]\n549:                                                :breakout\n550:                                                [[:field \"A\" {:base-type :type/Text}]\n551:                                                 [:field \"B\" {:base-type :type/Text}]\n552:                                                 [:field \"C\" {:base-type :type/Text}]\n553:                                                 [:field \"D\" {:base-type :type/Text}]]\n554:                                                :source-table (format \"card__%s\" pivot-data-card-id)})}]\n555:       (let [result (card-download pivot-card {:export-format :csv :pivot true})]\n556:         (testing \"Pivot CSV Exports look like a Pivoted Table\"\n557:           (testing \"The Headers Properly indicate the pivot rows names.\"\n558:             ;; Pivot rows header are simply the column names from the rows specified in\n559:             ;; [:visualization_settings :pivot_table.column_split :rows]\n560:             ;; Because there are two pivot columns, the pivot row headers are only in the second row of the CSV.\n561:             (is (= [[\"\" \"\"]\n562:                     [\"C\" \"D\"]]\n563:                    [(take 2 (first result))\n564:                     (take 2 (second result))])))",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E6",
+          "file_path": "test/metabase/api/downloads_exports_test.clj",
+          "start_line": 76,
+          "end_line": 92,
+          "retrieval_score": 11.764,
+          "matched_cues": [
+            "csv export",
+            "dataset"
+          ],
+          "content": "76:       (catch Throwable e\n77:         (throw (ex-info (format \"Error processing results: %s\" (ex-message e))\n78:                         {:results results}\n79:                         e))))))\n80: \n81: (defn- unsaved-card-download\n82:   [card {:keys [export-format format-rows pivot]}]\n83:   (->> (mt/user-http-request :crowberto :post 200\n84:                              (format \"dataset/%s\" (name export-format))\n85:                              {:visualization_settings (:visualization_settings card)\n86:                               :query (assoc (:dataset_query card)\n87:                                             :was-pivot (boolean pivot)\n88:                                             :info {:visualization-settings (:visualization_settings card)}\n89:                                             :middleware\n90:                                             {:userland-query? true})\n91:                               :format_rows   format-rows\n92:                               :pivot_results (boolean pivot)})",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E7",
+          "file_path": "test/metabase/pulse/pulse_integration_test.clj",
+          "start_line": 619,
+          "end_line": 635,
+          "retrieval_score": 11.764,
+          "matched_cues": [
+            "csv export",
+            "dataset"
+          ],
+          "content": "619:                                          (keep\n620:                                           (fn [{:keys [type content-type file-name content]}]\n621:                                             (when (and\n622:                                                    (= :attachment type)\n623:                                                    (= \"text/csv\" content-type))\n624:                                               [(strip-timestamp file-name)\n625:                                                (first (csv/read-csv (slurp content)))])))\n626:                                          (into {})))]\n627:             (testing \"Renaming columns via viz settings is correctly applied to the CSV export\"\n628:               (is (= [\"THE_ID\" \"ORDER TAX\" \"Total Amount\" \"Discount Applied ($)\" \"Amount Ordered\" \"Effective Tax Rate\"]\n629:                      (attachment-name->cols (format \"%s.csv\" base-card-name)))))\n630:             (testing \"A question derived from another question does not bring forward any renames\"\n631:               (is (= [\"ID\" \"Tax\" \"Total\" \"Discount ($)\" \"Quantity\" \"Tax Rate\"]\n632:                      (attachment-name->cols (format \"%s.csv\" model-card-name)))))\n633:             (testing \"A model with custom metadata shows the renamed metadata columns\"\n634:               (is (= [\"ID\" \"Tax\" \"Grand Total\" \"Amount of Discount ($)\" \"N\" \"Tax Rate\"]\n635:                      (attachment-name->cols (format \"%s.csv\" meta-model-card-name)))))",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E8",
+          "file_path": "test/metabase/pulse/pulse_integration_test.clj",
+          "start_line": 24,
+          "end_line": 40,
+          "retrieval_score": 11.764,
+          "matched_cues": [
+            "csv export",
+            "dataset"
+          ],
+          "content": "24:                         (thunk))))\n25: \n26: (defmacro with-metadata-data-cards\n27:   \"Provide a fixture that includes:\n28:   - A card with a custom column\n29:   - A model with curated metadata (override on the Tax Rate type)\n30:   - A question based on the above model\"\n31:   [[base-card-id model-card-id question-card-id] & body]\n32:   `(mt/dataset ~'test-data\n33:      (mt/with-temp [:model/Card {~base-card-id :id} {:name          \"Base question - no special metadata\"\n34:                                                      :dataset_query {:database (mt/id)\n35:                                                                      :type     :query\n36:                                                                      :query    {:source-table (mt/id :orders)\n37:                                                                                 :expressions  {\"Tax Rate\" [:/\n38:                                                                                                            [:field (mt/id :orders :tax) {:base-type :type/Float}]\n39:                                                                                                            [:field (mt/id :orders :total) {:base-type :type/Float}]]},\n40:                                                                                 :fields       [[:field (mt/id :orders :tax) {:base-type :type/Float}]",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "src/metabase/util/currency.cljc",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 27.423,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "metabase.util.currency",
+            "usd"
+          ],
+          "content": "1: (ns metabase.util.currency\n2:   \"The list of currencies, and associated metadata, used by Metabase for number formatting.\")\n3: \n4: (defn supports-symbol?\n5:   \"Currencies for which the Metabase frontend supports formatting with its symbol, rather than just\n6:   its code or name. This list is referenced during XLSX export to achieve parity in currency formatting.\"\n7:   [currency-code]\n8:   (contains?\n9:    #{:USD  ;; US dollar",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "src/metabase/util/currency.cljc",
+          "start_line": 58,
+          "end_line": 74,
+          "retrieval_score": 27.423,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "metabase.util.currency",
+            "usd"
+          ],
+          "content": "58:      [:BRL (make-currency \"R$\" \"Brazilian Real\" \"R$\" 2 0 \"BRL\" \"Brazilian reals\")]\n59:      [:BTC (make-currency \"₿\" \"Bitcoin\" \"BTC\" 8 0 \"BTC\" \"Bitcoins\")]\n60:      [:BWP (make-currency \"BWP\" \"Botswanan Pula\" \"P\" 2 0 \"BWP\" \"Botswanan pulas\")]\n61:      [:BYR (make-currency \"BYR\" \"Belarusian Ruble\" \"BYR\" 0 0 \"BYR\" \"Belarusian rubles\")]\n62:      [:BZD (make-currency \"BZ$\" \"Belize Dollar\" \"$\" 2 0 \"BZD\" \"Belize dollars\")]\n63:      [:CDF (make-currency \"CDF\" \"Congolese Franc\" \"FrCD\" 2 0 \"CDF\" \"Congolese francs\")]\n64:      [:CHF (make-currency \"CHF\" \"Swiss Franc\" \"CHF\" 2 0.05 \"CHF\" \"Swiss francs\")]\n65:      [:CLP (make-currency \"CL$\" \"Chilean Peso\" \"$\" 0 0 \"CLP\" \"Chilean pesos\")]\n66:      [:CNY (make-currency \"CN¥\" \"Chinese Yuan\" \"CN¥\" 2 0 \"CNY\" \"Chinese yuan\")]\n67:      [:COP (make-currency \"CO$\" \"Colombian Peso\" \"$\" 0 0 \"COP\" \"Colombian pesos\")]\n68:      [:CRC (make-currency \"₡\" \"Costa Rican Colón\" \"₡\" 0 0 \"CRC\" \"Costa Rican colóns\")]\n69:      [:CVE (make-currency \"CV$\" \"Cape Verdean Escudo\" \"CV$\" 2 0 \"CVE\" \"Cape Verdean escudos\")]\n70:      [:CZK (make-currency \"Kč\" \"Czech Republic Koruna\" \"Kč\" 2 0 \"CZK\" \"Czech Republic korunas\")]\n71:      [:DJF (make-currency \"Fdj\" \"Djiboutian Franc\" \"Fdj\" 0 0 \"DJF\" \"Djiboutian francs\")]\n72:      [:DKK (make-currency \"Dkr\" \"Danish Krone\" \"kr\" 2 0 \"DKK\" \"Danish kroner\")]\n73:      [:DOP (make-currency \"RD$\" \"Dominican Peso\" \"RD$\" 2 0 \"DOP\" \"Dominican pesos\")]\n74:      [:DZD (make-currency \"DA\" \"Algerian Dinar\" \"د.ج.‏\" 2 0 \"DZD\" \"Algerian dinars\")]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "src/metabase/util/currency.cljc",
+          "start_line": 31,
+          "end_line": 47,
+          "retrieval_score": 27.423,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "metabase.util.currency",
+            "usd"
+          ],
+          "content": "31:    :symbol_native  symbol_native\n32:    :decimal_digits decimal_digits\n33:    :rounding       rounding\n34:    :code           code\n35:    :name_plural    name_plural})\n36: \n37: (def ^:private currency-list\n38:   (concat\n39:    [[:USD (make-currency \"$\" \"US Dollar\" \"$\" 2 0 \"USD\" \"US dollars\")]\n40:     [:CAD (make-currency \"CA$\" \"Canadian Dollar\" \"$\" 2 0 \"CAD\" \"Canadian dollars\")]\n41:     [:EUR (make-currency \"€\" \"Euro\" \"€\" 2 0 \"EUR\" \"euros\")]]\n42:    (sort-by\n43:     #(-> % second :name)\n44:     [[:AED (make-currency \"AED\" \"United Arab Emirates Dirham\" \"د.إ.‏\" 2 0 \"AED\" \"UAE dirhams\")]\n45:      [:AFN (make-currency \"Af\" \"Afghan Afghani\" \"؋\" 0 0 \"AFN\" \"Afghan Afghanis\")]\n46:      [:ALL (make-currency \"ALL\" \"Albanian Lek\" \"Lek\" 0 0 \"ALL\" \"Albanian lekë\")]\n47:      [:AMD (make-currency \"AMD\" \"Armenian Dram\" \"դր.\" 0 0 \"AMD\" \"Armenian drams\")]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "resources/metabot/prompts/system/transform-codegen.selmer",
+          "start_line": 98,
+          "end_line": 114,
+          "retrieval_score": 20.199,
+          "matched_cues": [
+            "conversion logic",
+            "currency conversion"
+          ],
+          "content": "98: 3. Build fact table with grain definition\n99: 4. Add calculated metrics and KPIs\n100: 5. Implement data quality assertions\n101: \n102: Example 2:\n103: \n104: 1. Define complete date range for time-series\n105: 2. Create monthly revenue allocation logic\n106: 3. Add currency conversion logic\n107: 4. Build period-over-period comparisons\n108: 5. Create executive dashboard metrics\n109: \n110: Example 3:\n111: \n112: 1. Parse semi-structured JSON into columns\n113: 2. Deduplicate records using row_number()\n114: 3. Create snapshot table for history tracking",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "frontend/src/metabase/visualizations/shared/settings/column.ts",
+          "start_line": 26,
+          "end_line": 42,
+          "retrieval_score": 19.028,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "usd"
+          ],
+          "content": "26: // not supported by GraalVM.\n27: const CURRENCIES_WITH_SYMBOLS = new Set([\n28:   \"USD\",\n29:   \"CAD\",\n30:   \"EUR\",\n31:   \"AUD\",\n32:   \"BRL\",\n33:   \"BTC\",\n34:   \"CNY\",\n35:   \"GBP\",\n36:   \"HKD\",\n37:   \"ILS\",\n38:   \"INR\",\n39:   \"JPY\",\n40:   \"KRW\",\n41:   \"MXN\",\n42:   \"NZD\",",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "frontend/src/metabase/visualizations/shared/settings/column.ts",
+          "start_line": 43,
+          "end_line": 59,
+          "retrieval_score": 19.028,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "usd"
+          ],
+          "content": "43:   \"TWD\",\n44:   \"VND\",\n45: ]);\n46: \n47: export function getDefaultCurrencyStyle(\n48:   _column: any,\n49:   columnSettings: ColumnSettings,\n50: ) {\n51:   const c = columnSettings[\"currency\"] || \"USD\";\n52:   return CURRENCIES_WITH_SYMBOLS.has(c) ? \"symbol\" : \"code\";\n53: }\n54: \n55: export function getDefaultCurrencyInHeader() {\n56:   return true;\n57: }\n58: \n59: export function getDefaultNumberSeparators() {",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "frontend/test/metabase/lib/formatting.unit.spec.js",
+          "start_line": 213,
+          "end_line": 229,
+          "retrieval_score": 19.028,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "usd"
+          ],
+          "content": "213:         expect(formatNumber(0.001, options)).toEqual(\"$0.00\");\n214:         expect(formatNumber(7.24, options)).toEqual(\"$7.24\");\n215:         expect(formatNumber(7.249, options)).toEqual(\"$7.25\");\n216:         expect(formatNumber(724.9, options)).toEqual(\"$724.90\");\n217:         expect(formatNumber(1234.56, options)).toEqual(\"$1.2k\");\n218:         expect(formatNumber(1234567.89, options)).toEqual(\"$1.2M\");\n219:         expect(formatNumber(-1234567.89, options)).toEqual(\"-$1.2M\");\n220:         expect(\n221:           formatNumber(1234567.89, { ...options, currency: \"CNY\" }),\n222:         ).toEqual(\"CN¥1.2M\");\n223:         expect(\n224:           formatNumber(1234567.89, { ...options, currency_style: \"name\" }),\n225:         ).toEqual(\"$1.2M\");\n226:       });\n227:     });\n228: \n229:     it(\"should format to correct number of decimal places\", () => {",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "frontend/test/metabase/lib/formatting.unit.spec.js",
+          "start_line": 906,
+          "end_line": 922,
+          "retrieval_score": 19.028,
+          "matched_cues": [
+            "cny",
+            "eur",
+            "usd"
+          ],
+          "content": "906:   });\n907: \n908:   describe(\"getCurrencySymbol\", () => {\n909:     const currencySymbols = [\n910:       [\"USD\", \"$\"],\n911:       [\"EUR\", \"€\"],\n912:       [\"GBP\", \"£\"],\n913:       [\"JPY\", \"¥\"],\n914:       [\"CNY\", \"CN¥\"],\n915:       [\"CAD\", \"CA$\"],\n916:       [\"AUD\", \"AU$\"],\n917:       [\"NZD\", \"NZ$\"],\n918:       [\"HKD\", \"HK$\"],\n919:       [\"BTC\", \"₿\"],\n920:       [\"OOPS\", \"OOPS\"],\n921:     ];\n922: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G3",
+      "evidence": [
+        {
+          "evidence_id": "G3_E1",
+          "file_path": "docs/questions/visualizations/table.md",
+          "start_line": 252,
+          "end_line": 268,
+          "retrieval_score": 9.406,
+          "matched_cues": [
+            "currency column"
+          ],
+          "content": "252: Multiplies each number in this column by whatever you type here. Just don't type an emoji here; there is a nontrivial chance that it will manifest a temporal vortex.\n253: \n254: ### Add a prefix/suffix\n255: \n256: Lets you put a symbol, word, or whatever before or after each cell's value.\n257: \n258: ## Currency formatting options\n259: \n260: Currency columns have all the same options as [numbers](#number-formatting-options), plus the following:\n261: \n262: ### Unit of Currency\n263: \n264: Lets you change the unit of currency from whatever the system default is.\n265: \n266: ### Currency label style\n267: \n268: Choose how to display the currency label. For example, for Canadian dollars:",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "src/metabase/formatter/impl.clj",
+          "start_line": 133,
+          "end_line": 149,
+          "retrieval_score": 9.406,
+          "matched_cues": [
+            "currency column"
+          ],
+          "content": "133:                                   (get column-settings {::mb.viz/column-name col-id-or-name}))\n134:                               (qualify-keys col-settings))\n135:         global-settings      (streaming.common/viz-settings-for-col col viz-settings)\n136:         currency?            (boolean (or (= (::mb.viz/number-style column-settings) \"currency\")\n137:                                           (= (::mb.viz/number-style viz-settings) \"currency\")\n138:                                           (and (nil? (::mb.viz/number-style column-settings))\n139:                                                (or\n140:                                                 (::mb.viz/currency-style column-settings)\n141:                                                 (::mb.viz/currency column-settings)))))\n142: \n143:         {::mb.viz/keys [number-separators decimals scale number-style\n144:                         prefix suffix currency-style currency]} global-settings\n145:         currency           (when currency?\n146:                              (keyword (or currency \"USD\")))\n147:         integral?          (and (isa? (or effective_type base_type) :type/Integer) (integer? (or scale 1)))\n148:         relation?          (isa? semantic_type :Relation/*)\n149:         percent?           (or (isa? semantic_type :type/Percentage) (= number-style \"percent\"))",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "src/metabase/query_processor/streaming/common.clj",
+          "start_line": 84,
+          "end_line": 100,
+          "retrieval_score": 9.406,
+          "matched_cues": [
+            "currency column"
+          ],
+          "content": "84:   \"Merge format settings defined in the localization preferences into the format settings\n85:   for a single column.\"\n86:   [format-settings global-settings-key]\n87:   (let [global-settings (get (appearance/custom-formatting) global-settings-key)\n88:         normalized      (mb.viz/db->norm-column-settings-entries global-settings)]\n89:     (merge normalized format-settings)))\n90: \n91: (defn currency-identifier\n92:   \"Given the format settings for a currency column, returns the symbol, code or name for the\n93:   appropriate currency.\"\n94:   [format-settings]\n95:   (let [currency-code (or (::mb.viz/currency format-settings)\n96:                           (:currency format-settings \"USD\"))]\n97:     (condp = (or (::mb.viz/currency-style format-settings)\n98:                  (:currency_style format-settings)\n99:                  \"symbol\")\n100:       \"symbol\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E4",
+          "file_path": "test/metabase/metabot/agent/links_test.clj",
+          "start_line": 171,
+          "end_line": 187,
+          "retrieval_score": 9.406,
+          "matched_cues": [
+            "nil handling"
+          ],
+          "content": "171:       (is (= \"[B](/model/2)\" (-> result second :text))))))\n172: \n173: (deftest ^:parallel resolve-links-xf-nil-state-test\n174:   (testing \"transducer handles nil state maps\"\n175:     (let [parts [{:type :text :text \"[Link](metabase://model/123)\"}]\n176:           result (into [] (links/resolve-links-xf nil nil (atom {})) parts)]\n177:       (is (= \"[Link](/model/123)\" (-> result first :text))))))\n178: \n179: ;;; Nil handling tests - important for robustness against LLM edge cases\n180: \n181: (deftest ^:parallel resolve-metabase-uri-nil-uri-test\n182:   (testing \"handles nil URI gracefully\"\n183:     (is (nil? (links/resolve-metabase-uri nil {} {})))))\n184: \n185: (deftest ^:parallel resolve-metabase-uri-empty-string-test\n186:   (testing \"handles empty string URI\"\n187:     (is (nil? (links/resolve-metabase-uri \"\" {} {})))))",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E5",
+          "file_path": "test/metabase/metabot/table_utils_test.clj",
+          "start_line": 43,
+          "end_line": 59,
+          "retrieval_score": 9.406,
+          "matched_cues": [
+            "nil handling"
+          ],
+          "content": "43: \n44: (deftest similar?-different-strings-test\n45:   (testing \"similar? function with completely different strings\"\n46:     (is (not (table-utils/similar? \"users\" \"products\")))\n47:     (is (not (table-utils/similar? \"accounts\" \"inventory\")))\n48:     (is (not (table-utils/similar? \"people\" \"widgets\")))))\n49: \n50: (deftest similar?-empty-and-nil-test\n51:   (testing \"similar? function with empty and nil handling\"\n52:     (is (not (table-utils/similar? \"\" \"test\")))\n53:     (is (not (table-utils/similar? \"test\" \"\")))\n54:     (is (table-utils/similar? \"\" \"\"))))\n55: \n56: (deftest matching-tables?-test\n57:   (testing \"matching-tables? function with schema matching\"\n58:     (let [table1 {:name \"users\" :schema \"public\"}\n59:           table2 {:name \"USERS\" :schema \"PUBLIC\"}  ; case different",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "test/metabase/metabot/tools/util_test.clj",
+          "start_line": 321,
+          "end_line": 337,
+          "retrieval_score": 9.406,
+          "matched_cues": [
+            "nil handling"
+          ],
+          "content": "321:              (metabot.tools.util/resolve-column {:field-id \"t1-10\"} \"t1-\" columns))))\n322: \n323:       (testing \"throws when field ID prefix doesn't match expected prefix\"\n324:         (is (thrown-with-msg?\n325:              clojure.lang.ExceptionInfo\n326:              #\"does not match expected prefix\"\n327:              (metabot.tools.util/resolve-column {:field-id \"t999-0\"} \"t1-\" columns)))))))\n328: \n329: ;;; Nil handling tests - important for robustness against LLM edge cases\n330: \n331: (deftest parse-field-id-nil-handling-test\n332:   (testing \"returns nil for nil input (no NPE)\"\n333:     (is (nil? (metabot.tools.util/parse-field-id nil))))\n334: \n335:   (testing \"returns nil for empty string\"\n336:     (is (nil? (metabot.tools.util/parse-field-id \"\"))))\n337: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E7",
+          "file_path": "docs/data-studio/transforms/transform-inspector.md",
+          "start_line": 24,
+          "end_line": 40,
+          "retrieval_score": 6.293,
+          "matched_cues": [
+            "null values"
+          ],
+          "content": "24: - [Join analysis](#join-analysis)\n25: - [Drill lenses](#drill-lenses)\n26: \n27: ### Data summary\n28: \n29: Data summary gives you a quick snapshot of the transform's input and output tables:\n30: \n31: - **Input and output tables**: table name, row count, column count.\n32: - **Field-level stats**: data type, distinct count, nil percentage (number of null values), range, and averages.\n33: \n34: ### Column distributions\n35: \n36: The Column distributions lens visualizes how data distributions change through the transform. This lens can help you spot unexpected filtering or aggregation effects. This lens is only available when columns match between input and output tables (so you may not see it for transforms that aggregate data).\n37: \n38: The Column distributions lens can be slow on large datasets because it computes distribution stats for every matched column.\n39: \n40: ### Join analysis",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E8",
+          "file_path": "docs/databases/connections/mongodb.md",
+          "start_line": 123,
+          "end_line": 139,
+          "retrieval_score": 6.293,
+          "matched_cues": [
+            "null values"
+          ],
+          "content": "123: - **Connect to the secondary server**. When connecting to a cluster, always use the `?readPreference=secondary` argument in the connection string, which allows Metabase to read from a secondary server instead of consuming resources from the primary server.\n124: \n125: ## I added fields to my database but don't see them in Metabase\n126: \n127: Metabase may not sync all of your fields. Since any document in a MongoDB collection can contain any number of fields, the only way to get 100% coverage of all fields would be to scan every single document in every single collection. The reason Metabase doesn't do a full scan is because it would put too much strain on your database.\n128: \n129: Instead, Metabase gets a sample of the fields in a collection by scanning a sample of 1000 documents in each collection (the first 500 documents and the last 500 documents in each collection).\n130: \n131: If you're not seeing all of the fields show up for a collection in Metabase, one workaround is to include all possible keys in the first document of the collection, and give those keys null values. That way, Metabase will be able to recognize the correct schema for the entire collection.\n132: \n133: ## Writable connection\n134: \n135: Set up an additional connection used for write operations. See [Writable connections](../writable-connection.md).\n136: \n137: ## Database routing\n138: \n139: With database routing, an admin can build a question once using one database, and the question will run its query against a different database with the same schema depending on who is viewing the question.",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G4",
+      "evidence": [
+        {
+          "evidence_id": "G4_E1",
+          "file_path": "src/metabase/settings/models/setting.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 47.292,
+          "matched_cues": [
+            "admin settings",
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "1: (ns metabase.settings.models.setting\n2:   (:refer-clojure :exclude [get])\n3:   (:require\n4:    [clojure.core :as core]\n5:    [clojure.data :as data]\n6:    [clojure.data.csv :as csv]\n7:    [clojure.string :as str]\n8:    [environ.core :as env]\n9:    [malli.core :as mc]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E2",
+          "file_path": "src/metabase/settings/models/setting.clj",
+          "start_line": 181,
+          "end_line": 197,
+          "retrieval_score": 47.292,
+          "matched_cues": [
+            "admin settings",
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "181:   [reasons]\n182:   (if-let [reasons (seq (remove nil? reasons))]\n183:     (throw (ex-info \"Setting is not enabled for this database\" {:setting/disabled-reasons reasons}))\n184:     true))\n185: \n186: ;; This is called `LocalOption` rather than `DatabaseLocalOption` or something like that because we intend to also add\n187: ;; User-Local Settings at some point in the future. The will use the same options\n188: (def ^:private LocalOption\n189:   \"Schema for valid values of `:database-local`. See [[metabase.settings.models.setting]] docstring for description of what these\n190:   options mean.\"\n191:   [:enum :only :allowed :never])\n192: \n193: (def ^:private SettingDefinition\n194:   [:map\n195:    [:name        :keyword]\n196:    [:munged-name :string]\n197:    [:namespace   :symbol]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E3",
+          "file_path": "src/metabase/settings/models/setting.clj",
+          "start_line": 232,
+          "end_line": 248,
+          "retrieval_score": 47.292,
+          "matched_cues": [
+            "admin settings",
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "232:    [:export? :boolean]\n233: \n234:    ;; should the getter always fetch this value \"fresh\" from the DB? (default: false)\n235:    [:cache? :boolean]\n236: \n237:    ;; if non-nil, contains the Metabase version in which this setting was deprecated\n238:    [:deprecated [:maybe :string]]\n239: \n240:    ;; whether this Setting can be Database-local or User-local. See [[metabase.settings.models.setting]] docstring for more info.\n241:    [:database-local LocalOption]\n242:    [:user-local     LocalOption]\n243: \n244:    ;; should this setting be read from env vars?\n245:    [:can-read-from-env? :boolean]\n246: \n247:    ;; called whenever setting value changes, whether from update-setting! or a cache refresh. used to handle cases\n248:    ;; where a change to the cache necessitates a change to some value outside the cache, like when a change the",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E4",
+          "file_path": "src/metabase/system/settings.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 42.566,
+          "matched_cues": [
+            "defsetting",
+            "metabase.system.settings",
+            "settings"
+          ],
+          "content": "1: (ns metabase.system.settings\n2:   (:require\n3:    [clojure.string :as str]\n4:    [java-time.api :as t]\n5:    [metabase.appearance.core :as appearance]\n6:    [metabase.settings.core :as setting :refer [defsetting]]\n7:    [metabase.util :as u]\n8:    [metabase.util.encryption :as encryption]\n9:    [metabase.util.fonts :as u.fonts]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E5",
+          "file_path": "src/metabase/system/settings.clj",
+          "start_line": 14,
+          "end_line": 30,
+          "retrieval_score": 42.566,
+          "matched_cues": [
+            "defsetting",
+            "metabase.system.settings",
+            "settings"
+          ],
+          "content": "14:   ;; Don't i18n this docstring because it's not user-facing! :)\n15:   \"Unique identifier used for this instance of {0}. This is set once and only once the first time it is fetched via\n16:   its magic getter. Nice!\"\n17:   :encryption :no\n18:   :visibility :authenticated\n19:   :base       setting/uuid-nonce-base\n20:   :doc        false)\n21: \n22: (defsetting startup-time-millis\n23:   (deferred-tru \"The startup time in milliseconds\")\n24:   :visibility :public\n25:   :type       :double\n26:   :audit      :never\n27:   :default    0.0\n28:   :doc        false)\n29: \n30: (defn- normalize-site-url [^String s]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E6",
+          "file_path": "src/metabase/system/settings.clj",
+          "start_line": 39,
+          "end_line": 55,
+          "retrieval_score": 42.566,
+          "matched_cues": [
+            "defsetting",
+            "metabase.system.settings",
+            "settings"
+          ],
+          "content": "39:       (throw (ex-info (tru \"Invalid site URL: {0}\" (pr-str s)) {:url (pr-str s)})))\n40:     s))\n41: \n42: ;;; This value is *guaranteed* to never have a trailing slash :D\n43: ;;;\n44: ;;; It will also prepend `http://` to the URL if there's no protocol when it comes in\n45: ;;;\n46: ;;; TODO -- consider whether this belongs here or in `server`\n47: (defsetting site-url\n48:   (deferred-tru\n49:    (str \"This URL is used for things like creating links in emails, auth redirects, and in some embedding scenarios, \"\n50:         \"so changing it could break functionality or get you locked out of this instance.\"))\n51:   :encryption :when-encryption-key-set\n52:   :visibility :public\n53:   :audit      :getter\n54:   :getter     (fn []\n55:                 (try",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E7",
+          "file_path": ".clj-kondo/src/hooks/metabase/settings/models/setting.clj",
+          "start_line": 208,
+          "end_line": 224,
+          "retrieval_score": 21.244,
+          "matched_cues": [
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "208:          (list\n209:           (hooks/token-node 'let)\n210:           ;; include description and the options map so they can get validated as well.\n211:           (hooks/vector-node\n212:            [anon-binding docstring\n213:             anon-binding (hooks/map-node options-list)])\n214:           (hooks/reg-keyword! (-> (hooks/keyword-node (keyword (hooks/sexpr setting-name)))\n215:                                   (with-meta (meta setting-name)))\n216:                               'metabase.settings.models.setting/defsetting)\n217:           getter-node\n218:           setter-node))\n219:         (with-meta (meta node)))))\n220: \n221: (defn defsetting\n222:   \"Rewrite a [[metabase.models.defsetting]] form like\n223: \n224:     (defsetting my-setting \\\"Description\\\" :type :boolean)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E8",
+          "file_path": ".clj-kondo/src/hooks/metabase/settings/models/setting.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 21.244,
+          "matched_cues": [
+            "defsetting",
+            "metabase.settings.models.setting",
+            "settings"
+          ],
+          "content": "1: (ns hooks.metabase.settings.models.setting\n2:   (:require\n3:    [clj-kondo.hooks-api :as hooks]\n4:    [hooks.common :as common]))\n5: \n6: (defn lint-defsetting-namespace [node context]\n7:   (when-not (re-matches #\"^metabase(?:-enterprise)?\\.[^\\.]+\\.settings$\" (name (:ns context)))\n8:     (hooks/reg-finding! (assoc (meta node)\n9:                                :message \"All defsettings should live in metabase[-enterprise].<module>.settings namespaces\"",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

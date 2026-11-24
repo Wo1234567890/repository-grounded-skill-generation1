@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "When constructing the input map for `notification.api/create-notification!`, which keys are expected in the `::models.notification/FullyHydratedNotification` shaped map?",
+    "options": {
+      "A": "`:notification_type`, `:user_id`, `:card`, `:condition`, and `:first_only` — camel-cased versions of the alert API fields mapped to their notification equivalents.",
+      "B": "`:type`, `:owner_id`, `:data`, `:recipients`, and `:channels` — these correspond to the internal channel model fields used by the notification system.",
+      "C": "`:card_id`, `:channels`, `:alert_condition`, and `:alert_first_only` — the raw alert API request fields can be passed directly without transformation.",
+      "D": "`:payload_type` (keyword), `:creator_id`, `:payload` (map with at minimum `:card_id`), `:subscriptions` (seq), and `:handlers` (seq) — the alert API request fields must be transformed into this notification shape."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "D",
+  "answer": "D",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.7149788750102744,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 294,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

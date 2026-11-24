@@ -1,0 +1,37 @@
+{
+  "residual_units": [
+    {
+      "type": "validated_knowledge",
+      "content": "In Bazel BUILD files using `rules_python`, each rule symbol must be explicitly imported via a `load()` statement before use. The mappings are:\n- `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")`\n- `load(\"@rules_python//python:py_library.bzl\", \"py_library\")`\n- `load(\"@rules_python//python:py_test.bzl\", \"py_test\")`\n\nOmitting these causes a `name 'py_binary' is not defined` (or similar) error at analysis time. All three paths are confirmed by `examples/py/BUILD` and `src/test/py/bazel/bazel_external_repository_test.py`.",
+      "source_ids": [
+        "G2_KT1_C2"
+      ],
+      "residual_id": "R1"
+    },
+    {
+      "type": "execution_guidance",
+      "content": "For `examples/python-bazel`, apply the `py_library` + `py_binary` pattern from `examples/py/BUILD`:\n1. Extract shared logic (e.g., `greet` function) from `src/main.py` into a new `src/lib.py`.\n2. In `src/BUILD.bazel`, add a `py_library` target: `name='lib'`, `srcs=['lib.py']`, `visibility=['//visibility:public']`.\n3. Have `//src:main` (`py_binary`) depend on `deps=[':lib']`.\n4. In `tests/BUILD.bazel`, have the `py_test` depend on `deps=['//src:lib']`. Do not point `py_test` deps at a `py_binary`.\n5. Update `test_main.py` to import from the library rather than duplicating functions.",
+      "source_ids": [
+        "G1_KT1_EG1",
+        "G1_KT2_EG1"
+      ],
+      "residual_id": "R2"
+    },
+    {
+      "type": "execution_guidance",
+      "content": "The standalone workspace in `examples/python-bazel` uses `WORKSPACE` (not `MODULE.bazel`). Declare `rules_python` as a dependency by adding an `http_archive` block in `WORKSPACE` to fetch it, then call its setup functions. Also add explicit `load()` statements in `src/BUILD.bazel` and `tests/BUILD.bazel`, mirroring the pattern in `examples/py/BUILD`.",
+      "source_ids": [
+        "G2_KT2_EG1"
+      ],
+      "residual_id": "R3"
+    },
+    {
+      "type": "execution_guidance",
+      "content": "After adding the `rules_python` `http_archive` to `WORKSPACE`, register a hermetic Python toolchain by appending:\n```\nload(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\")\npython_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")\n```",
+      "source_ids": [
+        "G3_KT1_EG1"
+      ],
+      "residual_id": "R4"
+    }
+  ]
+}

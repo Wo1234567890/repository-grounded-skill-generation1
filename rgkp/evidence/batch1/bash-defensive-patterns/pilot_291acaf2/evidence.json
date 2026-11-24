@@ -1,0 +1,244 @@
+{
+  "instance_id": "batch1/bash-defensive-patterns",
+  "repository_url": "https://github.com/koalaman/shellcheck",
+  "repository_commit": "cd41f794383b6159757575c9debbf198426b21aa",
+  "gap_evidence": [
+    {
+      "gap_id": "G1",
+      "evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "src/ShellCheck/Analytics.hs",
+          "start_line": 1980,
+          "end_line": 1996,
+          "retrieval_score": 19.958,
+          "matched_cues": [
+            "arithmetic",
+            "cleanup",
+            "export -f",
+            "readonly",
+            "shellcheck",
+            "trap"
+          ],
+          "content": "1980:     doLists (T_UntilExpression _ _ cmds) = doList cmds True\n1981:     doLists (T_ForIn _ _ _ cmds) = doList cmds True\n1982:     doLists (T_ForArithmetic _ _ _ _ cmds) = doList cmds True\n1983:     doLists (T_IfExpression _ thens elses) = do\n1984:         mapM_ (\\(_, l) -> doList l False) thens\n1985:         doList elses False\n1986:     doLists _ = return ()\n1987: \n1988:     stripCleanup = reverse . dropWhile cleanup . reverse\n1989:     cleanup (T_Pipeline _ _ [cmd]) =\n1990:         isCommandMatch cmd (`elem` [\":\", \"echo\", \"exit\", \"printf\", \"return\"])\n1991:         || isAssignment cmd\n1992:     cleanup _ = False\n1993: \n1994:     doList = doList' . stripCleanup\n1995:     -- The second parameter is True if we are in a loop\n1996:     -- In that case we should emit the warning also if `exec' is the last statement",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E2",
+          "file_path": "src/ShellCheck/Analytics.hs",
+          "start_line": 2488,
+          "end_line": 2504,
+          "retrieval_score": 19.958,
+          "matched_cues": [
+            "arithmetic",
+            "cleanup",
+            "export -f",
+            "readonly",
+            "shellcheck",
+            "trap"
+          ],
+          "content": "2488: prop_checkUnassignedReferences7 = verifyNotTree checkUnassignedReferences \"getopts ':h' foo; echo $foo\"\n2489: prop_checkUnassignedReferences8 = verifyNotTree checkUnassignedReferences \"let 'foo = 1'; echo $foo\"\n2490: prop_checkUnassignedReferences9 = verifyNotTree checkUnassignedReferences \"echo ${foo-bar}\"\n2491: prop_checkUnassignedReferences10 = verifyNotTree checkUnassignedReferences \"echo ${foo:?}\"\n2492: prop_checkUnassignedReferences11 = verifyNotTree checkUnassignedReferences \"declare -A foo; echo \\\"${foo[@]}\\\"\"\n2493: prop_checkUnassignedReferences12 = verifyNotTree checkUnassignedReferences \"typeset -a foo; echo \\\"${foo[@]}\\\"\"\n2494: prop_checkUnassignedReferences13 = verifyNotTree checkUnassignedReferences \"f() { local foo; echo $foo; }\"\n2495: prop_checkUnassignedReferences14 = verifyNotTree checkUnassignedReferences \"foo=; echo $foo\"\n2496: prop_checkUnassignedReferences15 = verifyNotTree checkUnassignedReferences \"f() { true; }; export -f f\"\n2497: prop_checkUnassignedReferences16 = verifyNotTree checkUnassignedReferences \"declare -A foo=( [a b]=bar ); echo ${foo[a b]}\"\n2498: prop_checkUnassignedReferences17 = verifyNotTree checkUnassignedReferences \"USERS=foo; echo $USER\"\n2499: prop_checkUnassignedReferences18 = verifyNotTree checkUnassignedReferences \"FOOBAR=42; export FOOBAR=\"\n2500: prop_checkUnassignedReferences19 = verifyNotTree checkUnassignedReferences \"readonly foo=bar; echo $foo\"\n2501: prop_checkUnassignedReferences20 = verifyNotTree checkUnassignedReferences \"printf -v foo bar; echo $foo\"\n2502: prop_checkUnassignedReferences21 = verifyTree checkUnassignedReferences \"echo ${#foo}\"\n2503: prop_checkUnassignedReferences22 = verifyNotTree checkUnassignedReferences \"echo ${!os*}\"\n2504: prop_checkUnassignedReferences23 = verifyTree checkUnassignedReferences \"declare -a foo; foo[bar]=42;\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E3",
+          "file_path": "src/ShellCheck/Analytics.hs",
+          "start_line": 2449,
+          "end_line": 2465,
+          "retrieval_score": 19.958,
+          "matched_cues": [
+            "arithmetic",
+            "cleanup",
+            "export -f",
+            "readonly",
+            "shellcheck",
+            "trap"
+          ],
+          "content": "2449: prop_checkUnused37 = verifyNotTree checkUnusedAssignments \"fd=2; exec {fd}>&-\"\n2450: prop_checkUnused38 = verifyTree checkUnusedAssignments \"(( a=42 ))\"\n2451: prop_checkUnused39 = verifyNotTree checkUnusedAssignments \"declare -x -f foo\"\n2452: prop_checkUnused40 = verifyNotTree checkUnusedAssignments \"arr=(1 2); num=2; echo \\\"${arr[@]:num}\\\"\"\n2453: prop_checkUnused41 = verifyNotTree checkUnusedAssignments \"@test 'foo' {\\ntrue\\n}\\n\"\n2454: prop_checkUnused42 = verifyNotTree checkUnusedAssignments \"DEFINE_string foo '' ''; echo \\\"${FLAGS_foo}\\\"\"\n2455: prop_checkUnused43 = verifyTree checkUnusedAssignments \"DEFINE_string foo '' ''\"\n2456: prop_checkUnused44 = verifyNotTree checkUnusedAssignments \"DEFINE_string \\\"foo$ibar\\\" x y\"\n2457: prop_checkUnused45 = verifyTree checkUnusedAssignments \"readonly foo=bar\"\n2458: prop_checkUnused46 = verifyTree checkUnusedAssignments \"readonly foo=(bar)\"\n2459: prop_checkUnused47 = verifyNotTree checkUnusedAssignments \"a=1; alias hello='echo $a'\"\n2460: prop_checkUnused48 = verifyNotTree checkUnusedAssignments \"_a=1\"\n2461: prop_checkUnused49 = verifyNotTree checkUnusedAssignments \"declare -A array; key=a; [[ -v array[$key] ]]\"\n2462: prop_checkUnused50 = verifyNotTree checkUnusedAssignments \"foofunc() { :; }; typeset -fx foofunc\"\n2463: prop_checkUnused51 = verifyTree checkUnusedAssignments \"x[y[z=1]]=1; echo ${x[@]}\"\n2464: \n2465: checkUnusedAssignments params t = execWriter (mapM_ warnFor unused)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "src/ShellCheck/Checks/ShellSupport.hs",
+          "start_line": 148,
+          "end_line": 164,
+          "retrieval_score": 15.163,
+          "matched_cues": [
+            "arithmetic",
+            "export -f",
+            "readonly",
+            "shellcheck",
+            "trap"
+          ],
+          "content": "148: prop_checkBashisms54 = verify checkBashisms \"#!/bin/sh\\nfoo+=bar\"\n149: prop_checkBashisms55 = verify checkBashisms \"#!/bin/sh\\necho ${@%foo}\"\n150: prop_checkBashisms56 = verifyNot checkBashisms \"#!/bin/sh\\necho ${##}\"\n151: prop_checkBashisms57 = verifyNot checkBashisms \"#!/bin/dash\\nulimit -m unlimited\"\n152: prop_checkBashisms58 = verify checkBashisms \"#!/bin/sh\\nulimit -x unlimited\"\n153: prop_checkBashisms59 = verify checkBashisms \"#!/bin/sh\\njobs -s\"\n154: prop_checkBashisms60 = verifyNot checkBashisms \"#!/bin/sh\\njobs -p\"\n155: prop_checkBashisms61 = verifyNot checkBashisms \"#!/bin/sh\\njobs -lp\"\n156: prop_checkBashisms62 = verify checkBashisms \"#!/bin/sh\\nexport -f foo\"\n157: prop_checkBashisms63 = verifyNot checkBashisms \"#!/bin/sh\\nexport -p\"\n158: prop_checkBashisms64 = verify checkBashisms \"#!/bin/sh\\nreadonly -a\"\n159: prop_checkBashisms65 = verifyNot checkBashisms \"#!/bin/sh\\nreadonly -p\"\n160: prop_checkBashisms66 = verifyNot checkBashisms \"#!/bin/sh\\ncd -P .\"\n161: prop_checkBashisms67 = verify checkBashisms \"#!/bin/sh\\ncd -P -e .\"\n162: prop_checkBashisms68 = verify checkBashisms \"#!/bin/sh\\numask -p\"\n163: prop_checkBashisms69 = verifyNot checkBashisms \"#!/bin/sh\\numask -S\"\n164: prop_checkBashisms70 = verify checkBashisms \"#!/bin/sh\\ntrap -l\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "src/ShellCheck/Checks/ShellSupport.hs",
+          "start_line": 436,
+          "end_line": 452,
+          "retrieval_score": 15.163,
+          "matched_cues": [
+            "arithmetic",
+            "export -f",
+            "readonly",
+            "shellcheck",
+            "trap"
+          ],
+          "content": "436:         allowedFlags = Map.fromList [\n437:             (\"cd\", Just [\"L\", \"P\"]),\n438:             (\"exec\", Just []),\n439:             (\"export\", Just [\"p\"]),\n440:             (\"hash\", Just $ if isDash then [\"r\", \"v\"] else [\"r\"]),\n441:             (\"jobs\", Just [\"l\", \"p\"]),\n442:             (\"printf\", Just []),\n443:             (\"read\", Just $ if isDash || isBusyboxSh then [\"r\", \"p\"] else [\"r\"]),\n444:             (\"readonly\", Just [\"p\"]),\n445:             (\"trap\", Just []),\n446:             (\"type\", Just $ if isBusyboxSh then [\"p\"] else []),\n447:             (\"ulimit\",\n448:               Just $\n449:                 if isDash\n450:                   then [\"H\", \"S\", \"a\", \"c\", \"d\", \"f\", \"l\", \"m\", \"n\", \"p\", \"r\", \"s\", \"t\", \"v\", \"w\"]\n451:                   else [\"H\", \"S\", \"a\", \"c\", \"d\", \"f\", \"n\", \"s\", \"t\", \"v\"] -- POSIX.1-2024\n452:             ),",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E6",
+          "file_path": "src/ShellCheck/Checks/ShellSupport.hs",
+          "start_line": 107,
+          "end_line": 123,
+          "retrieval_score": 15.163,
+          "matched_cues": [
+            "arithmetic",
+            "export -f",
+            "readonly",
+            "shellcheck",
+            "trap"
+          ],
+          "content": "107: prop_checkBashisms16 = verify checkBashisms \"echo $RANDOM\"\n108: prop_checkBashisms17 = verify checkBashisms \"echo $((RANDOM%6+1))\"\n109: prop_checkBashisms18 = verify checkBashisms \"foo &> /dev/null\"\n110: prop_checkBashisms19 = verify checkBashisms \"foo > file*.txt\"\n111: prop_checkBashisms20 = verify checkBashisms \"read -ra foo\"\n112: prop_checkBashisms21 = verify checkBashisms \"[ -a foo ]\"\n113: prop_checkBashisms21b = verify checkBashisms \"test -a foo\"\n114: prop_checkBashisms22 = verifyNot checkBashisms \"[ foo -a bar ]\"\n115: prop_checkBashisms23 = verify checkBashisms \"trap mything ERR INT\"\n116: prop_checkBashisms24 = verifyNot checkBashisms \"trap mything INT TERM\"\n117: prop_checkBashisms25 = verify checkBashisms \"cat < /dev/tcp/host/123\"\n118: prop_checkBashisms26 = verify checkBashisms \"trap mything ERR SIGTERM\"\n119: prop_checkBashisms27 = verify checkBashisms \"echo *[^0-9]*\"\n120: prop_checkBashisms28 = verify checkBashisms \"exec {n}>&2\"\n121: prop_checkBashisms29 = verify checkBashisms \"echo ${!var}\"\n122: prop_checkBashisms30 = verify checkBashisms \"printf -v '%s' \\\"$1\\\"\"\n123: prop_checkBashisms31 = verify checkBashisms \"printf '%q' \\\"$1\\\"\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E7",
+          "file_path": "src/ShellCheck/Parser.hs",
+          "start_line": 987,
+          "end_line": 1003,
+          "retrieval_score": 14.652,
+          "matched_cues": [
+            "arithmetic",
+            "readonly",
+            "shellcheck",
+            "shellcheck source",
+            "trap"
+          ],
+          "content": "987: prop_readAnnotation1 = isOk readAnnotation \"# shellcheck disable=1234,5678\\n\"\n988: prop_readAnnotation2 = isOk readAnnotation \"# shellcheck disable=SC1234 disable=SC5678\\n\"\n989: prop_readAnnotation3 = isOk readAnnotation \"# shellcheck disable=SC1234 source=/dev/null disable=SC5678\\n\"\n990: prop_readAnnotation4 = isWarning readAnnotation \"# shellcheck cats=dogs disable=SC1234\\n\"\n991: prop_readAnnotation5 = isOk readAnnotation \"# shellcheck disable=SC2002 # All cats are precious\\n\"\n992: prop_readAnnotation6 = isOk readAnnotation \"# shellcheck disable=SC1234 # shellcheck foo=bar\\n\"\n993: prop_readAnnotation7 = isOk readAnnotation \"# shellcheck disable=SC1000,SC2000-SC3000,SC1001\\n\"\n994: prop_readAnnotation8 = isOk readAnnotation \"# shellcheck disable=all\\n\"\n995: prop_readAnnotation9 = isOk readAnnotation \"# shellcheck source='foo bar' source-path=\\\"baz etc\\\"\\n\"\n996: prop_readAnnotation10 = isOk readAnnotation \"# shellcheck disable='SC1234,SC2345' enable=\\\"foo\\\" shell='bash'\\n\"\n997: prop_readAnnotation11 = isOk (readAnnotationWithoutPrefix False) \"external-sources='true'\"\n998: \n999: readAnnotation = called \"shellcheck directive\" $ do\n1000:     try readAnnotationPrefix\n1001:     many1 linewhitespace\n1002:     readAnnotationWithoutPrefix True\n1003: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E8",
+          "file_path": "src/ShellCheck/Parser.hs",
+          "start_line": 2139,
+          "end_line": 2155,
+          "retrieval_score": 14.652,
+          "matched_cues": [
+            "arithmetic",
+            "readonly",
+            "shellcheck",
+            "shellcheck source",
+            "trap"
+          ],
+          "content": "2139: \n2140:       Just cmd -> do\n2141:             validateCommand cmd\n2142:             -- We have to ignore possible parsing problems from the lookAhead parser\n2143:             firstArgument <- ignoreProblemsOf . optionMaybe . try . lookAhead $ readCmdWord\n2144:             suffix <- option [] $ getParser readCmdSuffix\n2145:                     -- If `export` or other modifier commands are called with `builtin` we have to look at the first argument\n2146:                     (if isCommand [\"builtin\"] cmd then fromMaybe cmd firstArgument else cmd) [\n2147:                         ([\"declare\", \"export\", \"local\", \"readonly\", \"typeset\"], readModifierSuffix),\n2148:                         ([\"time\"], readTimeSuffix),\n2149:                         ([\"let\"], readLetSuffix),\n2150:                         ([\"eval\"], readEvalSuffix)\n2151:                     ]\n2152: \n2153:             id1 <- getNextIdSpanningTokenList (prefix ++ (cmd:suffix))\n2154:             id2 <- getNewIdFor id1\n2155: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "CHANGELOG.md",
+          "start_line": 171,
+          "end_line": 187,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "171: - SC1081: Keywords are now correctly parsed case sensitively, with a warning\n172: \n173: \n174: ## v0.7.0 - 2019-07-28\n175: ### Added\n176: - Precompiled binaries for macOS and Linux aarch64\n177: - Preliminary support for fix suggestions\n178: - New `-f diff` unified diff format for auto-fixes\n179: - Files containing Bats tests can now be checked\n180: - Directory wide directives can now be placed in a `.shellcheckrc`\n181: - Optional checks: Use `--list-optional` to show a list of tests,\n182:                    Enable with `-o` flags or `enable=name` directives\n183: - Source paths: Use `-P dir1:dir2` or a `source-path=dir1` directive\n184:                 to specify search paths for sourced files.\n185: - json1 format like --format=json but treats tabs as single characters\n186: - Recognize FLAGS variables created by the shflags library.\n187: - Site-specific changes can now be made in Custom.hs for ease of patching",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "CHANGELOG.md",
+          "start_line": 193,
+          "end_line": 209,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "193: - SC2248: Warn about unquoted variables without special chars (optional)\n194: - SC2247: Warn about $\"(cmd)\" and $\"{var}\"\n195: - SC2246: Warn if a shebang's interpreter ends with /\n196: - SC2245: Warn that Ksh ignores all but the first glob result in `[`\n197: - SC2243/SC2244: Suggest using explicit -n for `[ $foo ]` (optional)\n198: - SC1135: Suggest not ending double quotes just to make $ literal\n199: \n200: ### Changed\n201: - If a directive or shebang is not specified, a `.bash/.bats/.dash/.ksh`\n202:   extension will be used to infer the shell type when present.\n203: - Disabling SC2120 on a function now disables SC2119 on call sites\n204: \n205: ### Fixed\n206: - SC2183 no longer warns about missing printf args for `%()T`\n207: \n208: ## v0.6.0 - 2018-12-02\n209: ### Added",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "shellcheck.1.md",
+          "start_line": 95,
+          "end_line": 111,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "95:     `;` on Windows. This is equivalent to specifying `search-path`\n96:     directives.\n97: \n98: **-s**\\ *shell*,\\ **--shell=***shell*\n99: \n100: :   Specify Bourne shell dialect. Valid values are *sh*, *bash*, *dash*, *ksh*,\n101:     and *busybox*.\n102:     The default is to deduce the shell from the file's `shell` directive,\n103:     shebang, or `.bash/.bats/.dash/.ksh` extension, in that order. *sh* refers to\n104:     POSIX `sh` (not the system's), and will warn of portability issues.\n105: \n106: **-S**\\ *SEVERITY*,\\ **--severity=***severity*\n107: \n108: :   Specify minimum severity of errors to consider. Valid values in order of\n109:     severity are *error*, *warning*, *info* and *style*.\n110:     The default is *style*.\n111: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "src/ShellCheck/AST.hs",
+          "start_line": 138,
+          "end_line": 154,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "138:     | Inner_T_While\n139:     | Inner_T_WhileExpression [t] [t]\n140:     | Inner_T_Annotation [Annotation] t\n141:     | Inner_T_Pipe String\n142:     | Inner_T_CoProc (Maybe Token) t\n143:     | Inner_T_CoProcBody t\n144:     | Inner_T_Include t\n145:     | Inner_T_SourceCommand t t\n146:     | Inner_T_BatsTest String t\n147:     deriving (Show, Eq, Functor, Foldable, Traversable)\n148: \n149: data Annotation =\n150:     DisableComment Integer Integer -- [from, to)\n151:     | EnableComment String\n152:     | SourceOverride String\n153:     | ShellOverride String\n154:     | SourcePath String",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "src/ShellCheck/AST.hs",
+          "start_line": 210,
+          "end_line": 226,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "210: pattern TA_Parenthesis id t = OuterToken id (Inner_TA_Parenthesis t)\n211: pattern T_Assignment id mode var indices value = OuterToken id (Inner_T_Assignment mode var indices value)\n212: pattern TA_Trinary id t1 t2 t3 = OuterToken id (Inner_TA_Trinary t1 t2 t3)\n213: pattern TA_Unary id op t1 = OuterToken id (Inner_TA_Unary op t1)\n214: pattern TA_Variable id str t = OuterToken id (Inner_TA_Variable str t)\n215: pattern T_Backgrounded id l = OuterToken id (Inner_T_Backgrounded l)\n216: pattern T_Backticked id list = OuterToken id (Inner_T_Backticked list)\n217: pattern T_Banged id l = OuterToken id (Inner_T_Banged l)\n218: pattern T_BatsTest id name t = OuterToken id (Inner_T_BatsTest name t)\n219: pattern T_BraceExpansion id list = OuterToken id (Inner_T_BraceExpansion list)\n220: pattern T_BraceGroup id l = OuterToken id (Inner_T_BraceGroup l)\n221: pattern TC_And id typ str t1 t2 = OuterToken id (Inner_TC_And typ str t1 t2)\n222: pattern T_CaseExpression id word cases = OuterToken id (Inner_T_CaseExpression word cases)\n223: pattern TC_Binary id typ op lhs rhs = OuterToken id (Inner_TC_Binary typ op lhs rhs)\n224: pattern TC_Group id typ token = OuterToken id (Inner_TC_Group typ token)\n225: pattern TC_Nullary id typ token = OuterToken id (Inner_TC_Nullary typ token)\n226: pattern T_Condition id typ token = OuterToken id (Inner_T_Condition typ token)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "src/ShellCheck/AST.hs",
+          "start_line": 255,
+          "end_line": 271,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "255: pattern T_Script id shebang list = OuterToken id (Inner_T_Script shebang list)\n256: pattern T_SelectIn id v w l = OuterToken id (Inner_T_SelectIn v w l)\n257: pattern T_SimpleCommand id vars cmds = OuterToken id (Inner_T_SimpleCommand vars cmds)\n258: pattern T_SourceCommand id includer t_include = OuterToken id (Inner_T_SourceCommand includer t_include)\n259: pattern T_Subshell id l = OuterToken id (Inner_T_Subshell l)\n260: pattern T_UntilExpression id c l = OuterToken id (Inner_T_UntilExpression c l)\n261: pattern T_WhileExpression id c l = OuterToken id (Inner_T_WhileExpression c l)\n262: \n263: {-# COMPLETE T_AND_IF, T_Bang, T_Case, TC_Empty, T_CLOBBER, T_DGREAT, T_DLESS, T_DLESSDASH, T_Do, T_DollarSingleQuoted, T_Done, T_DSEMI, T_Elif, T_Else, T_EOF, T_Esac, T_Fi, T_For, T_Glob, T_GREATAND, T_Greater, T_If, T_In, T_Lbrace, T_Less, T_LESSAND, T_LESSGREAT, T_Literal, T_Lparen, T_NEWLINE, T_OR_IF, T_ParamSubSpecialChar, T_Pipe, T_Rbrace, T_Rparen, T_Select, T_Semi, T_SingleQuoted, T_Then, T_UnparsedIndex, T_Until, T_While, TA_Assignment, TA_Binary, TA_Expansion, T_AndIf, T_Annotation, T_\n264: \n265: instance Eq Token where\n266:     OuterToken _ a == OuterToken _ b = a == b\n267: \n268: analyze :: Monad m => (Token -> m ()) -> (Token -> m ()) -> (Token -> m Token) -> Token -> m Token\n269: analyze f g i =\n270:     round\n271:   where",
+          "line_truncated": true
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "src/ShellCheck/ASTLib.hs",
+          "start_line": 542,
+          "end_line": 558,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "542:                 arg <- listToMaybe args\n543:                 guard . not $ isFlag arg\n544:                 return arg\n545:         in\n546:             case str of\n547:                 \"busybox\" -> firstArg\n548:                 \"builtin\" -> firstArg\n549:                 \"command\" -> firstArg\n550:                 \"run\" -> firstArg -- Used by bats\n551:                 \"exec\" -> do\n552:                     opts <- getBsdOpts \"cla:\" args\n553:                     (_, (t, _)) <- find (null . fst) opts\n554:                     return t\n555:                 _ -> fail \"\"\n556: \n557: -- If a command substitution is a single command, get its name.\n558: --  $(date +%s) = Just \"date\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "src/ShellCheck/ASTLib.hs",
+          "start_line": 585,
+          "end_line": 601,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "585:         T_Pipeline _ _ [x] -> isOnlyRedirection x\n586:         T_Annotation _ _ w -> isOnlyRedirection w\n587:         T_Redirecting _ (_:_) c -> isOnlyRedirection c\n588:         T_SimpleCommand _ [] [] -> True\n589:         _ -> False\n590: \n591: isFunction t = case t of T_Function {} -> True; _ -> False\n592: \n593: -- Bats tests are functions for the purpose of 'local' and such\n594: isFunctionLike t =\n595:     case t of\n596:         T_Function {} -> True\n597:         T_BatsTest {} -> True\n598:         _ -> False\n599: \n600: \n601: isBraceExpansion t = case t of T_BraceExpansion {} -> True; _ -> False",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

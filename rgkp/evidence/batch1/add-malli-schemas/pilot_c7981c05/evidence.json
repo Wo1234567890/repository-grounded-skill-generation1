@@ -1,0 +1,338 @@
+{
+  "instance_id": "batch1/add-malli-schemas",
+  "repository_url": "https://github.com/metabase/metabase",
+  "repository_commit": "d8bb291939a60c44d8ba6eb7bb132a5e0f271cf1",
+  "gap_evidence": [
+    {
+      "gap_id": "G1",
+      "evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "src/metabase/pulse/api/alert.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 34.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "1: (ns ^:deprecated metabase.pulse.api.alert\n2:   \"/api/alert endpoints.\n3: \n4:   Deprecated: will soon be migrated to notification APIs.\"\n5:   (:require\n6:    [clojure.set :as set]\n7:    [metabase.api.common :as api]\n8:    [metabase.api.macros :as api.macros]\n9:    [metabase.classloader.core :as classloader]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E2",
+          "file_path": ".clj-kondo/config.edn",
+          "start_line": 601,
+          "end_line": 617,
+          "retrieval_score": 9.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "601:    metabase.permissions.core/allow-changing-all-users-group-members                                                          hooks.common/do*\n602:    metabase.permissions.core/disable-perms-cache                                                                             hooks.common/do*\n603:    metabase.premium-features.core/defenterprise                                                                              hooks.metabase.premium-features.defenterprise/defenterprise\n604:    metabase.premium-features.defenterprise/defenterprise                                                                     hooks.metabase.premium-features.defenterprise/defenterprise\n605:    metabase.public-sharing-rest.api-test/with-required-param-card!                                                           hooks.common/with-one-binding\n606:    metabase.public-sharing-rest.api-test/with-temp-public-card                                                               hooks.common/let-one-with-optional-value\n607:    metabase.public-sharing-rest.api-test/with-temp-public-dashboard                                                          hooks.common/let-one-with-optional-value\n608:    metabase.public-sharing-rest.api-test/with-temp-public-dashboard-and-card                                                 hooks.common/with-three-bindings\n609:    metabase.pulse.api.alert-test/with-alert-in-collection!                                                                   hooks.common/with-four-bindings\n610:    metabase.pulse.dashboard-subscription-test/with-link-card-fixture-for-dashboard                                           hooks.common/let-second\n611:    metabase.pulse.models.pulse-test/with-dashboard-subscription-in-collection!                                               hooks.common/with-four-bindings\n612:    metabase.pulse.models.pulse-test/with-pulse-in-collection!                                                                hooks.common/with-four-bindings\n613:    metabase.pulse.test-util/checkins-query-card                                                                              hooks.metabase.test.data/$ids\n614:    metabase.queries-rest.api.card-test/with-card-param-values-fixtures                                                       hooks.common/let-one-with-optional-value\n615:    metabase.queries-rest.api.card-test/with-temp-native-card                                                                 hooks.common/with-two-bindings\n616:    metabase.queries-rest.api.card-test/with-temp-native-card-with-params                                                     hooks.common/with-two-bindings\n617:    metabase.query-processor.expressions-test/calculate-bird-scarcity                                                         hooks.metabase.query-processor.expressions-test/calculate-bird-scarcity",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E3",
+          "file_path": ".cljfmt.edn",
+          "start_line": 170,
+          "end_line": 186,
+          "retrieval_score": 9.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "170:   metabase.parameters.chain-filter-test/with-human-readable-values-remapping!                 [[:block 0]]\n171:   metabase.permissions.core/allow-changing-all-users-group-members                            [[:block 0]]\n172:   metabase.permissions.core/disable-perms-cache                                               [[:block 0]]\n173:   metabase.public-sharing-rest.api-test/with-sharing-enabled-and-temp-card-referencing        [[:block 3]]\n174:   metabase.public-sharing-rest.api-test/with-sharing-enabled-and-temp-dashcard-referencing    [[:block 3]]\n175:   metabase.public-sharing-rest.api-test/with-temp-public-card                                 [[:block 1]]\n176:   metabase.public-sharing-rest.api-test/with-temp-public-dashboard                            [[:block 1]]\n177:   metabase.public-sharing-rest.api-test/with-temp-public-dashboard-and-card                   [[:block 1]]\n178:   metabase.pulse.api.alert-test/with-alert-in-collection                                      [[:block 1]]\n179:   metabase.pulse.dashboard-subscription-test/with-link-card-fixture-for-dashboard             [[:block 2]]\n180:   metabase.pulse.models.pulse-test/with-dashboard-subscription-in-collection                  [[:block 1]]\n181:   metabase.pulse.models.pulse-test/with-pulse-in-collection                                   [[:inner 0]]\n182:   metabase.queries-rest.api.card-test/with-cards-in-readable-collection                       [[:block 1]]\n183:   metabase.queries-rest.api.card-test/with-cards-in-writeable-collection                      [[:block 1]]\n184:   metabase.queries-rest.api.card-test/with-ordered-items                                      [[:inner 0]]\n185:   metabase.queries-rest.api.card-test/with-temp-native-card                                   [[:block 1]]\n186:   metabase.queries-rest.api.card-test/with-temp-native-card-with-params                       [[:block 1]]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "src/metabase/pulse/api.clj",
+          "start_line": 1,
+          "end_line": 17,
+          "retrieval_score": 9.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "1: (ns metabase.pulse.api\n2:   \"`/api/pulse` and `/api/alert` API routes. These routes are allegedly deprecated, but they're been deprecated for a\n3:   pretty long time now, so no telling how much longer they'll be around.\"\n4:   (:require\n5:    [metabase.api.macros :as api.macros]\n6:    [metabase.api.routes.common :as routes.common]\n7:    [metabase.api.util.handlers :as handlers]\n8:    ^{:clj-kondo/ignore [:deprecated-namespace]}\n9:    [metabase.pulse.api.alert]\n10:    ^{:clj-kondo/ignore [:deprecated-namespace]}\n11:    [metabase.pulse.api.pulse]\n12:    [metabase.pulse.api.unsubscribe]\n13:    [potemkin :as p]))\n14: \n15: (comment metabase.pulse.api.alert/keep-me\n16:          metabase.pulse.api.pulse/keep-me\n17:          metabase.pulse.api.unsubscribe/keep-me)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "src/metabase/pulse/api.clj",
+          "start_line": 25,
+          "end_line": 34,
+          "retrieval_score": 9.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "25:   logged in.\"\n26:   (handlers/routes\n27:    (handlers/route-map-handler\n28:     {\"/unsubscribe\" 'metabase.pulse.api.unsubscribe})\n29:    (routes.common/+auth metabase.pulse.api.pulse/routes)))\n30: \n31: (def ^{:arglists '([request respond raise])} alert-routes\n32:   \"`/api/alert` routes.\"\n33:   (api.macros/ns-handler 'metabase.pulse.api.alert))\n34: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E6",
+          "file_path": "test/metabase/pulse/api/alert_test.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 9.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "1: (ns metabase.pulse.api.alert-test\n2:   \"Tests for `/api/alert` endpoints.\"\n3:   (:require\n4:    [clojure.test :refer :all]\n5:    [clojure.walk :as walk]\n6:    [medley.core :as m]\n7:    [metabase.notification.models :as models.notification]\n8:    [metabase.notification.test-util :as notification.tu]\n9:    [metabase.pulse.models.pulse :as models.pulse]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E7",
+          "file_path": "bin/build/src/metabuild_common/files.clj",
+          "start_line": 45,
+          "end_line": 61,
+          "retrieval_score": 8.713,
+          "matched_cues": [
+            "file does not exist"
+          ],
+          "content": "45:   ([^String filename]\n46:    (steps/step (format \"Delete %s if exists\" filename)\n47:      (if (file-exists? filename)\n48:        (let [file (File. filename)]\n49:          (if (.isDirectory file)\n50:            (FileUtils/deleteDirectory file)\n51:            (.delete file))\n52:          (out/safe-println (format \"Deleted %s.\" filename)))\n53:        (out/safe-println (format \"Don't need to delete %s, file does not exist.\" filename)))\n54:      (assert (not (file-exists? filename)))))\n55: \n56:   ([file & more]\n57:    (dorun (map delete-file-if-exists! (cons file more)))))\n58: \n59: (defn copy-file!\n60:   \"Copy a `source` file (or directory, recursively) to `dest`.\"\n61:   [^String source ^String dest]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E8",
+          "file_path": "enterprise/backend/src/metabase_enterprise/gsheets/api.clj",
+          "start_line": 290,
+          "end_line": 306,
+          "retrieval_score": 8.713,
+          "matched_cues": [
+            "file does not exist"
+          ],
+          "content": "290:                  :last_sync_at (if last-sync-at (.getEpochSecond ^Instant (t/instant last-sync-at)) nil)\n291:                  :sync_started_at (.getEpochSecond ^Instant (t/instant (or last-sync-started-at (t/instant)))))\n292: \n293:           ;; other statuses are listed as \"errors\" to the frontend\n294:           :else\n295:           (u/prog1 (assoc (setting->response saved-setting)\n296:                           :status \"error\"\n297:                           :error_message (or status-reason\n298:                                              (when (= error \"not-found\") \"Unable to sync Google Drive: file does not exist or permissions are not set up correctly.\")\n299:                                              cannot-check-message)\n300:                           :last_sync_at (if last-sync-at (.getEpochSecond ^Instant (t/instant last-sync-at)) nil)\n301:                           :hm/response (loggable-response hm-response))\n302:             (analytics/inc! :metabase-gsheets/connection-creation-error {:reason \"status_error\"})\n303:             (log/errorf \"Error getting status of connection %s: status-reason=`%s` error-detail=`%s`\" conn-id (:status-reason hm-body) (:error-detail hm-body)))))\n304:       (cond\n305:         (empty? saved-setting)\n306:         {:status \"not-connected\"}",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "dev/test/dev/api/prototype_test.clj",
+          "start_line": 6,
+          "end_line": 22,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "6:    [toucan2.core :as t2]))\n7: \n8: (deftest create-table\n9:   (t2/query (#'proto/create-table-query)))\n10: \n11: (deftest e2e-test\n12:   (let [key (name (gensym \"prototype-e2e-test-\"))]\n13:     (testing \"when nothing is in a key, the API returns an empty list\"\n14:       (is (empty? (mt/user-http-request :crowberto :get 200\n15:                                         (format \"dev/prototype/%s/\" key)))))\n16:     (testing \"invalid ids return 404\"\n17:       (is (= \"Not found.\" (mt/user-http-request :crowberto :get 404\n18:                                                 (format \"dev/prototype/%s/9999\" key)))))\n19:     (testing \"can create records in the API\"\n20:       (let [response1 (mt/user-http-request :crowberto :post 200\n21:                                             (format \"dev/prototype/%s/\" key)\n22:                                             {:type    \"test1\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "dev/test/dev/api/prototype_test.clj",
+          "start_line": 35,
+          "end_line": 51,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "35:         (is (pos? (:id response2)))\n36:         (is (not= (:id response1) (:id response2)))\n37:         (testing \"can retrieve created records\"\n38:           (is (= {:id      (:id response1)\n39:                   :type    \"test1\"\n40:                   :age     1\n41:                   :num-val 4\n42:                   :str-val \"hi\"}\n43:                  (mt/user-http-request :crowberto :get 200\n44:                                        (format \"dev/prototype/%s/%s\" key (:id response1)))))\n45:           (is (= {:id      (:id response2)\n46:                   :type    \"test2\"\n47:                   :age     2\n48:                   :num-val 4\n49:                   :str-val \"hi\"}\n50:                  (mt/user-http-request :crowberto :get 200\n51:                                        (format \"dev/prototype/%s/%s\" key (:id response2))))))",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "dev/test/dev/api/prototype_test.clj",
+          "start_line": 62,
+          "end_line": 78,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "62:                     :num-val 4\n63:                     :str-val \"hi\"} updated-response1)))\n64:           (testing \"Updated version is saved\"\n65:             (is (= {:id      (:id response1)\n66:                     :type    \"test1-updated\"\n67:                     :count   5\n68:                     :num-val 4\n69:                     :str-val \"hi\"}\n70:                    (mt/user-http-request :crowberto :get 200\n71:                                          (format \"dev/prototype/%s/%s\" key (:id response1))))))\n72:           (testing \"Other record is unchanged\"\n73:             (is (= {:id      (:id response2)\n74:                     :type    \"test2\"\n75:                     :age     2\n76:                     :num-val 4\n77:                     :str-val \"hi\"}\n78:                    (mt/user-http-request :crowberto :get 200",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "enterprise/backend/test/metabase_enterprise/action_v2/api_test.clj",
+          "start_line": 34,
+          "end_line": 50,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "34:      :query    {:source-table table-id}})))\n35: \n36: (def ^:private execute-url \"/ee/action-v2/execute\")\n37: (def ^:private execute-bulk-url \"/ee/action-v2/execute-bulk\")\n38: (def ^:private execute-form-url \"/ee/action-v2/execute-form\")\n39: \n40: (deftest feature-flag-required-test\n41:   (mt/with-premium-features #{}\n42:     (mt/assert-has-premium-feature-error \"Table Data Editing\" (mt/user-http-request :crowberto :post 402 execute-url))\n43:     (mt/assert-has-premium-feature-error \"Table Data Editing\" (mt/user-http-request :crowberto :post 402 execute-bulk-url))\n44:     (mt/assert-has-premium-feature-error \"Table Data Editing\" (mt/user-http-request :crowberto :post 402 execute-form-url))))\n45: \n46: ;; TODO have a similar test to this next one, but for single execution (which data apps will use)\n47: \n48: (deftest table-operations-via-action-execute-test\n49:   (mt/with-premium-features #{actions-feature-flag}\n50:     (mt/test-drivers (mt/normal-drivers-with-feature :actions/data-editing)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "enterprise/backend/test/metabase_enterprise/action_v2/api_test.clj",
+          "start_line": 263,
+          "end_line": 279,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "263:                                :message     \"Other rows refer to this row so it cannot be deleted.\",\n264:                                :errors      {}\n265:                                :status-code 400}\n266:                               {:index       1,\n267:                                :type        \"metabase.actions.error/violate-foreign-key-constraint\",\n268:                                :message     \"Other rows refer to this row so it cannot be deleted.\",\n269:                                :errors      {},\n270:                                :status-code 400}]}\n271:                     (mt/user-http-request :crowberto :post 400 execute-bulk-url\n272:                                           body))))\n273: \n274:           ;; TODO: an edge case we could handle in the future\n275:           #_(testing \"success with delete-children options\"\n276:               (is (=? {:outputs [{:table-id (mt/id :products) :op \"deleted\" :row {(keyword (mt/format-name :id)) 1}}\n277:                                  {:table-id (mt/id :products) :op \"deleted\" :row {(keyword (mt/format-name :id)) 2}}]}\n278:                       (mt/user-http-request :crowberto :post 200 execute-bulk-url\n279:                                             (assoc body :params {:delete-children true}))))",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "enterprise/backend/test/metabase_enterprise/action_v2/api_test.clj",
+          "start_line": 318,
+          "end_line": 334,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "318:         (t2/update! :model/Table {:db_id (mt/id)} {:is_writable true})\n319: \n320:         (testing \"delete parent with self-referential children should return error without delete-children param\"\n321:           (is (=? {:errors [{:index       0\n322:                              :type        \"metabase.actions.error/violate-foreign-key-constraint\",\n323:                              :message     \"Other rows refer to this row so it cannot be deleted.\",\n324:                              :errors      {}\n325:                              :status-code 400}]}\n326:                   (mt/user-http-request :crowberto :post 400 execute-bulk-url body))))\n327: \n328:         ;; TODO: same with the test above, this is one of the case where we want to handle in the future\n329:         #_(testing \"success with delete-children option should cascade delete all descendants\"\n330:             (is (=? {:outputs [{:table-id (mt/id :category)\n331:                                 :op       \"deleted\"\n332:                                 :row      {(keyword (mt/format-name :id)) 1}}]}\n333:                     (mt/user-http-request :crowberto :post 200 execute-bulk-url\n334:                                           (assoc body :params {:delete-children true}))))",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "enterprise/backend/test/metabase_enterprise/action_v2/models/undo_test.clj",
+          "start_line": 31,
+          "end_line": 47,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "31: \n32: (defn next-batch-num\n33:   \"Return the batch number of the new change that we would (un-)revert.\n34:   NOTE: this does not check whether there is a conflict preventing us from actually performing it.\"\n35:   [undo-or-redo user-id scope]\n36:   (:batch_num (first (#'undo/next-batch (= :undo undo-or-redo) user-id scope))))\n37: \n38: (defn- undo-via-api! [user-id scope]\n39:   (mt/user-http-request user-id :post \"/ee/action-v2/execute-bulk\"\n40:                         {:action :data-editing/undo\n41:                          :scope  scope\n42:                          :inputs [{}]}))\n43: \n44: (defn- redo-via-api! [user-id scope]\n45:   (mt/user-http-request user-id :post \"/ee/action-v2/execute-bulk\"\n46:                         {:action :data-editing/redo\n47:                          :scope  scope",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "enterprise/backend/test/metabase_enterprise/action_v2/models/undo_test.clj",
+          "start_line": 5,
+          "end_line": 21,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "5:    [metabase-enterprise.action-v2.test-util :as action-v2.tu]\n6:    [metabase.query-processor.test :as qp]\n7:    [metabase.test :as mt]\n8:    [metabase.test.fixtures :as fixtures]\n9:    [toucan2.core :as t2]))\n10: \n11: (use-fixtures :once (fixtures/initialize :test-users-personal-collections))\n12: \n13: (deftest ^:parallel diff-keys-test\n14:   (testing \"Detect which keys have changes\"\n15:     (is (= [:a :b :c] (#'undo/diff-keys\n16:                        nil\n17:                        (zipmap [:a :b :c] (range)))))\n18:     (is (= [:a :b :c] (#'undo/diff-keys\n19:                        (zipmap [:a :b :c] (range))\n20:                        nil)))\n21:     (is (= [:b :c :d] (#'undo/diff-keys",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G3",
+      "evidence": [
+        {
+          "evidence_id": "G3_E1",
+          "file_path": "src/metabase/notification/api/notification.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 62.985,
+          "matched_cues": [
+            "create-notification!",
+            "defendpoint :post",
+            "defendpoint :put",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "1: (ns metabase.notification.api.notification\n2:   \"/api/notification endpoints\"\n3:   (:require\n4:    [clojure.data :refer [diff]]\n5:    [honey.sql.helpers :as sql.helpers]\n6:    [medley.core :as m]\n7:    [metabase.api.common :as api]\n8:    [metabase.api.macros :as api.macros]\n9:    [metabase.channel.email.messages :as messages]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "src/metabase/notification/api/notification.clj",
+          "start_line": 169,
+          "end_line": 185,
+          "retrieval_score": 62.985,
+          "matched_cues": [
+            "create-notification!",
+            "defendpoint :post",
+            "defendpoint :put",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "169:   (when (channel.settings/email-configured?)\n170:     (let [current-user? #{(:email @api/*current-user*)}]\n171:       (when-let [recipients-except-creator (->> (all-email-recipients notification)\n172:                                                 (remove current-user?)\n173:                                                 seq)]\n174:         (messages/send-you-were-added-card-notification-email!\n175:          (update notification :payload t2/hydrate :card) recipients-except-creator @api/*current-user*)))))\n176: \n177: (mu/defn create-notification! :- ::models.notification/FullyHydratedNotification\n178:   \"Create a notification with permission checks, hydration, email notifications, and event publishing.\"\n179:   [notification-info :- ::models.notification/FullyHydratedNotification]\n180:   (api/create-check :model/Notification notification-info)\n181:   (let [notification (models.notification/hydrate-notification\n182:                       (models.notification/create-notification!\n183:                        (dissoc notification-info :handlers :subscriptions)\n184:                        (:subscriptions notification-info)\n185:                        (:handlers notification-info)))]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "src/metabase/notification/api/notification.clj",
+          "start_line": 187,
+          "end_line": 203,
+          "retrieval_score": 62.985,
+          "matched_cues": [
+            "create-notification!",
+            "defendpoint :post",
+            "defendpoint :put",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "187:       (send-you-were-added-card-notification-email! notification))\n188:     (events/publish-event! :event/notification-create {:object notification :user-id api/*current-user-id*})\n189:     notification))\n190: \n191: (api.macros/defendpoint :post \"/\" :- ::models.notification/FullyHydratedNotification\n192:   \"Create a new notification, return the created notification.\"\n193:   [_route _query body :- ::NotificationApiInput request]\n194:   (check-no-resource-templates! (:handlers body))\n195:   (create-notification!\n196:    (-> body\n197:        (update :payload_type keyword)\n198:        (assoc :creator_id api/*current-user-id*)\n199:        (assoc-in [:payload :disable_links]\n200:                  (embed.util/is-modular-embedding-or-modular-embedding-sdk-request? request)))))\n201: \n202: (defn- notify-notification-updates!\n203:   \"Send notification emails based on changes between updated and existing notification\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E4",
+          "file_path": "src/metabase/pulse/api/alert.clj",
+          "start_line": 13,
+          "end_line": 29,
+          "retrieval_score": 42.847,
+          "matched_cues": [
+            "metabase.notification.api",
+            "notification->pulse"
+          ],
+          "content": "13:    [metabase.util.malli.schema :as ms]\n14:    [toucan2.core :as t2]))\n15: \n16: (set! *warn-on-reflection* true)\n17: \n18: (when config/ee-available?\n19:   (classloader/require 'metabase-enterprise.advanced-permissions.common))\n20: \n21: (defn- notification->pulse\n22:   \"Convert a notification to the legacy pulse structure for backward compatibility.\"\n23:   [notification]\n24:   (let [subscription      (-> notification :subscriptions first)\n25:         notification-card (-> notification :payload)\n26:         card              (->> notification :payload :card_id (t2/select-one :model/Card))]\n27:     (merge\n28:      (select-keys notification [:id :creator_id :creator :created_at :updated_at])\n29:      {:name                nil",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E5",
+          "file_path": "src/metabase/pulse/api/alert.clj",
+          "start_line": 92,
+          "end_line": 108,
+          "retrieval_score": 42.847,
+          "matched_cues": [
+            "metabase.notification.api",
+            "notification->pulse"
+          ],
+          "content": "92:                                   [:user_id  {:optional true} [:maybe ms/PositiveInt]]]]\n93:   (let [user-id (if api/*is-superuser?*\n94:                   user_id\n95:                   api/*current-user-id*)]\n96:     (->> (notification.api/list-notifications\n97:           {:payload_type   :notification/card\n98:            :legacy-user-id user-id\n99:            :legacy-active  (not archived)})\n100:          (map notification->pulse)\n101:          (remove nil?))))\n102: \n103: ;; TODO (Cam 2025-11-25) please add a response schema to this API endpoint, it makes it easier for our customers to\n104: ;; use our API + we will need it when we make auto-TypeScript-signature generation happen\n105: ;;\n106: #_{:clj-kondo/ignore [:metabase/validate-defendpoint-has-response-schema]}\n107: (api.macros/defendpoint :get \"/:id\"\n108:   \"Fetch an alert by ID\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "src/metabase/notification/api.clj",
+          "start_line": 1,
+          "end_line": 14,
+          "retrieval_score": 24.951,
+          "matched_cues": [
+            "create-notification!",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "1: (ns metabase.notification.api\n2:   (:require\n3:    [metabase.api.macros :as api.macros]\n4:    [metabase.api.routes.common :as routes.common]\n5:    [metabase.api.util.handlers :as handlers]\n6:    [metabase.notification.api.notification]\n7:    [metabase.notification.api.unsubscribe]\n8:    [potemkin :as p]))\n9: \n10: (p/import-vars\n11:  [metabase.notification.api.notification\n12:   create-notification!\n13:   list-notifications\n14:   get-notification",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E7",
+          "file_path": "test/metabase/notification/api/notification_test.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 24.951,
+          "matched_cues": [
+            "create-notification!",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "1: (ns metabase.notification.api.notification-test\n2:   (:require\n3:    [clojure.test :refer :all]\n4:    [java-time.api :as t]\n5:    [medley.core :as m]\n6:    [metabase.channel.email.messages :as messages]\n7:    [metabase.collections.models.collection :as collection]\n8:    [metabase.notification.core :as notification]\n9:    [metabase.notification.models :as models.notification]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E8",
+          "file_path": "test/metabase/notification/api/notification_test.clj",
+          "start_line": 556,
+          "end_line": 572,
+          "retrieval_score": 24.951,
+          "matched_cues": [
+            "create-notification!",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "556:   (mt/with-model-cleanup [:model/Notification]\n557:     (binding [collection/*allow-deleting-personal-collections* true]\n558:       (with-disabled-subscriptions-permissions!\n559:         (mt/with-user-in-groups [group {:name \"test notification perm\"}\n560:                                  user  [group]]\n561:           (mt/with-temp\n562:             [:model/Collection {collection-id :id} {:personal_owner_id (:id user)}\n563:              :model/Card       {card-id :id}       {:collection_id collection-id}]\n564:             (let [create-notification! (fn [user-or-id expected-status]\n565:                                          (mt/user-http-request user-or-id :post expected-status \"notification\"\n566:                                                                {:payload_type \"notification/card\"\n567:                                                                 :creator_id   (mt/user->id :rasta)\n568:                                                                 :payload      {:card_id card-id}}))]\n569:               (mt/with-premium-features #{}\n570:                 (testing \"admin can create\"\n571:                   (create-notification! :crowberto 200))\n572: ",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

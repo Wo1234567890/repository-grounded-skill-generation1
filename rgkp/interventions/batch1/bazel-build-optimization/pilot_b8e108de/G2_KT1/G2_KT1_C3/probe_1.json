@@ -1,0 +1,33 @@
+{
+  "input": {
+    "question": "When writing a BUILD file that uses the `py_binary` rule from `rules_python`, which `load()` statement is correct?",
+    "options": {
+      "A": "load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")",
+      "B": "load(\"//python:py_binary.bzl\", \"py_binary\")",
+      "C": "load(\"@rules_python//python:defs.bzl\", \"py_binary\")",
+      "D": "load(\"@bazel_tools//tools/python:py_binary.bzl\", \"py_binary\")"
+    },
+    "candidate_knowledge": "The `rules_python` Bazel ruleset exposes `py_binary`, `py_library`, and `py_test` as individual Starlark files, each requiring its own `load()` call. These are not built-in Bazel globals when using `rules_python` — they must be loaded explicitly.\n\nFor a `src/BUILD.bazel` containing a Python binary:\n```python\nload(\"@rules_python//python:py_binary.bzl\", \"py_binary\")\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_binary(\n    name = \"main\",\n    srcs = [\"main.py\"],\n)\n```\n\nFor a `tests/BUILD.bazel` containing Python tests:\n```python\nload(\"@rules_python//python:py_test.bzl\", \"py_test\")\n\npy_test(\n    name = \"main_test\",\n    srcs = [\"main_test.py\"],\n    deps = [\"//src:lib\"],\n)\n```\n\nThe label pattern for all three rules follows `@rules_python//python:<rule_name>.bzl`. This is distinct from the deprecated approach of using native Python rules without load statements. The `examples/py/BUILD` file in the repository demonstrates this pattern for `py_binary` and `py_library`, and `bazel_external_repository_test.py` confirms the same pattern for `py_test`."
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6626299999770708,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 568,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

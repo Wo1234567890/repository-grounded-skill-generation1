@@ -1,0 +1,320 @@
+{
+  "task_description": "# Task: Create Bazel Remote Execution Example Project\n\n## Background\n   Add a minimal but complete Bazel\n   project example demonstrating remote execution configuration and\n   build caching patterns to the Bazel repository.\n\n## Files to Create/Modify\n   - examples/python-bazel/WORKSPACE (workspace configuration)\n   - examples/python-bazel/BUILD.bazel (root build file)\n   - examples/python-bazel/.bazelrc (build configuration)\n   - examples/python-bazel/src/BUILD.bazel (source build)\n   - examples/python-bazel/src/main.py (sample Python code)\n   - examples/python-bazel/tests/BUILD.bazel (test build)\n\n## Requirements\n   \n   Project Structure:\n   - Simple py_binary target in src/\n   - py_test targets in tests/\n   - Hermetic Python toolchain configuration\n   \n   .bazelrc Configuration:\n   - Remote cache configuration (commented placeholder)\n   - Remote execution flags (commented placeholder)\n   - Local development settings\n   - CI-specific settings\n   \n   Build Targets:\n   - //src:main (Python binary)\n   - //tests:all (test suite)\n   - //:format (formatting target, optional)\n\n4. Configuration Flags to Include:\n   - --remote_cache placeholder\n   - --remote_executor placeholder\n   - --spawn_strategy options\n   - --disk_cache for local caching\n\n## Acceptance Criteria\n   - `cd examples/python-bazel && bazel build //...` exits with code 0\n   - `cd examples/python-bazel && bazel test //...` passes\n   - .bazelrc contains documented remote execution configuration\n",
+  "knowledge_targets": [
+    {
+      "target_id": "G1_KT1",
+      "knowledge_target": "In Bazel, the `deps` attribute of `py_test` (and `py_binary`) accepts `py_library` targets, not `py_binary` targets. To share Python code between a binary and a test, the shared logic must be placed in a `py_library` target. The `py_binary` can then depend on the `py_library`, and the `py_test` can independently depend on the same `py_library`.",
+      "evidence_ids": [
+        "G1_E1",
+        "G1_E3",
+        "G1_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "docs/versions/7.6.1/reference/be/python.mdx",
+          "start_line": 64,
+          "end_line": 80,
+          "retrieval_score": 25.112,
+          "matched_cues": [
+            "deps",
+            "py_binary",
+            "py_library",
+            "py_test",
+            "rules_python"
+          ],
+          "content": "64: | --- | --- |\n65: | `name` | [Name](/versions/7.6.1/concepts/labels#target-names); required  A unique name for this target.  If `main` is unspecified, this should be the same as the name of the source file that is the main entry point of the application, minus the extension. For example, if your entry point is called `main.py`, then your name should be `main`. |\n66: | `deps` | List of [labels](/versions/7.6.1/concepts/labels); default is `[]` The list of other libraries to be linked in to the binary target. See general comments about `deps` at [Typical attributes defined by most build rules](/versions/7.6.1/reference/be/common-definitions#typical-attributes). These are generally [`py_library`](/versions/7.6.1/reference/be/python#py_library) rules. |\n67: | `srcs` | List of [labels](/versions/7.6.1/concepts/labels); required The list of source (`.py`) files that are processed to create the target. This includes all your checked-in code and any generated source files. Library targets belong in `deps` instead, while other binary files needed at runtime belong in `data`. |\n68: | `imports` | List of strings; default is `[]` List of import directories to be added to the `PYTHONPATH`. Subject to [\"Make variable\"](/versions/7.6.1/reference/be/make-variables) substitution. These import directories will be added for this rule and all rules that depend on it (note: not the rules this rule depends on. Each directory will be added to `PYTHONPATH` by [`py_binary`](/versions/7.6.1/reference/be/python#py_binary) rules that depend on this rule.  Absolute paths (paths that start wi\n69: | `legacy_create_init` | Integer; default is `-1` Whether to implicitly create empty \\_\\_init\\_\\_.py files in the runfiles tree. These are created in every directory containing Python source code or shared libraries, and every parent directory of those directories, excluding the repo root directory. The default, auto, means true unless `--incompatible_default_to_explicit_init_py` is used. If false, the user is responsible for creating (possibly empty) \\_\\_init\\_\\_.py files and adding them to the\n70: | `main` | [Label](/versions/7.6.1/concepts/labels); default is `None` The name of the source file that is the main entry point of the application. This file must also be listed in `srcs`. If left unspecified, `name` is used instead (see above). If `name` does not match any filename in `srcs`, `main` must be specified. |\n71: | `python_version` | String; [nonconfigurable](common-definitions#configurable-attributes); default is `\"_INTERNAL_SENTINEL\"` Whether to build this target (and its transitive `deps`) for Python 2 or Python 3. Valid values are `\"PY2\"` and `\"PY3\"` (the default). The Python version is always reset (possibly by default) to whatever version is specified by this attribute, regardless of the version specified on the command line or by other higher targets that depend on this one. If you want to `select\n72: | `srcs_version` | String; default is `\"PY2AND3\"` This attribute declares the target's `srcs` to be compatible with either Python 2, Python 3, or both. To actually set the Python runtime version, use the [`python_version`](/versions/7.6.1/reference/be/python#py_binary.python_version) attribute of an executable Python rule (`py_binary` or `py_test`). Allowed values are: `\"PY2AND3\"`, `\"PY2\"`, and `\"PY3\"`. The values `\"PY2ONLY\"` and `\"PY3ONLY\"` are also allowed for historic reasons, but they are es\n73: | `stamp` | Integer; default is `-1` Whether to encode build information into the binary. Possible values:  * `stamp = 1`: Always stamp the build information into the binary, even in   [`--nostamp`](/versions/7.6.1/docs/user-manual#flag--stamp) builds. **This   setting should be avoided**, since it potentially kills remote caching for the   binary and any downstream actions that depend on it. * `stamp = 0`: Always replace build information by constant values. This   gives good build result cachi\n74: \n75: ## py\\_library\n76: \n77: [View rule sourceopen\\_in\\_new](https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/bazel/rules/python/BazelPyLibraryRule.java)\n78: \n79: ```\n80: py_library(name, deps, srcs, data, compatible_with, deprecation, distribs, exec_compatible_with, exec_properties, features, imports, licenses, restricted_to, srcs_version, tags, target_compatible_with, testonly, visibility)",
+          "line_truncated": true
+        },
+        {
+          "evidence_id": "G1_E3",
+          "file_path": "docs/versions/7.6.1/reference/be/python.mdx",
+          "start_line": 132,
+          "end_line": 148,
+          "retrieval_score": 25.112,
+          "matched_cues": [
+            "deps",
+            "py_binary",
+            "py_library",
+            "py_test",
+            "rules_python"
+          ],
+          "content": "132: | --- | --- |\n133: | `name` | [Name](/versions/7.6.1/concepts/labels#target-names); required  A unique name for this target. |\n134: | `deps` | List of [labels](/versions/7.6.1/concepts/labels); default is `[]` The list of other libraries to be linked in to the binary target. See general comments about `deps` at [Typical attributes defined by most build rules](/versions/7.6.1/reference/be/common-definitions#typical-attributes). These are generally [`py_library`](/versions/7.6.1/reference/be/python#py_library) rules. |\n135: | `srcs` | List of [labels](/versions/7.6.1/concepts/labels); required The list of source (`.py`) files that are processed to create the target. This includes all your checked-in code and any generated source files. Library targets belong in `deps` instead, while other binary files needed at runtime belong in `data`. |\n136: | `imports` | List of strings; default is `[]` List of import directories to be added to the `PYTHONPATH`. Subject to [\"Make variable\"](/versions/7.6.1/reference/be/make-variables) substitution. These import directories will be added for this rule and all rules that depend on it (note: not the rules this rule depends on. Each directory will be added to `PYTHONPATH` by [`py_binary`](/versions/7.6.1/reference/be/python#py_binary) rules that depend on this rule.  Absolute paths (paths that start wi\n137: | `legacy_create_init` | Integer; default is `-1` Whether to implicitly create empty \\_\\_init\\_\\_.py files in the runfiles tree. These are created in every directory containing Python source code or shared libraries, and every parent directory of those directories, excluding the repo root directory. The default, auto, means true unless `--incompatible_default_to_explicit_init_py` is used. If false, the user is responsible for creating (possibly empty) \\_\\_init\\_\\_.py files and adding them to the\n138: | `main` | [Label](/versions/7.6.1/concepts/labels); default is `None` The name of the source file that is the main entry point of the application. This file must also be listed in `srcs`. If left unspecified, `name` is used instead (see above). If `name` does not match any filename in `srcs`, `main` must be specified. |\n139: | `python_version` | String; [nonconfigurable](common-definitions#configurable-attributes); default is `\"_INTERNAL_SENTINEL\"` Whether to build this target (and its transitive `deps`) for Python 2 or Python 3. Valid values are `\"PY2\"` and `\"PY3\"` (the default). The Python version is always reset (possibly by default) to whatever version is specified by this attribute, regardless of the version specified on the command line or by other higher targets that depend on this one. If you want to `select\n140: | `srcs_version` | String; default is `\"PY2AND3\"` This attribute declares the target's `srcs` to be compatible with either Python 2, Python 3, or both. To actually set the Python runtime version, use the [`python_version`](/versions/7.6.1/reference/be/python#py_binary.python_version) attribute of an executable Python rule (`py_binary` or `py_test`). Allowed values are: `\"PY2AND3\"`, `\"PY2\"`, and `\"PY3\"`. The values `\"PY2ONLY\"` and `\"PY3ONLY\"` are also allowed for historic reasons, but they are es\n141: | `stamp` | Integer; default is `0` See the section on [py\\_binary()](/versions/7.6.1/reference/be/python#py_binary_args) arguments, except that the stamp argument is set to 0 by default for tests. |\n142: \n143: ## py\\_runtime\n144: \n145: [View rule sourceopen\\_in\\_new](https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/rules/python/PyRuntimeRule.java)\n146: \n147: ```\n148: py_runtime(name, bootstrap_template, compatible_with, coverage_tool, deprecation, distribs, features, files, interpreter, interpreter_path, licenses, python_version, restricted_to, stub_shebang, tags, target_compatible_with, testonly, visibility)",
+          "line_truncated": true
+        },
+        {
+          "evidence_id": "G1_E6",
+          "file_path": "docs/versions/7.7.1/reference/be/python.mdx",
+          "start_line": 132,
+          "end_line": 148,
+          "retrieval_score": 25.112,
+          "matched_cues": [
+            "deps",
+            "py_binary",
+            "py_library",
+            "py_test",
+            "rules_python"
+          ],
+          "content": "132: | --- | --- |\n133: | `name` | [Name](/versions/7.7.1/concepts/labels#target-names); required  A unique name for this target. |\n134: | `deps` | List of [labels](/versions/7.7.1/concepts/labels); default is `[]` The list of other libraries to be linked in to the binary target. See general comments about `deps` at [Typical attributes defined by most build rules](/versions/7.7.1/reference/be/common-definitions#typical-attributes). These are generally [`py_library`](/versions/7.7.1/reference/be/python#py_library) rules. |\n135: | `srcs` | List of [labels](/versions/7.7.1/concepts/labels); required The list of source (`.py`) files that are processed to create the target. This includes all your checked-in code and any generated source files. Library targets belong in `deps` instead, while other binary files needed at runtime belong in `data`. |\n136: | `imports` | List of strings; default is `[]` List of import directories to be added to the `PYTHONPATH`. Subject to [\"Make variable\"](/versions/7.7.1/reference/be/make-variables) substitution. These import directories will be added for this rule and all rules that depend on it (note: not the rules this rule depends on. Each directory will be added to `PYTHONPATH` by [`py_binary`](/versions/7.7.1/reference/be/python#py_binary) rules that depend on this rule.  Absolute paths (paths that start wi\n137: | `legacy_create_init` | Integer; default is `-1` Whether to implicitly create empty \\_\\_init\\_\\_.py files in the runfiles tree. These are created in every directory containing Python source code or shared libraries, and every parent directory of those directories, excluding the repo root directory. The default, auto, means true unless `--incompatible_default_to_explicit_init_py` is used. If false, the user is responsible for creating (possibly empty) \\_\\_init\\_\\_.py files and adding them to the\n138: | `main` | [Label](/versions/7.7.1/concepts/labels); default is `None` The name of the source file that is the main entry point of the application. This file must also be listed in `srcs`. If left unspecified, `name` is used instead (see above). If `name` does not match any filename in `srcs`, `main` must be specified. |\n139: | `python_version` | String; [nonconfigurable](common-definitions#configurable-attributes); default is `\"_INTERNAL_SENTINEL\"` Whether to build this target (and its transitive `deps`) for Python 2 or Python 3. Valid values are `\"PY2\"` and `\"PY3\"` (the default). The Python version is always reset (possibly by default) to whatever version is specified by this attribute, regardless of the version specified on the command line or by other higher targets that depend on this one. If you want to `select\n140: | `srcs_version` | String; default is `\"PY2AND3\"` This attribute declares the target's `srcs` to be compatible with either Python 2, Python 3, or both. To actually set the Python runtime version, use the [`python_version`](/versions/7.7.1/reference/be/python#py_binary.python_version) attribute of an executable Python rule (`py_binary` or `py_test`). Allowed values are: `\"PY2AND3\"`, `\"PY2\"`, and `\"PY3\"`. The values `\"PY2ONLY\"` and `\"PY3ONLY\"` are also allowed for historic reasons, but they are es\n141: | `stamp` | Integer; default is `0` See the section on [py\\_binary()](/versions/7.7.1/reference/be/python#py_binary_args) arguments, except that the stamp argument is set to 0 by default for tests. |\n142: \n143: ## py\\_runtime\n144: \n145: [View rule sourceopen\\_in\\_new](https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/rules/python/PyRuntimeRule.java)\n146: \n147: ```\n148: py_runtime(name, bootstrap_template, compatible_with, coverage_tool, deprecation, distribs, features, files, interpreter, interpreter_path, licenses, python_version, restricted_to, stub_shebang, tags, target_compatible_with, testonly, visibility)",
+          "line_truncated": true
+        }
+      ]
+    },
+    {
+      "target_id": "G1_KT2",
+      "knowledge_target": "The existing repository example at `examples/py/BUILD` demonstrates the correct Bazel Python project structure: a `py_library` target holds the shared source (e.g., `lib.py`), and a `py_binary` depends on that library via `deps = [\":lib\"]`. A `py_test` would similarly reference the `py_library`, not the `py_binary`.",
+      "evidence_ids": [
+        "G1_E2",
+        "G1_E5"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E2",
+          "file_path": "docs/versions/7.6.1/reference/be/python.mdx",
+          "start_line": 83,
+          "end_line": 99,
+          "retrieval_score": 25.112,
+          "matched_cues": [
+            "deps",
+            "py_binary",
+            "py_library",
+            "py_test",
+            "rules_python"
+          ],
+          "content": "83: ### Arguments\n84: \n85: | Attributes | |\n86: | --- | --- |\n87: | `name` | [Name](/versions/7.6.1/concepts/labels#target-names); required  A unique name for this target. |\n88: | `deps` | List of [labels](/versions/7.6.1/concepts/labels); default is `[]` The list of other libraries to be linked in to the binary target. See general comments about `deps` at [Typical attributes defined by most build rules](/versions/7.6.1/reference/be/common-definitions#typical-attributes). These are generally [`py_library`](/versions/7.6.1/reference/be/python#py_library) rules. |\n89: | `srcs` | List of [labels](/versions/7.6.1/concepts/labels); default is `[]` The list of source (`.py`) files that are processed to create the target. This includes all your checked-in code and any generated source files. |\n90: | `imports` | List of strings; default is `[]` List of import directories to be added to the `PYTHONPATH`. Subject to [\"Make variable\"](/versions/7.6.1/reference/be/make-variables) substitution. These import directories will be added for this rule and all rules that depend on it (note: not the rules this rule depends on. Each directory will be added to `PYTHONPATH` by [`py_binary`](/versions/7.6.1/reference/be/python#py_binary) rules that depend on this rule.  Absolute paths (paths that start wi\n91: | `srcs_version` | String; default is `\"PY2AND3\"` This attribute declares the target's `srcs` to be compatible with either Python 2, Python 3, or both. To actually set the Python runtime version, use the [`python_version`](/versions/7.6.1/reference/be/python#py_binary.python_version) attribute of an executable Python rule (`py_binary` or `py_test`). Allowed values are: `\"PY2AND3\"`, `\"PY2\"`, and `\"PY3\"`. The values `\"PY2ONLY\"` and `\"PY3ONLY\"` are also allowed for historic reasons, but they are es\n92: \n93: ## py\\_test\n94: \n95: [View rule sourceopen\\_in\\_new](https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/bazel/rules/python/BazelPyTestRule.java)\n96: \n97: ```\n98: py_test(name, deps, srcs, data, args, compatible_with, deprecation, distribs, env, env_inherit, exec_compatible_with, exec_properties, features, flaky, imports, legacy_create_init, licenses, local, main, python_version, restricted_to, shard_count, size, srcs_version, stamp, tags, target_compatible_with, testonly, timeout, toolchains, visibility)\n99: ```",
+          "line_truncated": true
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "docs/versions/7.7.1/reference/be/python.mdx",
+          "start_line": 83,
+          "end_line": 99,
+          "retrieval_score": 25.112,
+          "matched_cues": [
+            "deps",
+            "py_binary",
+            "py_library",
+            "py_test",
+            "rules_python"
+          ],
+          "content": "83: ### Arguments\n84: \n85: | Attributes | |\n86: | --- | --- |\n87: | `name` | [Name](/versions/7.7.1/concepts/labels#target-names); required  A unique name for this target. |\n88: | `deps` | List of [labels](/versions/7.7.1/concepts/labels); default is `[]` The list of other libraries to be linked in to the binary target. See general comments about `deps` at [Typical attributes defined by most build rules](/versions/7.7.1/reference/be/common-definitions#typical-attributes). These are generally [`py_library`](/versions/7.7.1/reference/be/python#py_library) rules. |\n89: | `srcs` | List of [labels](/versions/7.7.1/concepts/labels); default is `[]` The list of source (`.py`) files that are processed to create the target. This includes all your checked-in code and any generated source files. |\n90: | `imports` | List of strings; default is `[]` List of import directories to be added to the `PYTHONPATH`. Subject to [\"Make variable\"](/versions/7.7.1/reference/be/make-variables) substitution. These import directories will be added for this rule and all rules that depend on it (note: not the rules this rule depends on. Each directory will be added to `PYTHONPATH` by [`py_binary`](/versions/7.7.1/reference/be/python#py_binary) rules that depend on this rule.  Absolute paths (paths that start wi\n91: | `srcs_version` | String; default is `\"PY2AND3\"` This attribute declares the target's `srcs` to be compatible with either Python 2, Python 3, or both. To actually set the Python runtime version, use the [`python_version`](/versions/7.7.1/reference/be/python#py_binary.python_version) attribute of an executable Python rule (`py_binary` or `py_test`). Allowed values are: `\"PY2AND3\"`, `\"PY2\"`, and `\"PY3\"`. The values `\"PY2ONLY\"` and `\"PY3ONLY\"` are also allowed for historic reasons, but they are es\n92: \n93: ## py\\_test\n94: \n95: [View rule sourceopen\\_in\\_new](https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/bazel/rules/python/BazelPyTestRule.java)\n96: \n97: ```\n98: py_test(name, deps, srcs, data, args, compatible_with, deprecation, distribs, env, env_inherit, exec_compatible_with, exec_properties, features, flaky, imports, legacy_create_init, licenses, local, main, python_version, restricted_to, shard_count, size, srcs_version, stamp, tags, target_compatible_with, testonly, timeout, toolchains, visibility)\n99: ```",
+          "line_truncated": true
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT1",
+      "knowledge_target": "BUILD files using `py_binary`, `py_library`, or `py_test` must include explicit `load()` statements to import these symbols from `rules_python`. The correct load paths are: `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")`, `load(\"@rules_python//python:py_library.bzl\", \"py_library\")`, and `load(\"@rules_python//python:py_test.bzl\", \"py_test\")`. This pattern is used in the existing `examples/py/BUILD` file in the repository.",
+      "evidence_ids": [
+        "G2_E4",
+        "G2_E5",
+        "G2_E6",
+        "G2_E7"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "examples/py/BUILD",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 32.879,
+          "matched_cues": [
+            "load",
+            "py_binary",
+            "rules_python"
+          ],
+          "content": "1: load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")\n2: load(\"@rules_python//python:py_library.bzl\", \"py_library\")\n3: \n4: py_library(\n5:     name = \"lib\",\n6:     srcs = [\"lib.py\"],\n7: )\n8: \n9: py_binary(",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "examples/py/BUILD",
+          "start_line": 11,
+          "end_line": 27,
+          "retrieval_score": 32.879,
+          "matched_cues": [
+            "load",
+            "py_binary",
+            "rules_python"
+          ],
+          "content": "11:     srcs = [\"bin.py\"],\n12:     deps = [\":lib\"],\n13: )\n14: \n15: py_binary(\n16:     name = \"runfile\",\n17:     srcs = [\"runfile.py\"],\n18:     data = [\"//examples:runfile.txt\"],\n19:     deps = [\"@rules_python//python/runfiles\"],\n20: )\n21: \n22: filegroup(\n23:     name = \"srcs\",\n24:     srcs = [\"BUILD\"] + glob([\"**/*.py\"]),\n25:     visibility = [\"//examples:__pkg__\"],\n26: )\n27: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "src/test/py/bazel/bazel_external_repository_test.py",
+          "start_line": 212,
+          "end_line": 228,
+          "retrieval_score": 28.538,
+          "matched_cues": [
+            "bazel_dep",
+            "http_archive",
+            "load",
+            "py_binary",
+            "py_test",
+            "rules_python"
+          ],
+          "content": "212:             'path = runfiles.Create().Rlocation(sys.argv[1])',\n213:             'if open(path, \"rb\").read() != b\"\\\\0\"*1024*1024:',\n214:             '  sys.exit(1)',\n215:         ],\n216:     )\n217:     self.ScratchFile(\n218:         'BUILD',\n219:         [\n220:             'load(\"@rules_python//python:py_test.bzl\", \"py_test\")',\n221:             'py_test(',\n222:             '    name = \"test\",',\n223:             '    srcs = [\"test.py\"],',\n224:             '    args = [\"$(rlocationpath @sparse_archive//:sparse_file)\"],',\n225:             '    data = [',\n226:             '        \"@sparse_archive//:sparse_file\",',\n227:             '        \"@bazel_tools//tools/python/runfiles\",',\n228:             '    ],)',",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "src/test/py/bazel/bazel_external_repository_test.py",
+          "start_line": 265,
+          "end_line": 281,
+          "retrieval_score": 28.538,
+          "matched_cues": [
+            "bazel_dep",
+            "http_archive",
+            "load",
+            "py_binary",
+            "py_test",
+            "rules_python"
+          ],
+          "content": "265:         ')',\n266:     ]\n267:     self.ScratchFile('MODULE.bazel', rule_definition)\n268:     self._CreatePyWritingStarlarkRule('hello!')\n269:     self.ScratchFile(\n270:         'BUILD',\n271:         [\n272:             'load(\"@r//:foo.bzl\", \"gen_py\")',\n273:             'load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")',\n274:             'gen_py(name = \"gen\")',\n275:             'py_binary(name = \"bin\", srcs = [\":gen\"], main = \"gen.py\")',\n276:         ],\n277:     )\n278: \n279:     _, stdout, _ = self.RunBazel(['run', '//:bin'])\n280:     self.assertIn('hello!', os.linesep.join(stdout))\n281: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT2",
+      "knowledge_target": "A standalone Bazel workspace using `rules_python` must declare it as a dependency. When using Bzlmod (MODULE.bazel), the declaration is `bazel_dep(name = \"rules_python\", version = \"0.40.0\")`. When using the legacy WORKSPACE approach, `http_archive` must be used to fetch the `rules_python` release and its setup functions must be called.",
+      "evidence_ids": [
+        "G2_E7",
+        "G2_E8"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "src/test/py/bazel/bazel_external_repository_test.py",
+          "start_line": 265,
+          "end_line": 281,
+          "retrieval_score": 28.538,
+          "matched_cues": [
+            "bazel_dep",
+            "http_archive",
+            "load",
+            "py_binary",
+            "py_test",
+            "rules_python"
+          ],
+          "content": "265:         ')',\n266:     ]\n267:     self.ScratchFile('MODULE.bazel', rule_definition)\n268:     self._CreatePyWritingStarlarkRule('hello!')\n269:     self.ScratchFile(\n270:         'BUILD',\n271:         [\n272:             'load(\"@r//:foo.bzl\", \"gen_py\")',\n273:             'load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")',\n274:             'gen_py(name = \"gen\")',\n275:             'py_binary(name = \"bin\", srcs = [\":gen\"], main = \"gen.py\")',\n276:         ],\n277:     )\n278: \n279:     _, stdout, _ = self.RunBazel(['run', '//:bin'])\n280:     self.assertIn('hello!', os.linesep.join(stdout))\n281: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "src/test/py/bazel/bazel_external_repository_test.py",
+          "start_line": 61,
+          "end_line": 77,
+          "retrieval_score": 28.538,
+          "matched_cues": [
+            "bazel_dep",
+            "http_archive",
+            "load",
+            "py_binary",
+            "py_test",
+            "rules_python"
+          ],
+          "content": "61: \n62:   def tearDown(self):\n63:     test_base.TestBase.tearDown(self)\n64:     self.StopHttpServer()\n65: \n66:   def testNewHttpArchive(self):\n67:     ip, port = self._http_server.server_address\n68:     rule_definition = [\n69:         'bazel_dep(name = \"rules_python\", version = \"0.40.0\")',\n70:         'http_archive = use_repo_rule(',\n71:         '   \"@bazel_tools//tools/build_defs/repo:http.bzl\", \"http_archive\")',\n72:         'http_archive(',\n73:         '    name = \"hello_archive\",',\n74:         '    urls = [\"http://%s:%s/hello-1.0.0.tar.gz\"],' % (ip, port),\n75:         '    sha256 = ',\n76:         '  \"154740b327bcfee5669ef2ce0a04bf0904227a3bfe0fee08a5aaca96ea5a601a\",',\n77:         '    strip_prefix = \"hello-1.0.0\",',",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT1",
+      "knowledge_target": "To configure a hermetic Python toolchain in a Bazel project using the legacy WORKSPACE approach, the WORKSPACE file must load and call `python_register_toolchains` from `@rules_python//python:repositories.bzl`, specifying a `name` and `python_version`. Example: `load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\"); python_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")`.",
+      "evidence_ids": [
+        "G3_E1",
+        "G3_E2",
+        "G3_E7"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E1",
+          "file_path": "docs/external/migration_tool.mdx",
+          "start_line": 222,
+          "end_line": 238,
+          "retrieval_score": 23.397,
+          "matched_cues": [
+            "python_register_toolchains",
+            "python_version",
+            "rules_python",
+            "toolchain"
+          ],
+          "content": "222: pip_parse(\n223:    name = \"my_python_deps\",\n224:    requirements_lock = \"@example//:requirements_lock.txt\",\n225: )\n226: \n227: load(\"@my_python_deps//:requirements.bzl\", \"install_deps\")\n228: install_deps()\n229: \n230: load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\")\n231: python_register_toolchains(\n232:     name = \"python_3_11\",\n233:     python_version = \"3.11\",\n234: )\n235: \n236: # Maven dependencies\n237: # __________________\n238: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "docs/external/migration_tool.mdx",
+          "start_line": 449,
+          "end_line": 465,
+          "retrieval_score": 23.397,
+          "matched_cues": [
+            "python_register_toolchains",
+            "python_version",
+            "rules_python",
+            "toolchain"
+          ],
+          "content": "449: pip_parse(\n450:    name = \"my_python_deps\",\n451:    requirements_lock = \"@example//:requirements_lock.txt\",\n452: )\n453: \n454: load(\"@my_python_deps//:requirements.bzl\", \"install_deps\")\n455: install_deps()\n456: \n457: load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\")\n458: python_register_toolchains(\n459:     name = \"python_3_11\",\n460:     python_version = \"3.11\",\n461: )\n462: </pre>\n463:   </div>\n464:   <div style=\"flex: 1; min-width: 300px;\">\n465:     <p><strong>MODULE.bazel - Python Extension</strong></p>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E7",
+          "file_path": "site/en/external/migration_tool.md",
+          "start_line": 229,
+          "end_line": 245,
+          "retrieval_score": 23.397,
+          "matched_cues": [
+            "python_register_toolchains",
+            "python_version",
+            "rules_python",
+            "toolchain"
+          ],
+          "content": "229: pip_parse(\n230:    name = \"my_python_deps\",\n231:    requirements_lock = \"@example//:requirements_lock.txt\",\n232: )\n233: \n234: load(\"@my_python_deps//:requirements.bzl\", \"install_deps\")\n235: install_deps()\n236: \n237: load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\")\n238: python_register_toolchains(\n239:     name = \"python_3_11\",\n240:     python_version = \"3.11\",\n241: )\n242: \n243: # Maven dependencies\n244: # __________________\n245: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT2",
+      "knowledge_target": "To configure a hermetic Python toolchain in a Bazel project using Bzlmod (MODULE.bazel), the module file must use `use_extension` on `@rules_python//python/extensions:python.bzl` to get a `python` extension object, then call `python.toolchain(python_version = \"3.11\")` (optionally also `python.defaults(python_version = \"3.11\")`). This replaces `python_register_toolchains` from the WORKSPACE approach.",
+      "evidence_ids": [
+        "G3_E3",
+        "G3_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "docs/external/migration_tool.mdx",
+          "start_line": 469,
+          "end_line": 485,
+          "retrieval_score": 23.397,
+          "matched_cues": [
+            "python_register_toolchains",
+            "python_version",
+            "rules_python",
+            "toolchain"
+          ],
+          "content": "469:     hub_name = \"my_python_deps\",\n470:     python_version = \"3.11\",\n471:     requirements_lock = \"//:requirements_lock.txt\",\n472: )\n473: use_repo(pip, \"my_python_deps\")\n474: \n475: python = use_extension(\"@rules_python//python/extensions:python.bzl\", \"python\")\n476: python.defaults(python_version = \"3.11\")\n477: python.toolchain(python_version = \"3.11\")\n478: </pre>\n479:   </div>\n480: </div>\n481: \n482: <hr style=\"height: 1px; background-color: black; border: none;\"/>\n483: \n484: <div style=\"display: flex; flex-wrap: wrap; gap: 16px;\">\n485:   <div style=\"flex: 1; min-width: 300px;\">",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "docs/versions/9.0.0/external/migration_tool.mdx",
+          "start_line": 467,
+          "end_line": 483,
+          "retrieval_score": 23.397,
+          "matched_cues": [
+            "python_register_toolchains",
+            "python_version",
+            "rules_python",
+            "toolchain"
+          ],
+          "content": "467:     hub_name = \"my_python_deps\",\n468:     python_version = \"3.11\",\n469:     requirements_lock = \"//:requirements_lock.txt\",\n470: )\n471: use_repo(pip, \"my_python_deps\")\n472: \n473: python = use_extension(\"@rules_python//python/extensions:python.bzl\", \"python\")\n474: python.defaults(python_version = \"3.11\")\n475: python.toolchain(python_version = \"3.11\")\n476: </pre>\n477:   </div>\n478: </div>\n479: \n480: <hr style=\"height: 1px; background-color: black; border: none;\"/>\n481: \n482: <div style=\"display: flex; flex-wrap: wrap; gap: 16px;\">\n483:   <div style=\"flex: 1; min-width: 300px;\">",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

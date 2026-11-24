@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "When configuring label-based sections in a `.github_changelog_generator` file, which of the following correctly demonstrates the format for the `exclude-labels` option?",
+    "options": {
+      "A": "exclude_labels: [duplicate, wontfix]",
+      "B": "exclude-labels: duplicate, wontfix",
+      "C": "exclude_labels=duplicate,wontfix",
+      "D": "exclude-labels=duplicate,wontfix"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "Looking at this question about the `.github_changelog_generator` configuration file format:\n\nThe `.github_changelog_generator` file uses YAML format for configuration. For list-based options in YAML, the standard format uses:\n- Hyphenated option names (not underscores)\n- Colon separator (not equals)\n- Square bracket array syntax for lists\n\nThe correct format for `exclude-labels` would be:\n`exclude-labels: [duplicate, wontfix]`\n\nThis matches option A, which uses:\n- Hyphenated name (`exclude-labels`)\n- Colon separator\n- Square bracket array syntax with comma-separated values\n\n**A**",
+  "answer": null,
+  "valid": false,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 2.273709917004453,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 149,
+    "output_tokens": 152,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "According to the `metabase.util.currency` namespace in the repository, what does the `make-currency` function (and the currency metadata it stores) provide, and what is it NOT designed to do?",
+    "options": {
+      "A": "It provides real-time exchange rates fetched from an external API, along with symbol and name metadata for display purposes.",
+      "B": "It provides exchange rate data for common currency pairs (USD, EUR, CNY) while storing symbol metadata for less common currencies.",
+      "C": "It provides formatting metadata such as symbol, name, decimal_digits, rounding, code, and name_plural — but it does not contain exchange rates or perform numeric conversion between currencies.",
+      "D": "It provides only the currency symbol and code, and delegates all formatting decisions (including decimal places) to the frontend layer."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6119001670158468,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 229,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

@@ -1,0 +1,30 @@
+```json
+{
+  "application_results": [
+    {
+      "target_id": "G2_KT1",
+      "application_state": "not_applied",
+      "reason": "The agent included '<ql/indexes/swap/euribor.hpp>' in DCFDemo.cpp (line 28 of the written file), but the correct path demonstrated in Bonds.cpp (line 36), BermudanSwaption.cpp (line 37), and CDS.cpp (line 28) is '<ql/indexes/ibor/euribor.hpp>'. The agent had read Bonds.cpp and saw the correct path before writing DCFDemo.cpp, yet still used the wrong path.",
+      "trajectory_lines": [17, 28],
+      "evidence_ids": ["G2_E1", "G2_E4", "G2_E6"],
+      "execution_guidance": "When writing DCFDemo.cpp, the include for Euribor must use the correct path '<ql/indexes/ibor/euribor.hpp>'. However, since the Euribor class is not actually used in DCFDemo.cpp, the cleanest fix is to simply remove that unused include entirely. If Euribor is needed in the future, use the path seen in Examples/Bonds/Bonds.cpp line 36: '#include <ql/indexes/ibor/euribor.hpp>'."
+    },
+    {
+      "target_id": "G4_KT1",
+      "application_state": "not_applied",
+      "reason": "The task explicitly requires 'Present value calculation using QuantLib::CashFlows::npv'. Although DCFDemo.cpp includes 'ql/cashflows/cashflows.hpp', the agent never calls CashFlows::npv(). Instead, NPV is computed manually in a loop using raw discount factors. The CashFlows::npv API (taking a Leg and InterestRate) was not used at all.",
+      "trajectory_lines": [28],
+      "evidence_ids": ["G4_E5", "G4_E7", "G4_E8"],
+      "execution_guidance": "In DCFDemo.cpp, replace the manual NPV accumulation loop with a call to CashFlows::npv. Build a Leg (std::vector<ext::shared_ptr<CashFlow>>) from your cash flows, construct an InterestRate with the discount rate, and call: 'Real npv = CashFlows::npv(leg, discountRate, true, evaluationDate);'. The signature seen in test-suite/cashflows.cpp line 159 is: CashFlows::npv(leg, no_discount, includeRef, today). CashFlows is a static-only utility class (constructors deleted per ql/cashflows/cashflows.hpp lines 68-72), so call it without instantiation."
+    },
+    {
+      "target_id": "G4_KT2",
+      "application_state": "not_applied",
+      "reason": "The task requires 'Creating cash flow schedules with QuantLib::Schedule'. DCFDemo.cpp neither includes 'ql/time/schedule.hpp' nor uses the Schedule class or FixedRateLeg builder pattern. The agent manually constructed date/amount vectors instead of using the QuantLib Schedule+FixedRateLeg pattern.",
+      "trajectory_lines": [28],
+      "evidence_ids": ["G4_E1", "G4_E6"],
+      "execution_guidance": "In DCFDemo.cpp, replace the manual bond cash flow construction (the for-loop building bondDates/bondCashFlows) with the Schedule+FixedRateLeg pattern. Add '#include <ql/time/schedule.hpp>' and use the existing '#include <ql/cashflows/fixedratecoupon.hpp>'. Construct a Schedule with start/end dates and a 6-month period, then build the Leg with: 'Leg bondLeg = FixedRateLeg(schedule).withNotionals(faceValue).withCouponRates(couponRate, dayCounter);'. This pattern is shown in test-suite/cashflows.cpp lines 448-450 and test-suite/bonds.cpp lines 43-44. Pass this Leg directly to CashFlows::npv."
+    }
+  ]
+}
+```

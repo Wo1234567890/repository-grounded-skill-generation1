@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In `metabase.pulse.api.alert`, what is the role of the `notification->pulse` function and how is it used in the existing GET list endpoint?",
+    "options": {
+      "A": "It serializes a notification to JSON format for the HTTP response, replacing the default serialization in `api.macros/defendpoint`.",
+      "B": "It validates that a notification has all required pulse fields and throws an exception if any are missing, used as a pre-check before returning results.",
+      "C": "It converts a fully-hydrated notification back to the legacy pulse wire format for backward compatibility, and is applied via `map` over the results of `notification.api/list-notifications` in the GET list endpoint.",
+      "D": "It converts a legacy pulse map into the new notification format required by `notification.api/create-notification!`, and is used to transform request bodies before creation."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.7239076670084614,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 244,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

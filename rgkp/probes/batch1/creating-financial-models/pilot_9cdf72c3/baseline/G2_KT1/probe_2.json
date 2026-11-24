@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "When including the Euribor index class in a QuantLib-based C++ project, which header path is correct?",
+    "options": {
+      "A": "#include <ql/indexes/swap/euribor.hpp>",
+      "B": "#include <ql/instruments/ibor/euribor.hpp>",
+      "C": "#include <ql/indexes/ibor/euribor.hpp>",
+      "D": "#include <ql/indexes/euribor.hpp>"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6004357499768957,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 161,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

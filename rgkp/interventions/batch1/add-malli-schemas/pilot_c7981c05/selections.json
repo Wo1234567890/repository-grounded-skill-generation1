@@ -1,0 +1,26 @@
+{
+  "selections": [
+    {
+      "target_id": "G1_KT2",
+      "status": "selected",
+      "selected_candidate": {
+        "candidate_id": "G1_KT2_C2",
+        "target_id": "G1_KT2",
+        "question_id": "G1_KT2_Q1",
+        "knowledge": "The repository convention maps source paths to namespaces using the directory structure under `src/` and `test/`. The alert API source file is `src/metabase/pulse/api/alert.clj` → namespace `metabase.pulse.api.alert`. Its test file is `test/metabase/pulse/api/alert_test.clj` → namespace `metabase.pulse.api.alert-test`. When adding a new Malli validation test file for alerts, the correct path following this convention would be `test/metabase/pulse/api/alert_malli_test.clj` with namespace `metabase.pulse.api.alert-malli-test`, not `test/metabase/api/alert_malli_test.clj` as listed in the task requirements.",
+        "baseline_state": 0,
+        "intervention_state": 1,
+        "delta": 1,
+        "answers": [
+          "B",
+          "B",
+          "B"
+        ],
+        "valid_count": 3,
+        "correct_count": 3,
+        "repetitions": 3,
+        "candidate_tokens": 190
+      }
+    }
+  ]
+}

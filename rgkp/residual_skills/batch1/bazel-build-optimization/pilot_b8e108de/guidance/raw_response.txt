@@ -1,0 +1,46 @@
+```json
+{
+  "application_results": [
+    {
+      "target_id": "G1_KT1",
+      "application_state": "not_applied",
+      "reason": "The agent wrote tests/BUILD.bazel with `deps = [\"//src:main\"]` where //src:main is a py_binary. The Bazel docs explicitly state that deps in py_test should be py_library targets. The agent even duplicated the greet function in test_main.py locally (acknowledging the import would not work), yet still declared the invalid py_binary dep in the BUILD file.",
+      "trajectory_lines": [54, 60, 63],
+      "evidence_ids": ["G1_E1", "G1_E3", "G1_E6"],
+      "execution_guidance": "When creating tests/BUILD.bazel, do not declare a py_binary as a dep of py_test. Instead: (1) extract the shared logic (e.g., the greet function) from src/main.py into a new src/lib.py file; (2) add a py_library target named 'lib' in src/BUILD.bazel with `srcs = [\"lib.py\"]` and `visibility = [\"//visibility:public\"]`; (3) have the py_binary //src:main depend on `deps = [\":lib\"]`; (4) have the py_test in tests/BUILD.bazel depend on `deps = [\"//src:lib\"]`. This mirrors the existing pattern in examples/py/BUILD where py_binary depends on a py_library. Update test_main.py to import from the library rather than duplicating functions."
+    },
+    {
+      "target_id": "G1_KT2",
+      "application_state": "not_applied",
+      "reason": "The agent read examples/py/BUILD and saw the pattern of py_library + py_binary with deps = [\":lib\"], but did not replicate it in the new project. Instead it created src/BUILD.bazel with only a py_binary and tests/BUILD.bazel depending directly on that py_binary.",
+      "trajectory_lines": [16, 54, 60],
+      "evidence_ids": ["G1_E2", "G1_E5"],
+      "execution_guidance": "Apply the py_library + py_binary pattern from examples/py/BUILD to examples/python-bazel. Create a py_library target in src/BUILD.bazel (e.g., name='lib', srcs=['lib.py']) containing the shared logic, make //src:main depend on it via deps=[':lib'], and make the py_test in tests/BUILD.bazel depend on deps=['//src:lib']. Do not point py_test deps at a py_binary."
+    },
+    {
+      "target_id": "G2_KT2",
+      "application_state": "not_applied",
+      "reason": "The agent created a WORKSPACE file with only `workspace(name = ...)` and no rules_python dependency declaration. The BUILD files use bare py_binary and py_test without any load() statements. The agent observed that examples/py/BUILD uses explicit load statements from @rules_python but did not apply this to the new project.",
+      "trajectory_lines": [45, 54, 60, 16],
+      "evidence_ids": ["G2_E7", "G2_E8"],
+      "execution_guidance": "The standalone workspace in examples/python-bazel must declare rules_python as a dependency. Since the project uses WORKSPACE (not MODULE.bazel), add http_archive to fetch rules_python in WORKSPACE, then call its setup functions. Also add explicit load() statements in src/BUILD.bazel and tests/BUILD.bazel (e.g., `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")` and `load(\"@rules_python//python:py_test.bzl\", \"py_test\")`), mirroring the pattern already present in examples/py/BUILD."
+    },
+    {
+      "target_id": "G3_KT1",
+      "application_state": "not_applied",
+      "reason": "The agent created no toolchain configuration anywhere in the project. The WORKSPACE contains only `workspace(name = ...)`, and the BUILD files have no toolchain references. The task explicitly requires hermetic Python toolchain configuration.",
+      "trajectory_lines": [45, 51, 54],
+      "evidence_ids": ["G3_E1", "G3_E2", "G3_E7"],
+      "execution_guidance": "After adding the rules_python http_archive to WORKSPACE, also call `python_register_toolchains` from `@rules_python//python:repositories.bzl`. Add to WORKSPACE after the http_archive setup: `load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\"); python_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")`. This registers a hermetic Python toolchain as required by the task."
+    },
+    {
+      "target_id": "G3_KT2",
+      "application_state": "uncertain",
+      "reason": "The agent chose the WORKSPACE approach rather than Bzlmod. There is no evidence the agent considered or rejected MODULE.bazel for the new standalone project. The Bzlmod toolchain knowledge is not directly applicable since the agent went with WORKSPACE, but it is unclear whether this was a deliberate choice.",
+      "trajectory_lines": [45],
+      "evidence_ids": ["G3_E3", "G3_E6"],
+      "execution_guidance": ""
+    }
+  ]
+}
+```

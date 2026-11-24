@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "What does the `create-notification!` function in `metabase.notification.api.notification` do when called?",
+    "options": {
+      "A": "It only validates the input schema and returns the validated map without persisting anything to the database.",
+      "B": "It directly inserts a row into the `notification` table using `t2/insert!` and returns the raw database row without hydration.",
+      "C": "It delegates entirely to `notification.api/list-notifications` to check for duplicates before creating, then returns a stub map.",
+      "D": "It calls `api/create-check`, persists the notification via `models.notification/create-notification!`, hydrates the result, optionally sends email notifications, and publishes a `:event/notification-create` event."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "D",
+  "answer": "D",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6817101249762345,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 223,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

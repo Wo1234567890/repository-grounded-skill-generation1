@@ -1,0 +1,7 @@
+```json
+{
+  "repository_provides": true,
+  "supporting_evidence_ids": ["G2_E1", "G2_E5"],
+  "reason": "G2_E1 (package.json) explicitly shows that 'type-check' runs 'bun run clean:cljs && bun run build:cljs && bun run type-check-pure' (requiring a CLJS build first), while 'type-check-pure' runs 'NODE_OPTIONS=--max-old-space-size=8192 tsc --noEmit'. G2_E5 (.claude/skills/_shared/typescript-commands.md) prescriptively instructs that 'bun run type-check-pure' is the command for TypeScript type checking, and that 'bun run test-unit-keep-cljs path/to/file.unit.spec.js' is used to test a specific file. Together these explicitly provide all three pieces of knowledge: the correct type-check command, that 'bun run type-check' additionally requires a CLJS build, and the command for running a specific unit test file."
+}
+```

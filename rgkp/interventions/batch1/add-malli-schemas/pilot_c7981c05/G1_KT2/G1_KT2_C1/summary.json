@@ -1,0 +1,18 @@
+{
+  "candidate_id": "G1_KT2_C1",
+  "target_id": "G1_KT2",
+  "question_id": "G1_KT2_Q1",
+  "knowledge": "In this repository, the actual alert API implementation lives at `src/metabase/pulse/api/alert.clj` with namespace `metabase.pulse.api.alert`, and its corresponding tests live at `test/metabase/pulse/api/alert_test.clj` with namespace `metabase.pulse.api.alert-test`. The task specifies creating `src/metabase/api/alert.clj` and `test/metabase/api/alert_malli_test.clj`, but no such files exist in the repository. The correct existing file to modify for alert API validation is `src/metabase/pulse/api/alert.clj`, and new Malli-specific tests should be placed at `test/metabase/pulse/api/alert_malli_test.clj` (using namespace `metabase.pulse.api.alert-malli-test`) to match the repository's actual directory and namespace conventions.",
+  "baseline_state": 0,
+  "intervention_state": 1,
+  "delta": 1,
+  "answers": [
+    "B",
+    "B",
+    "B"
+  ],
+  "valid_count": 3,
+  "correct_count": 3,
+  "repetitions": 3,
+  "candidate_tokens": 224
+}

@@ -1,0 +1,44 @@
+.env
+__pycache__/
+*.pyc
+.DS_Store
+
+# temporary runtime files
+tmp/
+cache/
+
+# secrets
+*.key
+*.pem
+
+# Python virtual environment
+.venv/
+
+# Private evaluation files
+evaluation_private/
+
+# Experiment data and logs
+logs/
+executions/
+results/
+trajectories/
+repositories/
+
+# Additional secrets
+.env.*
+*.secret
+*credentials*
+*token*.json
+
+# Backup files
+*.bak
+
+.venv/
+evaluation_private/
+logs/
+executions/
+results/
+trajectories/
+repositories/
+*.bak
+.env.*

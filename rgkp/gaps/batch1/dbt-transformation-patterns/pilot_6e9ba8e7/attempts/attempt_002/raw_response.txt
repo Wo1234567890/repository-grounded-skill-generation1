@@ -1,0 +1,152 @@
+```json
+{
+  "execution_gaps": [
+    {
+      "gap_id": "G1",
+      "local_state": "The task requires creating optional fixture files at `core/dbt/tests/staging/stg_orders.sql` and `core/dbt/tests/staging/schema.yml`.",
+      "agent_action": "The agent only created files under `tests/functional/staging/` and did not create any files under `core/dbt/tests/staging/`.",
+      "observed_problem": "The optional fixture files `core/dbt/tests/staging/stg_orders.sql` and `core/dbt/tests/staging/schema.yml` were never created, despite the task explicitly listing them as files to create/modify.",
+      "trajectory_evidence": [
+        {
+          "line": 189,
+          "description": "The agent lists the contents of `core/dbt/tests/` and sees only `fixtures/` and `util.py`, confirming no `staging/` subdirectory was created there."
+        },
+        {
+          "line": 185,
+          "description": "The agent lists `tests/functional/staging/` and shows only the files it created there, with no corresponding action taken for `core/dbt/tests/staging/`."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "core/dbt/tests/staging/stg_orders.sql",
+          "core/dbt/tests/staging/schema.yml"
+        ],
+        "file_names": [
+          "stg_orders.sql",
+          "schema.yml"
+        ],
+        "functions_or_classes": [],
+        "modules_or_packages": [
+          "dbt.tests"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [],
+        "other_keywords": [
+          "staging model",
+          "optional fixture"
+        ]
+      }
+    },
+    {
+      "gap_id": "G2",
+      "local_state": "The `test_stg_orders_model_compiles` test checks that a node with `name == 'stg_orders'` exists in the compile results.",
+      "agent_action": "The agent wrote `assert any(node.name == 'stg_orders' for node in results)` where `results` is the return value of `run_dbt(['compile'])`, but `run_dbt` returns a list of `RunResult` objects whose `.name` attribute is not directly the model name—it must be accessed via `result.node.name`.",
+      "observed_problem": "The assertion iterates over compile results treating each item as having a `.name` attribute directly, but dbt result objects expose the name via `.node.name`. This test would fail or silently pass incorrectly.",
+      "trajectory_evidence": [
+        {
+          "line": 51,
+          "description": "The agent writes `assert any(node.name == 'stg_orders' for node in results)` immediately after `results = run_dbt(['compile'])`, without accessing `.node.name`."
+        },
+        {
+          "line": 169,
+          "description": "The agent reads `util.py` which shows `run_dbt` returns `res.result`, a list of RunResult objects, whose node name must be accessed via `result.node.name` as shown in `check_result_nodes_by_name`."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "tests/functional/staging/test_stg_orders.py",
+          "core/dbt/tests/util.py"
+        ],
+        "file_names": [
+          "test_stg_orders.py",
+          "util.py"
+        ],
+        "functions_or_classes": [
+          "run_dbt",
+          "check_result_nodes_by_name",
+          "TestStagingOrders.test_stg_orders_model_compiles"
+        ],
+        "modules_or_packages": [
+          "dbt.tests.util"
+        ],
+        "commands": [
+          "run_dbt([\"compile\"])"
+        ],
+        "error_messages": [],
+        "tests": [
+          "test_stg_orders_model_compiles"
+        ],
+        "configuration_terms": [],
+        "other_keywords": [
+          "RunResult",
+          "node.name"
+        ]
+      }
+    },
+    {
+      "gap_id": "G3",
+      "local_state": "Several tests in `test_stg_orders.py` call `get_manifest(project.project_root)` without first calling `run_dbt(['compile'])` or `run_dbt(['parse'])` to generate the manifest.",
+      "agent_action": "Tests like `test_schema_yml_contains_model_description`, `test_schema_yml_contains_column_descriptions`, `test_schema_yml_contains_built_in_tests`, `test_custom_test_reference_exists`, `test_model_config_materialized_as_view`, and `test_model_uses_source_macro` all call `get_manifest` directly without prior compilation in the same test method.",
+      "observed_problem": "Without a prior `run_dbt(['compile'])` or `run_dbt(['parse'])` call in the same test, the manifest file may not exist or may be stale, causing `get_manifest` to fail or return outdated data.",
+      "trajectory_evidence": [
+        {
+          "line": 51,
+          "description": "In `test_schema_yml_contains_model_description`, the agent calls `get_manifest(project.project_root)` without first compiling the project."
+        },
+        {
+          "line": 90,
+          "description": "The pattern used in `test_generic_test_description.py` shows `run_dbt(['compile'])` called before `get_manifest`, establishing the correct pattern the agent did not follow in multiple tests."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "tests/functional/staging/test_stg_orders.py",
+          "tests/functional/generic_test_description/test_generic_test_description.py"
+        ],
+        "file_names": [
+          "test_stg_orders.py"
+        ],
+        "functions_or_classes": [
+          "get_manifest",
+          "run_dbt",
+          "TestStagingOrders.test_schema_yml_contains_model_description",
+          "TestStagingOrders.test_schema_yml_contains_column_descriptions"
+        ],
+        "modules_or_packages": [
+          "dbt.tests.util"
+        ],
+        "commands": [
+          "run_dbt([\"compile\"])",
+          "run_dbt([\"parse\"])"
+        ],
+        "error_messages": [],
+        "tests": [
+          "test_schema_yml_contains_model_description",
+          "test_schema_yml_contains_column_descriptions",
+          "test_schema_yml_contains_built_in_tests",
+          "test_custom_test_reference_exists",
+          "test_model_config_materialized_as_view",
+          "test_model_uses_source_macro"
+        ],
+        "configuration_terms": [],
+        "other_keywords": [
+          "manifest.json",
+          "target directory"
+        ]
+      }
+    }
+  ],
+  "environment_blockers": [
+    {
+      "description": "Bash permission was denied for running `python3 -m py_compile` to verify Python syntax of created files.",
+      "evidence_lines": [57]
+    },
+    {
+      "description": "Bash permission was denied for running `find` with `-exec grep` to search for test patterns.",
+      "evidence_lines": [73]
+    }
+  ]
+}
+```

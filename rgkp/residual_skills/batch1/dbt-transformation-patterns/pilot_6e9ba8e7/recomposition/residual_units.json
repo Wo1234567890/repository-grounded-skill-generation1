@@ -1,0 +1,31 @@
+{
+  "residual_units": [
+    {
+      "type": "execution_guidance",
+      "content": "Create `core/dbt/tests/staging/` as a new subdirectory following the existing `core/dbt/tests/fixtures/` precedent. No `__init__.py` is strictly required unless the directory needs to be importable as a package. Place two fixture files there:\n- `stg_orders.sql`: must contain `{{ config(materialized='view') }}`, column transformations, and a `{{ source() }}` macro call.\n- `schema.yml`: must use `version: 2` format with a `models:` key containing `name`, `description`, and `columns` with `data_tests` entries (e.g., `unique`, `not_null`, `assert_positive_amounts`)—matching the pattern in `core/dbt/include/starter_project/models/example/schema.yml`.",
+      "source_ids": [
+        "G1_KT1_EG1",
+        "G1_KT2_EG1"
+      ],
+      "residual_id": "R1"
+    },
+    {
+      "type": "execution_guidance",
+      "content": "In `test_stg_orders_model_compiles`, replace `assert any(node.name == 'stg_orders' for node in results)` with `check_result_nodes_by_name(results, ['stg_orders'])`, imported from `dbt.tests.util`. This correctly accesses `result.node.name` on each result object returned by `run_dbt(['compile'])`.",
+      "source_ids": [
+        "G2_KT2_EG1"
+      ],
+      "residual_id": "R2"
+    },
+    {
+      "type": "execution_guidance",
+      "content": "Every test method in `TestStagingOrders` that calls `get_manifest(project.project_root)` must independently call `run_dbt(['compile'])` first, since shared class fixtures do not guarantee execution order or manifest freshness between methods. Apply the pattern `run_dbt(['compile'])` → `manifest = get_manifest(project.project_root)` to all six methods: `test_schema_yml_contains_model_description`, `test_schema_yml_contains_column_descriptions`, `test_schema_yml_contains_built_in_tests`, `test_custom_test_reference_exists`, `test_model_config_materialized_as_view`, and `test_model_uses_source_macro`. Note: `get_manifest` returns a parsed Python object; `get_artifact(project.project_root, 'target', 'manifest.json')` returns the raw dict—both require a preceding compile step to populate `target/manifest.json`.",
+      "source_ids": [
+        "G3_KT1_EG1",
+        "G3_KT2_EG1",
+        "G3_KT3_EG1"
+      ],
+      "residual_id": "R3"
+    }
+  ]
+}

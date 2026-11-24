@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "When writing a BUILD file that uses the `py_binary` rule from `rules_python`, which `load()` statement is correct?",
+    "options": {
+      "A": "load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")",
+      "B": "load(\"//python:py_binary.bzl\", \"py_binary\")",
+      "C": "load(\"@rules_python//python:defs.bzl\", \"py_binary\")",
+      "D": "load(\"@bazel_tools//tools/python:py_binary.bzl\", \"py_binary\")"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6485376250057016,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 195,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

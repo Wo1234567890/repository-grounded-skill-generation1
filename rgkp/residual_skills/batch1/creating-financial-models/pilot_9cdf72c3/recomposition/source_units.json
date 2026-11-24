@@ -1,0 +1,19 @@
+{
+  "source_units": [
+    {
+      "source_id": "G2_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "When writing DCFDemo.cpp, the include for Euribor must use the correct path '<ql/indexes/ibor/euribor.hpp>'. However, since the Euribor class is not actually used in DCFDemo.cpp, the cleanest fix is to simply remove that unused include entirely. If Euribor is needed in the future, use the path seen in Examples/Bonds/Bonds.cpp line 36: '#include <ql/indexes/ibor/euribor.hpp>'."
+    },
+    {
+      "source_id": "G4_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "In DCFDemo.cpp, replace the manual NPV accumulation loop with a call to CashFlows::npv. Build a Leg (std::vector<ext::shared_ptr<CashFlow>>) from your cash flows, construct an InterestRate with the discount rate, and call: 'Real npv = CashFlows::npv(leg, discountRate, true, evaluationDate);'. The signature seen in test-suite/cashflows.cpp line 159 is: CashFlows::npv(leg, no_discount, includeRef, today). CashFlows is a static-only utility class (constructors deleted per ql/cashflows/cashflows.hpp lines 68-72), so call it without instantiation."
+    },
+    {
+      "source_id": "G4_KT2_EG1",
+      "type": "execution_guidance",
+      "content": "In DCFDemo.cpp, replace the manual bond cash flow construction (the for-loop building bondDates/bondCashFlows) with the Schedule+FixedRateLeg pattern. Add '#include <ql/time/schedule.hpp>' and use the existing '#include <ql/cashflows/fixedratecoupon.hpp>'. Construct a Schedule with start/end dates and a 6-month period, then build the Leg with: 'Leg bondLeg = FixedRateLeg(schedule).withNotionals(faceValue).withCouponRates(couponRate, dayCounter);'. This pattern is shown in test-suite/cashflows.cpp lines 448-450 and test-suite/bonds.cpp lines 43-44. Pass this Leg directly to CashFlows::npv."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "Which pattern correctly constructs a QuantLib Leg of FixedRateCoupon cash flows from a Schedule?",
+    "options": {
+      "A": "Leg leg = Schedule::toFixedRateLeg(notional, rate, dayCounter);",
+      "B": "Leg leg = FixedRateLeg(schedule).withNotionals(notional).withCouponRates(rate, dayCounter);",
+      "C": "Leg leg = FixedRateCoupon(schedule, notional, rate, dayCounter);",
+      "D": "Leg leg = CashFlows::buildFixedLeg(schedule, notional, rate, dayCounter);"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "B",
+  "answer": "B",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.609166207985254,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 205,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

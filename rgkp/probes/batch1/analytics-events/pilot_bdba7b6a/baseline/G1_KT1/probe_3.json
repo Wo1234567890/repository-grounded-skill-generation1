@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "A developer creates a new test file at `frontend/test/metabase/lib/analytics.test.ts` to test analytics utilities in the Metabase frontend. After running the Jest test suite, they notice none of the tests in that file were executed. What is the most likely reason?",
+    "options": {
+      "A": "The Jest configuration's `testMatch` patterns only match files ending in `.unit.spec.{js,jsx,ts,tsx}`, so a file named `analytics.test.ts` is never discovered by the test runner.",
+      "B": "TypeScript test files must be compiled to JavaScript before Jest can run them; a `.ts` file without a prior build step is silently skipped.",
+      "C": "The file must be co-located with the source file it tests (i.e., next to `analytics.ts`) rather than placed in a separate `test/` directory.",
+      "D": "Test files placed under `frontend/test/` are excluded by `testPathIgnorePatterns`, so only files under `frontend/src/` are executed."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.645935709006153,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 285,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In Clojure's `clojure.test`, what is the correct structure when a `deftest` body needs to contain multiple `is` or `testing` forms?",
+    "options": {
+      "A": "Each `is` or `testing` form must be placed in its own separate `deftest`, because a single `deftest` can only contain one top-level assertion.",
+      "B": "All `is` and `testing` forms must appear before the final closing parenthesis of the `deftest` form, so they are all evaluated within the test body.",
+      "C": "The `is` forms after the first must be wrapped in a `do` block to prevent them from becoming top-level expressions.",
+      "D": "Multiple assertions can be placed outside the `deftest` closing paren as long as they appear in the same namespace file."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "B",
+  "answer": "B",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6108261249901261,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 234,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

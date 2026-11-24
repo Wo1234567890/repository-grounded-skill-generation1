@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In a Ghost e2e test, a developer writes: `const {body} = await agent.get('audit_logs').expectStatus(200).matchBodySnapshot({audit_logs: [body.audit_logs[0]]});`. What is the fundamental problem with this code?",
+    "options": {
+      "A": "The `body` variable does not exist yet when `matchBodySnapshot()` arguments are evaluated, because `body` is only available after the entire chained expression resolves.",
+      "B": "The `audit_logs` key in the matcher object must be a string, not an array, to match the response format.",
+      "C": "The `matchBodySnapshot()` method does not accept an object argument; it only works with no arguments.",
+      "D": "The `expectStatus()` call must come after `matchBodySnapshot()`, not before it."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.616380791994743,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 236,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

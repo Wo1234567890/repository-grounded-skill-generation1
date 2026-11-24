@@ -1,0 +1,126 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "repetitions": 3,
+  "baseline_results": [
+    {
+      "target_id": "G1_KT1",
+      "question_id": "G1_KT1_Q1",
+      "reference_answer": "D",
+      "answers": [
+        "D",
+        "D",
+        "D"
+      ],
+      "repetitions": 3,
+      "valid_count": 3,
+      "correct_count": 3,
+      "baseline_state": 1,
+      "status": "completed"
+    },
+    {
+      "target_id": "G1_KT2",
+      "question_id": "G1_KT2_Q1",
+      "reference_answer": "C",
+      "answers": [
+        "C",
+        "C",
+        "C"
+      ],
+      "repetitions": 3,
+      "valid_count": 3,
+      "correct_count": 3,
+      "baseline_state": 1,
+      "status": "completed"
+    },
+    {
+      "target_id": "G2_KT1",
+      "question_id": "G2_KT1_Q1",
+      "reference_answer": "A",
+      "answers": [
+        "A",
+        "A",
+        "A"
+      ],
+      "repetitions": 3,
+      "valid_count": 3,
+      "correct_count": 3,
+      "baseline_state": 1,
+      "status": "completed"
+    },
+    {
+      "target_id": "G2_KT2",
+      "question_id": "G2_KT2_Q1",
+      "reference_answer": "B",
+      "answers": [
+        "B",
+        "B",
+        "B"
+      ],
+      "repetitions": 3,
+      "valid_count": 3,
+      "correct_count": 3,
+      "baseline_state": 1,
+      "status": "completed"
+    },
+    {
+      "target_id": "G2_KT3",
+      "question_id": "G2_KT3_Q1",
+      "reference_answer": "C",
+      "answers": [
+        "A",
+        "C",
+        "C"
+      ],
+      "repetitions": 3,
+      "valid_count": 3,
+      "correct_count": 2,
+      "baseline_state": 1,
+      "status": "completed"
+    },
+    {
+      "target_id": "G3_KT1",
+      "question_id": "G3_KT1_Q1",
+      "reference_answer": "B",
+      "answers": [
+        "B",
+        "B",
+        "B"
+      ],
+      "repetitions": 3,
+      "valid_count": 3,
+      "correct_count": 3,
+      "baseline_state": 1,
+      "status": "completed"
+    },
+    {
+      "target_id": "G3_KT2",
+      "question_id": "G3_KT2_Q1",
+      "reference_answer": "C",
+      "answers": [
+        null,
+        "C",
+        "C"
+      ],
+      "repetitions": 3,
+      "valid_count": 2,
+      "correct_count": 2,
+      "baseline_state": null,
+      "status": "unresolved"
+    },
+    {
+      "target_id": "G3_KT3",
+      "question_id": "G3_KT3_Q1",
+      "reference_answer": "D",
+      "answers": [
+        "D",
+        "D",
+        "D"
+      ],
+      "repetitions": 3,
+      "valid_count": 3,
+      "correct_count": 3,
+      "baseline_state": 1,
+      "status": "completed"
+    }
+  ]
+}

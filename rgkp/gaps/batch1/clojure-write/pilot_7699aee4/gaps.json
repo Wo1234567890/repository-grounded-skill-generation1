@@ -1,0 +1,206 @@
+{
+  "execution_gaps": [
+    {
+      "gap_id": "G1",
+      "local_state": "Task requires modifying `src/metabase/api/dataset.clj` to call middleware in POST /api/dataset/csv and POST /api/dataset/json export paths",
+      "agent_action": "Agent never read, modified, or even located `src/metabase/api/dataset.clj`; instead integrated the middleware globally in `postprocess.clj`",
+      "observed_problem": "The task explicitly listed `src/metabase/api/dataset.clj` as a file to modify and specified integration at the CSV and JSON export API paths specifically. The agent did not modify this file at all, and placed the middleware in the general post-processing pipeline instead of the specific export paths.",
+      "trajectory_evidence": [
+        {
+          "line": 4,
+          "description": "Agent searched for dataset.clj but found nothing at the expected path"
+        },
+        {
+          "line": 5,
+          "description": "Bash search for dataset.clj returned no output, meaning the file was not found"
+        },
+        {
+          "line": 7,
+          "description": "Agent searched api/ directory for dataset files but found nothing"
+        },
+        {
+          "line": 8,
+          "description": "Second dataset search returned no output"
+        },
+        {
+          "line": 134,
+          "description": "Agent integrated middleware into postprocess.clj middleware list globally, not in dataset export API endpoints"
+        },
+        {
+          "line": 167,
+          "description": "Git status shows only postprocess.clj and system/settings.clj modified, no dataset.clj changes"
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "src/metabase/api/dataset.clj"
+        ],
+        "file_names": [
+          "dataset.clj"
+        ],
+        "functions_or_classes": [],
+        "modules_or_packages": [
+          "metabase.api.dataset"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [
+          "POST /api/dataset/csv",
+          "POST /api/dataset/json"
+        ],
+        "other_keywords": [
+          "dataset",
+          "csv export",
+          "json export",
+          "api route"
+        ]
+      }
+    },
+    {
+      "gap_id": "G2",
+      "local_state": "Task requires implementing actual currency conversion logic (e.g., USD to CNY with proper exchange rate)",
+      "agent_action": "Agent created a `format-currency-value` function that is a complete no-op stub returning the value unchanged, with no exchange rate conversion implemented",
+      "observed_problem": "The acceptance criteria states 'Currency conversions work correctly (e.g., USD → CNY with proper exchange rate)'. The `format-currency-value` function ignores its `_currency` parameter and simply returns `value` unchanged, meaning no actual conversion takes place.",
+      "trajectory_evidence": [
+        {
+          "line": 96,
+          "description": "Agent wrote format-currency-value as a stub: '[value _currency] value' with a comment 'returns the value as-is'"
+        },
+        {
+          "line": 141,
+          "description": "Final file content shows format-currency-value still returns value unchanged with no conversion logic"
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "src/metabase/query_processor/middleware/currency_formatter.clj"
+        ],
+        "file_names": [
+          "currency_formatter.clj"
+        ],
+        "functions_or_classes": [
+          "format-currency-value",
+          "currency-formatter"
+        ],
+        "modules_or_packages": [
+          "metabase.query-processor.middleware.currency-formatter",
+          "metabase.util.currency"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [
+          "test/metabase/query_processor/middleware/currency_formatter_test.clj"
+        ],
+        "configuration_terms": [
+          "exchange rate",
+          "USD",
+          "CNY",
+          "EUR",
+          "currency conversion"
+        ],
+        "other_keywords": [
+          "currency pairs",
+          "conversion logic",
+          "site-currency"
+        ]
+      }
+    },
+    {
+      "gap_id": "G3",
+      "local_state": "The test for null values checks that the second (non-null) row's price field is null",
+      "agent_action": "Agent wrote a test asserting `(nil? (nth (last @rows) 1))` where `last @rows` would be `[2 150.00]`, meaning it checks whether 150.00 is nil",
+      "observed_problem": "The test assertion at the end of `test-currency-formatter-with-null-values` is logically wrong: it checks the last row (which has value 150.00) for being nil, rather than checking the first row (which has nil). This test would fail when run.",
+      "trajectory_evidence": [
+        {
+          "line": 118,
+          "description": "Agent wrote test with rows [1 nil] and [2 150.00], then asserted (nil? (nth (last @rows) 1)) where last @rows is [2 150.00]"
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "test/metabase/query_processor/middleware/currency_formatter_test.clj"
+        ],
+        "file_names": [
+          "currency_formatter_test.clj"
+        ],
+        "functions_or_classes": [
+          "test-currency-formatter-with-null-values"
+        ],
+        "modules_or_packages": [
+          "metabase.query-processor.middleware.currency-formatter-test"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [
+          "test-currency-formatter-with-null-values"
+        ],
+        "configuration_terms": [],
+        "other_keywords": [
+          "null values",
+          "nil handling",
+          "currency column"
+        ]
+      }
+    },
+    {
+      "gap_id": "G4",
+      "local_state": "Task requires reading site-currency setting from `src/metabase/models/setting.clj`",
+      "agent_action": "Agent added the `site-currency` defsetting to `src/metabase/system/settings.clj` instead of `src/metabase/models/setting.clj` as specified",
+      "observed_problem": "The task description explicitly says to 'Read site-currency setting from `src/metabase/models/setting.clj`'. The agent placed the new defsetting in a different file (`system/settings.clj`) and there is no `src/metabase/models/setting.clj` matching that path.",
+      "trajectory_evidence": [
+        {
+          "line": 28,
+          "description": "Agent found the actual setting file at `src/metabase/settings/models/setting.clj` not `src/metabase/models/setting.clj`"
+        },
+        {
+          "line": 114,
+          "description": "Agent added site-currency defsetting to system/settings.clj, not to any models/setting.clj"
+        },
+        {
+          "line": 161,
+          "description": "Final verification shows site-currency in system/settings.clj"
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "src/metabase/models/setting.clj",
+          "src/metabase/settings/models/setting.clj",
+          "src/metabase/system/settings.clj"
+        ],
+        "file_names": [
+          "setting.clj",
+          "settings.clj"
+        ],
+        "functions_or_classes": [
+          "defsetting",
+          "site-currency"
+        ],
+        "modules_or_packages": [
+          "metabase.settings.models.setting",
+          "metabase.system.settings"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [
+          "site-currency",
+          "defsetting"
+        ],
+        "other_keywords": [
+          "settings",
+          "admin settings"
+        ]
+      }
+    }
+  ],
+  "environment_blockers": [
+    {
+      "description": "Bash permission was denied twice during the session, preventing the agent from listing query_processor directory contents and verifying Clojure compilation",
+      "evidence_lines": [
+        80,
+        123
+      ]
+    }
+  ]
+}

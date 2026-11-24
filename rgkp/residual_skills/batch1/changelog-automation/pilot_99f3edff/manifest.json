@@ -1,0 +1,10 @@
+{
+  "status": "generated",
+  "model": "claude-sonnet-4-6",
+  "validated_knowledge_units": 0,
+  "execution_guidance_units": 1,
+  "source_units": 1,
+  "residual_units": 1,
+  "skill_file": "rgkp/residual_skills/batch1/changelog-automation/pilot_99f3edff/SKILL.md",
+  "skill_characters": 577
+}

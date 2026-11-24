@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In a Bazel project using Bzlmod (MODULE.bazel), which snippet correctly configures a hermetic Python 3.11 toolchain via `rules_python`?",
+    "options": {
+      "A": "use_extension(\"@rules_python//python:defs.bzl\", \"python_toolchain\")\npython_toolchain.register(version = \"3.11\")",
+      "B": "bazel_dep(name = \"rules_python\", version = \"0.40.0\")\nregister_toolchains(\"@rules_python//python:3.11_toolchain\")",
+      "C": "python = use_extension(\"@rules_python//python/extensions:python.bzl\", \"python\")\npython.toolchain(python_version = \"3.11\")",
+      "D": "load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\")\npython_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.71611804200802,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 298,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

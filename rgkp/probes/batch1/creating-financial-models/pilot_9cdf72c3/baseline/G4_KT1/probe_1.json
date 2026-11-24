@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "Which of the following statements about QuantLib::CashFlows is correct?",
+    "options": {
+      "A": "CashFlows is a template class parameterized on the cash flow type, and npv() is an instance method.",
+      "B": "CashFlows can be instantiated and its npv() method called on an instance object.",
+      "C": "CashFlows::npv() requires a YieldTermStructure handle rather than an InterestRate, and the class can be subclassed.",
+      "D": "CashFlows::npv() can be called with a yield-based signature taking a Leg and an InterestRate, and CashFlows cannot be instantiated because all its constructors are deleted."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "D",
+  "answer": "D",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6100412500090897,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 211,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

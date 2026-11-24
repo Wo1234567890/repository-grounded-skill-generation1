@@ -1,0 +1,31 @@
+{
+  "residual_units": [
+    {
+      "type": "execution_guidance",
+      "content": "Check whether Ghost's permissions system requires explicit resource registration for `audit_logs`. Search for how existing resources like 'actions' are registered:\n- `grep -r '\"actions\"' ghost/core/core/server/data/fixtures/ -l`\n- `grep -r '\"actions\"' ghost/core/core/shared/ -l`\n\nIf a permissions fixtures file (e.g., `fixtures.json`) or app-actions file lists resources with allowed roles, add an `audit_logs` entry with browse and read permissions for Owner and Administrator roles, following the same pattern as 'actions'. Do this before the route and controller are considered complete.",
+      "source_ids": [
+        "G1_KT1_EG1",
+        "G1_KT2_EG1"
+      ],
+      "residual_id": "R1"
+    },
+    {
+      "type": "execution_guidance",
+      "content": "In `audit-logs.test.js`, do not reference `body` inside chained method arguments. Use the pre-defined `matchAuditLog` constant directly in `matchBodySnapshot()`.\n\n- For the empty-collection case, follow the labels test pattern: `.matchBodySnapshot()` with no arguments.\n- For tests validating actual audit log structure, use: `await agent.get('audit_logs/').expectStatus(200).matchBodySnapshot({audit_logs: [matchAuditLog]}).matchHeaderSnapshot({...})`.\n- If you need `body` for further assertions, make a separate request or use a `.then()` callback.",
+      "source_ids": [
+        "G2_KT1_EG1",
+        "G2_KT2_EG1",
+        "G2_KT3_EG1"
+      ],
+      "residual_id": "R2"
+    },
+    {
+      "type": "execution_guidance",
+      "content": "Since no `audit_logs` fixture set exists, create test data directly in the test. In the `before` or `beforeEach` hook, after `agent.loginAsOwner()`, add:\n```js\nawait models.AuditLog.add(\n  {user_id: testUserId, action: 'test.action', context: '{}'},\n  {context: {internal: true}}\n);\n```\nObtain `testUserId` from fixtures, e.g., `fixtureManager.get('users', 0).id` or `testUtils.DataGenerator.Content.users[0].id`. This ensures the browse test always has at least one record and can validate the full structure with `matchBodySnapshot({audit_logs: [matchAuditLog]})`.",
+      "source_ids": [
+        "G3_KT1_EG1"
+      ],
+      "residual_id": "R3"
+    }
+  ]
+}

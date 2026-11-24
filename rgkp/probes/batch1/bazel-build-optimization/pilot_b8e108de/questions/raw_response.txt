@@ -1,0 +1,90 @@
+```json
+{
+  "diagnostic_questions": [
+    {
+      "target_id": "G1_KT1",
+      "status": "ready",
+      "question": "In Bazel, you have a `py_binary` target named `//src:main` and a `py_test` target named `//tests:main_test`. Both need to use the same Python module `helper.py`. According to Bazel's Python rules, what is the correct way to share `helper.py` between these two targets?",
+      "options": {
+        "A": "Create a `py_library` target containing `helper.py`, then have both `//src:main` and `//tests:main_test` depend on it via their `deps` attribute.",
+        "B": "Add `helper.py` directly to the `srcs` attribute of both `//src:main` and `//tests:main_test`.",
+        "C": "Have `//tests:main_test` list `//src:main` in its `deps` attribute to reuse the binary's sources.",
+        "D": "Create a `py_binary` target containing `helper.py` and list it in the `deps` attribute of `//tests:main_test`."
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The `deps` attribute of `py_binary` and `py_test` is intended for `py_library` targets (described as 'generally py_library rules' in the Bazel docs). To share code between a binary and a test, the shared logic must live in a `py_library` target. Both `py_binary` and `py_test` can then independently declare that `py_library` in their `deps`.",
+      "evidence_ids": ["G1_E1", "G1_E3", "G1_E6"]
+    },
+    {
+      "target_id": "G1_KT2",
+      "status": "ready",
+      "question": "In a Bazel Python project, you want both a `py_binary` and a `py_test` to use a shared module `lib.py`. Based on Bazel's Python rules documentation, which BUILD file structure correctly expresses this relationship?",
+      "options": {
+        "A": "Define a `py_binary` with `srcs = [\"lib.py\"]` and have the `py_test` list that binary in its `deps`.",
+        "B": "Define a `py_library` with `srcs = [\"lib.py\"]`, then have both the `py_binary` and the `py_test` reference it via `deps = [\":lib\"]`.",
+        "C": "List `lib.py` in the `data` attribute of both the `py_binary` and the `py_test`.",
+        "D": "Define the `py_binary` with `srcs = [\"lib.py\", \"bin.py\"]` and separately define the `py_test` with `srcs = [\"lib.py\", \"test.py\"]`, duplicating the source."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The `deps` attribute of `py_library`, `py_binary`, and `py_test` are all described as generally accepting `py_library` rules. The existing `examples/py/BUILD` file in the repository demonstrates this pattern: a `py_library` named `lib` holds `lib.py`, and a `py_binary` depends on it via `deps = [\":lib\"]`. A `py_test` would analogously depend on the same `py_library`.",
+      "evidence_ids": ["G1_E2", "G1_E5"]
+    },
+    {
+      "target_id": "G2_KT1",
+      "status": "ready",
+      "question": "When writing a BUILD file that uses the `py_binary` rule from `rules_python`, which `load()` statement is correct?",
+      "options": {
+        "A": "load(\"@rules_python//python:defs.bzl\", \"py_binary\")",
+        "B": "load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")",
+        "C": "load(\"@bazel_tools//tools/python:py_binary.bzl\", \"py_binary\")",
+        "D": "load(\"//python:py_binary.bzl\", \"py_binary\")"
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The repository file `examples/py/BUILD` uses `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")` and `load(\"@rules_python//python:py_library.bzl\", \"py_library\")`. Test infrastructure code also shows `load(\"@rules_python//python:py_test.bzl\", \"py_test\")` and `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")`, confirming the per-rule `.bzl` file pattern under `@rules_python//python:`.",
+      "evidence_ids": ["G2_E4", "G2_E5", "G2_E6", "G2_E7"]
+    },
+    {
+      "target_id": "G2_KT2",
+      "status": "ready",
+      "question": "When creating a standalone Bazel project that uses `rules_python` with Bzlmod (MODULE.bazel), how should `rules_python` be declared as a dependency?",
+      "options": {
+        "A": "Add `load(\"@rules_python//python:repositories.bzl\", \"rules_python_register\")` and call `rules_python_register()` in MODULE.bazel.",
+        "B": "Add `bazel_dep(name = \"rules_python\", version = \"0.40.0\")` to MODULE.bazel.",
+        "C": "Add an `http_archive` rule directly inside MODULE.bazel pointing to the `rules_python` GitHub release.",
+        "D": "No declaration is needed because `rules_python` is bundled with Bazel by default."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The test file `bazel_external_repository_test.py` shows a MODULE.bazel constructed with `'bazel_dep(name = \"rules_python\", version = \"0.40.0\")'` as the Bzlmod way of depending on `rules_python`. The `http_archive` approach is for the legacy WORKSPACE method, not MODULE.bazel.",
+      "evidence_ids": ["G2_E7", "G2_E8"]
+    },
+    {
+      "target_id": "G3_KT1",
+      "status": "ready",
+      "question": "In a Bazel project using the legacy WORKSPACE approach, which of the following correctly configures a hermetic Python 3.11 toolchain via `rules_python`?",
+      "options": {
+        "A": "load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\")\npython_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")",
+        "B": "load(\"@rules_python//python/extensions:python.bzl\", \"python\")\npython.toolchain(python_version = \"3.11\")",
+        "C": "load(\"@rules_python//python:defs.bzl\", \"python_toolchain\")\npython_toolchain(version = \"3.11\")",
+        "D": "load(\"@bazel_tools//tools/python:toolchain.bzl\", \"python_toolchain\")\npython_toolchain(name = \"py311\", python_version = \"3.11\")"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The documentation examples show that in the legacy WORKSPACE approach, `python_register_toolchains` is loaded from `@rules_python//python:repositories.bzl` and called with `name` and `python_version` arguments, e.g., `python_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")`. Option B uses the Bzlmod extension API, which is for MODULE.bazel, not WORKSPACE.",
+      "evidence_ids": ["G3_E1", "G3_E2", "G3_E7"]
+    },
+    {
+      "target_id": "G3_KT2",
+      "status": "ready",
+      "question": "In a Bazel project using Bzlmod (MODULE.bazel), which snippet correctly configures a hermetic Python 3.11 toolchain via `rules_python`?",
+      "options": {
+        "A": "load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\")\npython_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")",
+        "B": "python = use_extension(\"@rules_python//python/extensions:python.bzl\", \"python\")\npython.toolchain(python_version = \"3.11\")",
+        "C": "bazel_dep(name = \"rules_python\", version = \"0.40.0\")\nregister_toolchains(\"@rules_python//python:3.11_toolchain\")",
+        "D": "use_extension(\"@rules_python//python:defs.bzl\", \"python_toolchain\")\npython_toolchain.register(version = \"3.11\")"
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The documentation shows that in the Bzlmod approach, `use_extension(\"@rules_python//python/extensions:python.bzl\", \"python\")` obtains the extension object, and then `python.toolchain(python_version = \"3.11\")` (optionally with `python.defaults(python_version = \"3.11\")`) registers the toolchain. Option A is the legacy WORKSPACE approach using `python_register_toolchains`, which does not apply in MODULE.bazel.",
+      "evidence_ids": ["G3_E3", "G3_E6"]
+    }
+  ]
+}
+```

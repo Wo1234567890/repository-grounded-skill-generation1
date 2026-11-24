@@ -1,0 +1,18 @@
+{
+  "candidate_id": "G2_KT1_C3",
+  "target_id": "G2_KT1",
+  "question_id": "G2_KT1_Q1",
+  "knowledge": "The `rules_python` Bazel ruleset exposes `py_binary`, `py_library`, and `py_test` as individual Starlark files, each requiring its own `load()` call. These are not built-in Bazel globals when using `rules_python` — they must be loaded explicitly.\n\nFor a `src/BUILD.bazel` containing a Python binary:\n```python\nload(\"@rules_python//python:py_binary.bzl\", \"py_binary\")\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\n\npy_binary(\n    name = \"main\",\n    srcs = [\"main.py\"],\n)\n```\n\nFor a `tests/BUILD.bazel` containing Python tests:\n```python\nload(\"@rules_python//python:py_test.bzl\", \"py_test\")\n\npy_test(\n    name = \"main_test\",\n    srcs = [\"main_test.py\"],\n    deps = [\"//src:lib\"],\n)\n```\n\nThe label pattern for all three rules follows `@rules_python//python:<rule_name>.bzl`. This is distinct from the deprecated approach of using native Python rules without load statements. The `examples/py/BUILD` file in the repository demonstrates this pattern for `py_binary` and `py_library`, and `bazel_external_repository_test.py` confirms the same pattern for `py_test`.",
+  "baseline_state": 0,
+  "intervention_state": 0,
+  "delta": 0,
+  "answers": [
+    "C",
+    "C",
+    "C"
+  ],
+  "valid_count": 3,
+  "correct_count": 0,
+  "repetitions": 3,
+  "candidate_tokens": null
+}

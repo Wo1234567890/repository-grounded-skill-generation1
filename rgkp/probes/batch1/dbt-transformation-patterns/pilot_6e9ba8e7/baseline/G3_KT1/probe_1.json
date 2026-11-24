@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In dbt-core functional tests, what must be done before calling `get_manifest(project.project_root)` or `get_artifact(project.project_root, 'target', 'manifest.json')` to ensure the manifest data is available?",
+    "options": {
+      "A": "`run_dbt(['compile'])` (or `run_dbt(['parse'])`) must be called first within the same test method to generate the manifest in the target directory",
+      "B": "`get_manifest()` itself triggers compilation internally, so no prior `run_dbt` call is required",
+      "C": "A `conftest.py` autouse fixture must call `run_dbt(['compile'])` once at the class level before any test method runs",
+      "D": "The `project` fixture automatically generates the manifest when it is initialized, so no explicit command is needed"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6855143330176361,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 244,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

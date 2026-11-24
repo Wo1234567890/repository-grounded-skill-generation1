@@ -1,0 +1,26 @@
+{
+  "diagnostic_questions": [
+    {
+      "target_id": "G2_KT1",
+      "status": "ready",
+      "question": "How does ShellCheck handle BATS test files and their `@test` blocks internally, based on the ShellCheck source code and documentation?",
+      "options": {
+        "A": "ShellCheck ignores `.bats` files entirely and requires users to explicitly pass `--shell=bash` on the command line; `@test` blocks are parsed as standard shell functions with no special handling.",
+        "B": "ShellCheck converts `.bats` files to plain bash before analysis, strips all `@test` markers, and treats `run` as an alias for `eval`, applying the same analysis rules as for `eval`.",
+        "C": "ShellCheck infers the shell type from the `.bats` extension (treating it as bash), represents `@test` blocks using a dedicated `T_BatsTest` AST node treated as function-like scopes, and handles the BATS `run` command similarly to `builtin` or `command` when resolving the effective command.",
+        "D": "ShellCheck treats `.bats` files identically to `.sh` files, parses `@test` blocks as regular `if` statements, and raises warnings when the `run` command is encountered because it is unrecognized."
+      },
+      "correct_answer": "C",
+      "reference_explanation": "The CHANGELOG states that `.bats` extension is used to infer the shell type (G2_E2, G2_E3). The AST defines a `T_BatsTest` constructor (G2_E4), and `isFunctionLike` returns `True` for both `T_Function` and `T_BatsTest`, meaning BATS tests are treated as function-like scopes (G2_E8). Additionally, `run` is explicitly listed alongside `builtin` and `command` as a wrapper whose first non-flag argument is used as the effective command (G2_E7).",
+      "evidence_ids": [
+        "G2_E1",
+        "G2_E2",
+        "G2_E3",
+        "G2_E4",
+        "G2_E7",
+        "G2_E8"
+      ],
+      "question_id": "G2_KT1_Q1"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "candidate_id": "G2_KT1_C2",
+  "target_id": "G2_KT1",
+  "question_id": "G2_KT1_Q1",
+  "knowledge": "In Bazel BUILD files that use `rules_python`, each Python rule symbol must be explicitly imported via a `load()` statement referencing the `@rules_python` external repository. The file-to-symbol mapping is:\n\n| Rule | Load statement |\n|------|---------------|\n| `py_binary` | `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")` |\n| `py_library` | `load(\"@rules_python//python:py_library.bzl\", \"py_library\")` |\n| `py_test` | `load(\"@rules_python//python:py_test.bzl\", \"py_test\")` |\n\nThese load statements must appear before the rules are used in the BUILD file. Omitting them causes a `name 'py_binary' is not defined` (or similar) error at analysis time. The repository evidence from `examples/py/BUILD` and test files in `src/test/py/bazel/bazel_external_repository_test.py` confirms all three paths. Note that `py_binary` and `py_library` are both used in `examples/py/BUILD`, while `py_test` appears in the test file at `load(\"@rules_python//python:py_test.bzl\", \"py_test\")`.",
+  "baseline_state": 0,
+  "intervention_state": 1,
+  "delta": 1,
+  "answers": [
+    "A",
+    "A",
+    "A"
+  ],
+  "valid_count": 3,
+  "correct_count": 3,
+  "repetitions": 3,
+  "candidate_tokens": 308
+}

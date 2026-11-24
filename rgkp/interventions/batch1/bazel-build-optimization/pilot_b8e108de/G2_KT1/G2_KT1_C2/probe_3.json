@@ -1,0 +1,33 @@
+{
+  "input": {
+    "question": "When writing a BUILD file that uses the `py_binary` rule from `rules_python`, which `load()` statement is correct?",
+    "options": {
+      "A": "load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")",
+      "B": "load(\"//python:py_binary.bzl\", \"py_binary\")",
+      "C": "load(\"@rules_python//python:defs.bzl\", \"py_binary\")",
+      "D": "load(\"@bazel_tools//tools/python:py_binary.bzl\", \"py_binary\")"
+    },
+    "candidate_knowledge": "In Bazel BUILD files that use `rules_python`, each Python rule symbol must be explicitly imported via a `load()` statement referencing the `@rules_python` external repository. The file-to-symbol mapping is:\n\n| Rule | Load statement |\n|------|---------------|\n| `py_binary` | `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")` |\n| `py_library` | `load(\"@rules_python//python:py_library.bzl\", \"py_library\")` |\n| `py_test` | `load(\"@rules_python//python:py_test.bzl\", \"py_test\")` |\n\nThese load statements must appear before the rules are used in the BUILD file. Omitting them causes a `name 'py_binary' is not defined` (or similar) error at analysis time. The repository evidence from `examples/py/BUILD` and test files in `src/test/py/bazel/bazel_external_repository_test.py` confirms all three paths. Note that `py_binary` and `py_library` are both used in `examples/py/BUILD`, while `py_test` appears in the test file at `load(\"@rules_python//python:py_test.bzl\", \"py_test\")`."
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6471487079979852,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 524,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

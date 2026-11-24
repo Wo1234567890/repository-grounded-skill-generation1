@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "When writing a Ghost e2e browse test for a resource that starts with zero records, what is the recommended approach for the empty-collection case as demonstrated by the labels test?",
+    "options": {
+      "A": "Pass `{audit_logs: null}` to `matchBodySnapshot()` to explicitly assert that the collection key is null when empty.",
+      "B": "Skip the empty-collection test entirely and only test after seeding data, since `matchBodySnapshot()` cannot handle empty arrays.",
+      "C": "Call `matchBodySnapshot()` with no arguments (or a static empty matcher), and test the non-empty case separately after explicitly creating test data.",
+      "D": "Use `assert.strictEqual(body.audit_logs.length, 0)` inside a `.then()` callback chained after `matchBodySnapshot()`."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.712700957985362,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 231,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

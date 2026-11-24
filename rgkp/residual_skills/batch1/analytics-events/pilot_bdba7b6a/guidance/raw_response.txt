@@ -1,0 +1,22 @@
+```json
+{
+  "application_results": [
+    {
+      "target_id": "G1_KT1",
+      "application_state": "not_applied",
+      "reason": "At line 36, the agent observed all existing test files in `frontend/test/metabase/lib/` use the `.unit.spec.ts` or `.unit.spec.js` suffix (e.g., `browser.unit.spec.ts`, `schema_metadata.unit.spec.ts`, `string.unit.spec.ts`). Despite this, the agent created the test file as `analytics.test.ts` at line 50, which does not match the `testMatch` patterns in `jest.config.js` (`*.unit.spec.{js,jsx,ts,tsx}`) and will not be discovered by Jest.",
+      "trajectory_lines": [36, 50],
+      "evidence_ids": ["G1_E3", "G1_E4", "G1_E5", "G1_E1", "G1_E2"],
+      "execution_guidance": "When creating the test file, rename it to match the project convention. At the point of writing the test file (line 49), use `frontend/test/metabase/lib/analytics.unit.spec.ts` instead of `analytics.test.ts`. The Jest `testMatch` in `jest.config.js` only discovers `*.unit.spec.{js,jsx,ts,tsx}` files, so `analytics.test.ts` will never be run by `bun run test-unit`."
+    },
+    {
+      "target_id": "G2_KT2",
+      "application_state": "uncertain",
+      "reason": "The agent's test file imports directly from `metabase/lib/analytics` without adding explicit mocks for `@snowplow/browser-tracker`, `metabase/env`, or `metabase/lib/settings`. However, the Jest setup files may already provide global mocks for these modules. The agent was blocked from running tests or type-check due to a permission denial, so it is not possible to determine from the trajectory whether the tests would actually fail at import time.",
+      "trajectory_lines": [49, 50, 54],
+      "evidence_ids": ["G2_E4", "G2_E2"],
+      "execution_guidance": ""
+    }
+  ]
+}
+```

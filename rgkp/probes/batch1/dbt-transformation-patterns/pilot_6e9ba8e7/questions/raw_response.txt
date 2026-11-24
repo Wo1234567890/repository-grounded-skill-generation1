@@ -1,0 +1,104 @@
+```json
+{
+  "diagnostic_questions": [
+    {
+      "target_id": "G1_KT1",
+      "status": "ready",
+      "question": "According to the dbt-core repository's schema.yml conventions (as seen in starter project and functional test fixtures), which top-level structure is used to define models with column-level descriptions and built-in tests such as `unique` and `not_null`?",
+      "options": {
+        "A": "A `version: 2` document with a `models:` list, where each entry has `name`, `description`, and `columns:` containing `data_tests:`",
+        "B": "A `version: 2` document with a `sources:` list, where each entry has `name`, `description`, and `columns:` containing `tests:`",
+        "C": "A `version: 1` document with a `models:` list, where each entry has `name`, `description`, and `columns:` containing `data_tests:`",
+        "D": "A `version: 2` document with a `data_tests:` list, where each entry has `name`, `description`, and `columns:` containing `unique` and `not_null`"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The repository's schema.yml files (e.g., core/dbt/include/starter_project/models/example/schema.yml and tests/functional/fixtures/happy_path_project/models/schema.yml) consistently use `version: 2` at the top level, a `models:` key containing a list of model entries, each with `name`, `description`, and `columns:` that include `data_tests:` listing `unique` and `not_null`.",
+      "evidence_ids": ["G1_E1", "G1_E4"]
+    },
+    {
+      "target_id": "G1_KT2",
+      "status": "ready",
+      "question": "Based on the dbt-core repository structure, where does the `core/dbt/tests/fixtures/` directory establish a precedent, and what does the `__init__.py` file found there indicate?",
+      "options": {
+        "A": "It is a Python package under `core/dbt/tests/`, indicating that new subdirectories (e.g., `core/dbt/tests/staging/`) can similarly be added as packages within `dbt.tests`",
+        "B": "It is a configuration directory for pytest, indicating that test configuration files must be placed there rather than in subdirectories",
+        "C": "It is the sole permitted location for all fixture SQL and YAML files in the entire repository, with no subdirectories allowed",
+        "D": "It is a generated directory created automatically by hatch, and manually adding new subdirectories alongside it is not supported"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The file `core/dbt/tests/fixtures/__init__.py` contains a comment '# dbt.tests.fixtures directory', confirming it is a Python package under `core/dbt/tests/`. This establishes the pattern that subdirectories under `core/dbt/tests/` can be Python packages (e.g., `dbt.tests.fixtures`), making it feasible to add new subdirectories like `core/dbt/tests/staging/` as additional packages.",
+      "evidence_ids": ["G1_E6", "G1_E7", "G1_E8"]
+    },
+    {
+      "target_id": "G2_KT1",
+      "status": "ready",
+      "question": "When iterating over results returned by `run_dbt(['compile'])` in dbt-core functional tests, how is the name of each result's node accessed, as demonstrated by `check_result_nodes_by_name` in `core/dbt/tests/util.py`?",
+      "options": {
+        "A": "Via `result.node.name`",
+        "B": "Via `result.name`",
+        "C": "Via `result.node['name']`",
+        "D": "Via `result.get_name()`"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "In `core/dbt/tests/util.py`, the `check_result_nodes_by_name` function iterates over results and appends `result.node.name` to build the list of names. Similarly, `get_unique_ids_in_results` uses `result.node.unique_id`. Both confirm the pattern is `result.node.name`.",
+      "evidence_ids": ["G2_E2", "G2_E3"]
+    },
+    {
+      "target_id": "G2_KT2",
+      "status": "ready",
+      "question": "According to `core/dbt/tests/util.py`, what is the preferred utility function for asserting that compile results contain a specific set of node names (e.g., `['stg_orders']`)?",
+      "options": {
+        "A": "`check_result_nodes_by_name(results, ['stg_orders'])`",
+        "B": "`assert any(result.name == 'stg_orders' for result in results)`",
+        "C": "`check_result_nodes_by_unique_id(results, ['stg_orders'])`",
+        "D": "`assert results[0].name == 'stg_orders'`"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The repository's `core/dbt/tests/util.py` provides `check_result_nodes_by_name(results, names)`, which correctly accesses `result.node.name` for each result and asserts set equality with the provided names. This is the established utility for checking node names in compile/run results.",
+      "evidence_ids": ["G2_E2", "G2_E1"]
+    },
+    {
+      "target_id": "G3_KT1",
+      "status": "ready",
+      "question": "In dbt-core functional tests, what must be done before calling `get_manifest(project.project_root)` or `get_artifact(project.project_root, 'target', 'manifest.json')` to ensure the manifest data is available?",
+      "options": {
+        "A": "`run_dbt(['compile'])` (or `run_dbt(['parse'])`) must be called first within the same test method to generate the manifest in the target directory",
+        "B": "The `project` fixture automatically generates the manifest when it is initialized, so no explicit command is needed",
+        "C": "`get_manifest()` itself triggers compilation internally, so no prior `run_dbt` call is required",
+        "D": "A `conftest.py` autouse fixture must call `run_dbt(['compile'])` once at the class level before any test method runs"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "Repository examples consistently show the pattern `run_dbt(['compile'])` followed immediately by `manifest = get_manifest(project.project_root)` or `manifest = get_artifact(project.project_root, 'target', 'manifest.json')` within the same test method. This is necessary because `compile` (or `parse`) writes `manifest.json` to the target directory, which these functions then read.",
+      "evidence_ids": ["G3_E7", "G3_E1", "G3_E3"]
+    },
+    {
+      "target_id": "G3_KT2",
+      "status": "ready",
+      "question": "In a dbt functional test class with multiple test methods that each need to inspect the manifest, what is the correct pattern according to the repository's existing tests?",
+      "options": {
+        "A": "Each test method that uses manifest data should independently call `run_dbt(['compile'])` at the start of that method before accessing the manifest",
+        "B": "A single `run_dbt(['compile'])` call in a `setup_method` or `setup_class` is sufficient for all test methods in the class to share the same manifest",
+        "C": "Only the first test method needs to call `run_dbt(['compile'])`; subsequent test methods can rely on the manifest left in the target directory",
+        "D": "The `project` fixture automatically re-runs compilation before each test method, so no explicit `run_dbt(['compile'])` call is needed in individual test methods"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The repository's AGENTS.md notes that multiple tests in a functional test class share the same project fixture but each test method is independent, and that modifying the project in one test can affect others. The existing test examples (e.g., `test_compile` in `test_singular_test_patch.py` and `test_generic_test_description.py`) each call `run_dbt(['compile'])` at the start of the test method before accessing manifest data.",
+      "evidence_ids": ["G3_E7", "G3_E1", "G3_E6"]
+    },
+    {
+      "target_id": "G3_KT3",
+      "status": "ready",
+      "question": "What is the key difference between `get_manifest(project.project_root)` and `get_artifact(project.project_root, 'target', 'manifest.json')` as used in dbt-core functional tests?",
+      "options": {
+        "A": "`get_manifest()` returns a parsed Python manifest object (with `.nodes` as a dict of objects), while `get_artifact()` returns the raw manifest as a Python dict (with `manifest['nodes']` as a dict of raw dicts)",
+        "B": "`get_manifest()` returns the raw manifest as a Python dict, while `get_artifact()` returns a parsed Python manifest object with attribute access",
+        "C": "`get_manifest()` reads directly from the project source files without requiring a prior compile, while `get_artifact()` requires a prior `run_dbt(['compile'])` call",
+        "D": "Both functions return identical objects; the difference is only in the number of arguments they accept"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "In `test_singular_test_patch.py`, after `run_dbt(['compile'])`, `get_manifest(project.project_root)` is used and then `manifest.nodes` is accessed as attribute-style (e.g., `manifest.nodes['test.test.my_singular_test']` returns an object with `.description`). In `test_generic_test_description.py` and `test_foreign_key_constraints.py`, `get_artifact(project.project_root, 'target', 'manifest.json')` is used and accessed as a dict (e.g., `manifest['nodes']`). Both require a prior `run_dbt(['compile'])` call.",
+      "evidence_ids": ["G3_E7", "G3_E3", "G3_E6"]
+    }
+  ]
+}
+```

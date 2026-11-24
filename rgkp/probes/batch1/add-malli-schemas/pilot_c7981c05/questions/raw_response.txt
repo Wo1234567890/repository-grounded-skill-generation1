@@ -1,0 +1,104 @@
+```json
+{
+  "diagnostic_questions": [
+    {
+      "target_id": "G1_KT1",
+      "status": "ready",
+      "question": "In the Metabase repository, where are the `/api/alert` endpoint handlers actually implemented, and how is this namespace wired into the application router?",
+      "options": {
+        "A": "The handlers are in `src/metabase/pulse/api/alert.clj` (namespace `metabase.pulse.api.alert`, marked `^:deprecated`), and the router uses `(api.macros/ns-handler 'metabase.pulse.api.alert)` via `metabase.pulse.api/alert-routes`.",
+        "B": "The handlers are in `src/metabase/api/alert.clj` (namespace `metabase.api.alert`), and the router registers them directly via a Compojure `defroutes` call.",
+        "C": "The handlers are in `src/metabase/notification/api/alert.clj` (namespace `metabase.notification.api.alert`), and the router uses `(api.macros/ns-handler 'metabase.notification.api.alert)` via `metabase.notification.api/alert-routes`.",
+        "D": "The handlers are split between `src/metabase/api/alert.clj` and `src/metabase/pulse/api/alert.clj`, with the router merging both namespaces using `handlers/routes`."
+      },
+      "correct_answer": "A",
+      "reference_explanation": "Evidence G1_E1 shows the namespace `metabase.pulse.api.alert` declared as `^:deprecated` in `src/metabase/pulse/api/alert.clj`. Evidence G1_E5 shows `alert-routes` defined in `src/metabase/pulse/api.clj` as `(api.macros/ns-handler 'metabase.pulse.api.alert)`. There is no `src/metabase/api/alert.clj` file referenced in the evidence.",
+      "evidence_ids": ["G1_E1", "G1_E4", "G1_E5"]
+    },
+    {
+      "target_id": "G1_KT2",
+      "status": "ready",
+      "question": "In the Metabase repository, where do the existing tests for the `/api/alert` endpoints reside, and what namespace do they use?",
+      "options": {
+        "A": "They are in `test/metabase/api/alert_test.clj` under the namespace `metabase.api.alert-test`.",
+        "B": "They are in `test/metabase/pulse/api/alert_test.clj` under the namespace `metabase.pulse.api.alert-test`.",
+        "C": "They are in `test/metabase/notification/api/alert_test.clj` under the namespace `metabase.notification.api.alert-test`.",
+        "D": "They are in `test/metabase/pulse/alert_test.clj` under the namespace `metabase.pulse.alert-test`."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "Evidence G1_E6 shows the file `test/metabase/pulse/api/alert_test.clj` with namespace declaration `(ns metabase.pulse.api.alert-test ...)` and docstring 'Tests for `/api/alert` endpoints.'",
+      "evidence_ids": ["G1_E6", "G1_E1"]
+    },
+    {
+      "target_id": "G2_KT1",
+      "status": "ready",
+      "question": "When writing Clojure tests with `clojure.test`, what is required for a call to `mt/user-http-request` to register as a test assertion in the test results?",
+      "options": {
+        "A": "The call must be made inside a `(testing ...)` block; a bare `mt/user-http-request` call automatically registers an assertion based on the status code argument.",
+        "B": "The call must be wrapped in `(is ...)` (e.g., `(is (= expected (mt/user-http-request ...)))`) so the assertion is registered; a bare call may throw on status mismatch but does not register as a test assertion.",
+        "C": "The call must be assigned to a `let` binding and then passed to `assert`; wrapping in `is` is optional for status-code checks.",
+        "D": "The call must use `(are ...)` instead of `(is ...)` to register multiple status-code assertions in a single test."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "Evidence G2_E1 and G2_E2 show that all `mt/user-http-request` calls that are intended to be test assertions are wrapped in `(is ...)` or `(is (= ...) ...)` or `(is (=? ...) ...)`. A bare call without `is` does not register as a test assertion in `clojure.test`, even though it may throw on a status mismatch.",
+      "evidence_ids": ["G2_E1", "G2_E2", "G2_E5"]
+    },
+    {
+      "target_id": "G2_KT2",
+      "status": "ready",
+      "question": "In Clojure's `clojure.test`, what is the correct structure when a `deftest` body needs to contain multiple `is` or `testing` forms?",
+      "options": {
+        "A": "Each `is` or `testing` form must be placed in its own separate `deftest`, because a single `deftest` can only contain one top-level assertion.",
+        "B": "All `is` and `testing` forms must appear before the final closing parenthesis of the `deftest` form, so they are all evaluated within the test body.",
+        "C": "The `is` forms after the first must be wrapped in a `do` block to prevent them from becoming top-level expressions.",
+        "D": "Multiple assertions can be placed outside the `deftest` closing paren as long as they appear in the same namespace file."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "Evidence G2_E1 and G2_E4 demonstrate that multiple `testing` and `is` blocks are all nested inside a single `deftest` closing parenthesis. If the `deftest` body closes early, subsequent forms become top-level expressions evaluated at compile/load time and do not run as part of the test.",
+      "evidence_ids": ["G2_E1", "G2_E4"]
+    },
+    {
+      "target_id": "G3_KT1",
+      "status": "ready",
+      "question": "What does the `create-notification!` function in `metabase.notification.api.notification` do when called?",
+      "options": {
+        "A": "It only validates the input schema and returns the validated map without persisting anything to the database.",
+        "B": "It calls `api/create-check`, persists the notification via `models.notification/create-notification!`, hydrates the result, optionally sends email notifications, and publishes a `:event/notification-create` event.",
+        "C": "It directly inserts a row into the `notification` table using `t2/insert!` and returns the raw database row without hydration.",
+        "D": "It delegates entirely to `notification.api/list-notifications` to check for duplicates before creating, then returns a stub map."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "Evidence G3_E2 shows `create-notification!` calls `api/create-check`, then `models.notification/create-notification!`, then `models.notification/hydrate-notification`. Evidence G3_E3 shows it also calls `send-you-were-added-card-notification-email!` and `events/publish-event!` with `:event/notification-create`.",
+      "evidence_ids": ["G3_E2", "G3_E3", "G3_E6"]
+    },
+    {
+      "target_id": "G3_KT2",
+      "status": "ready",
+      "question": "In `metabase.pulse.api.alert`, what is the role of the `notification->pulse` function and how is it used in the existing GET list endpoint?",
+      "options": {
+        "A": "It converts a legacy pulse map into the new notification format required by `notification.api/create-notification!`, and is used to transform request bodies before creation.",
+        "B": "It converts a fully-hydrated notification back to the legacy pulse wire format for backward compatibility, and is applied via `map` over the results of `notification.api/list-notifications` in the GET list endpoint.",
+        "C": "It validates that a notification has all required pulse fields and throws an exception if any are missing, used as a pre-check before returning results.",
+        "D": "It serializes a notification to JSON format for the HTTP response, replacing the default serialization in `api.macros/defendpoint`."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "Evidence G3_E4 defines `notification->pulse` as converting a notification to the legacy pulse structure. Evidence G3_E5 shows the GET list endpoint applying it via `(map notification->pulse)` over `(notification.api/list-notifications ...)` results.",
+      "evidence_ids": ["G3_E4", "G3_E5", "G3_E6"]
+    },
+    {
+      "target_id": "G3_KT3",
+      "status": "ready",
+      "question": "When constructing the input map for `notification.api/create-notification!`, which keys are expected in the `::models.notification/FullyHydratedNotification` shaped map?",
+      "options": {
+        "A": "`:card_id`, `:channels`, `:alert_condition`, and `:alert_first_only` — the raw alert API request fields can be passed directly without transformation.",
+        "B": "`:payload_type` (keyword), `:creator_id`, `:payload` (map with at minimum `:card_id`), `:subscriptions` (seq), and `:handlers` (seq) — the alert API request fields must be transformed into this notification shape.",
+        "C": "`:type`, `:owner_id`, `:data`, `:recipients`, and `:channels` — these correspond to the internal channel model fields used by the notification system.",
+        "D": "`:notification_type`, `:user_id`, `:card`, `:condition`, and `:first_only` — camel-cased versions of the alert API fields mapped to their notification equivalents."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "Evidence G3_E2 shows `create-notification!` accepts a `::models.notification/FullyHydratedNotification` and destructures `:handlers` and `:subscriptions` from it. Evidence G3_E3 shows the notification POST endpoint constructing this shape with `:payload_type`, `:creator_id`, `:payload`, `:subscriptions`, and `:handlers`. Evidence G3_E8 confirms `:payload_type`, `:creator_id`, and `:payload` with `:card_id` are used when calling the notification API.",
+      "evidence_ids": ["G3_E2", "G3_E3", "G3_E8"]
+    }
+  ]
+}
+```

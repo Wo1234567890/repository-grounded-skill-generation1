@@ -1,0 +1,98 @@
+{
+  "application_results": [
+    {
+      "target_id": "G1_KT1",
+      "application_state": "not_applied",
+      "reason": "The agent never created files under `core/dbt/tests/staging/`. The task explicitly listed `core/dbt/tests/staging/stg_orders.sql` and `core/dbt/tests/staging/schema.yml` as files to create. At line 189, the agent listed `core/dbt/tests/` and found only `fixtures/` and `util.py`, but then took no action to create the `staging/` subdirectory there. All file creation was performed under `tests/functional/staging/` only.",
+      "trajectory_lines": [
+        189,
+        185
+      ],
+      "evidence_ids": [
+        "G1_E1",
+        "G1_E4",
+        "G1_E5"
+      ],
+      "execution_guidance": "Create the optional fixture files at `core/dbt/tests/staging/stg_orders.sql` and `core/dbt/tests/staging/schema.yml`. The `core/dbt/tests/fixtures/` directory already exists as a package precedent—follow the same pattern by creating a `staging/` subdirectory under `core/dbt/tests/`. The `stg_orders.sql` file should contain `{{ config(materialized='view') }}`, column transformations, and `{{ source() }}` macro. The `schema.yml` should follow `version: 2` format with a `models:` key containing `name`, `description`, and `columns` with `data_tests` entries (e.g., `unique`, `not_null`, and `assert_positive_amounts`)—matching the pattern in `core/dbt/include/starter_project/models/example/schema.yml`.",
+      "guidance_id": "G1_KT1_EG1"
+    },
+    {
+      "target_id": "G1_KT2",
+      "application_state": "not_applied",
+      "reason": "The agent was aware of `core/dbt/tests/` (checked it at line 189) and knew `core/dbt/tests/fixtures/` exists as a subdirectory package (G1_E8). However, the agent did not create a `core/dbt/tests/staging/` subdirectory with the optional fixture SQL and YAML files, despite the task specifying these paths.",
+      "trajectory_lines": [
+        189
+      ],
+      "evidence_ids": [
+        "G1_E6",
+        "G1_E7",
+        "G1_E8"
+      ],
+      "execution_guidance": "Create `core/dbt/tests/staging/` as a new subdirectory following the existing `core/dbt/tests/fixtures/` precedent. Place `stg_orders.sql` and `schema.yml` there. These are standalone SQL/YAML fixture files (not Python), so no `__init__.py` is strictly required unless you want them importable as a package. The files serve as example/reference fixtures for the `dbt.tests` package.",
+      "guidance_id": "G1_KT2_EG1"
+    },
+    {
+      "target_id": "G2_KT2",
+      "application_state": "not_applied",
+      "reason": "At line 51, the agent wrote `assert any(node.name == 'stg_orders' for node in results)` where `results` comes from `run_dbt(['compile'])`. Repository evidence shows that result objects from `run_dbt` expose the model name via `result.node.name` (not `result.name`), and the utility `check_result_nodes_by_name(results, ['stg_orders'])` from `dbt.tests.util` is the preferred pattern. The agent read `util.py` at line 169 which shows this pattern explicitly.",
+      "trajectory_lines": [
+        51,
+        169
+      ],
+      "evidence_ids": [
+        "G2_E2",
+        "G2_E1"
+      ],
+      "execution_guidance": "In `test_stg_orders_model_compiles`, replace `assert any(node.name == 'stg_orders' for node in results)` with `check_result_nodes_by_name(results, ['stg_orders'])` imported from `dbt.tests.util`. This correctly accesses `result.node.name` for each result object returned by `run_dbt(['compile'])`.",
+      "guidance_id": "G2_KT2_EG1"
+    },
+    {
+      "target_id": "G3_KT1",
+      "application_state": "not_applied",
+      "reason": "Multiple test methods in `test_stg_orders.py` call `get_manifest(project.project_root)` without first calling `run_dbt(['compile'])` within the same method. For example, `test_schema_yml_contains_model_description` (line ~21-33), `test_schema_yml_contains_column_descriptions`, `test_schema_yml_contains_built_in_tests`, `test_custom_test_reference_exists`, `test_model_config_materialized_as_view`, and `test_model_uses_source_macro` all go directly to `get_manifest` without compiling. The pattern from `test_generic_test_description.py` (line 90) and `test_singular_test_patch.py` clearly shows `run_dbt(['compile'])` must precede `get_manifest`.",
+      "trajectory_lines": [
+        51,
+        90
+      ],
+      "evidence_ids": [
+        "G3_E7",
+        "G3_E1",
+        "G3_E3"
+      ],
+      "execution_guidance": "Add `run_dbt(['compile'])` at the start of every test method in `TestStagingOrders` that calls `get_manifest(project.project_root)`. Specifically, add it to: `test_schema_yml_contains_model_description`, `test_schema_yml_contains_column_descriptions`, `test_schema_yml_contains_built_in_tests`, `test_custom_test_reference_exists`, `test_model_config_materialized_as_view`, and `test_model_uses_source_macro`. The pattern is: `run_dbt(['compile'])` → `manifest = get_manifest(project.project_root)`.",
+      "guidance_id": "G3_KT1_EG1"
+    },
+    {
+      "target_id": "G3_KT2",
+      "application_state": "not_applied",
+      "reason": "Same as G3_KT1—multiple test methods share the class fixture but do not independently call `run_dbt(['compile'])` before accessing manifest data. The agent observed the correct pattern in existing tests (line 90) but did not apply it to the new test methods.",
+      "trajectory_lines": [
+        51,
+        90
+      ],
+      "evidence_ids": [
+        "G3_E7",
+        "G3_E1",
+        "G3_E6"
+      ],
+      "execution_guidance": "Each test method that reads manifest data must independently call `run_dbt(['compile'])` at its start, since shared class fixtures do not guarantee execution order or manifest freshness between test methods. Apply this to all six methods that call `get_manifest` without a preceding compile call.",
+      "guidance_id": "G3_KT2_EG1"
+    },
+    {
+      "target_id": "G3_KT3",
+      "application_state": "not_applied",
+      "reason": "The agent used `get_manifest(project.project_root)` in multiple test methods without first populating the target directory via `run_dbt(['compile'])`. Without compilation, `manifest.json` does not exist in the target directory and `get_manifest` will fail. The agent demonstrated awareness of `get_manifest` but did not apply the prerequisite compile step.",
+      "trajectory_lines": [
+        51,
+        90
+      ],
+      "evidence_ids": [
+        "G3_E7",
+        "G3_E3",
+        "G3_E6"
+      ],
+      "execution_guidance": "Add `run_dbt(['compile'])` before `get_manifest(project.project_root)` in every test method that needs manifest data. This populates `target/manifest.json`. Use `get_manifest` for a parsed Python object or `get_artifact(project.project_root, 'target', 'manifest.json')` for the raw dict—both require compilation first.",
+      "guidance_id": "G3_KT3_EG1"
+    }
+  ]
+}

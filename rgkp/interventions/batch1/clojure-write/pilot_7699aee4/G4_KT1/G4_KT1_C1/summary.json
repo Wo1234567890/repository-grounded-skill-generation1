@@ -1,0 +1,18 @@
+{
+  "candidate_id": "G4_KT1_C1",
+  "target_id": "G4_KT1",
+  "question_id": "G4_KT1_Q1",
+  "knowledge": "The correct file path for the settings model in this repository is `src/metabase/settings/models/setting.clj`, with namespace `metabase.settings.models.setting`. The task description's reference to `src/metabase/models/setting.clj` does not match the actual repository layout. When adding a new `defsetting` for `site-currency`, it should go into an appropriate existing settings file (such as `src/metabase/system/settings.clj`), and the `defsetting` macro should be imported from `metabase.settings.core`. To use `defsetting` in a new namespace, require it as: `[metabase.settings.core :as setting :refer [defsetting]]`, mirroring the pattern in `src/metabase/system/settings.clj` line 6.",
+  "baseline_state": 0,
+  "intervention_state": 0,
+  "delta": 0,
+  "answers": [
+    "C",
+    "C",
+    "C"
+  ],
+  "valid_count": 3,
+  "correct_count": 0,
+  "repetitions": 3,
+  "candidate_tokens": null
+}

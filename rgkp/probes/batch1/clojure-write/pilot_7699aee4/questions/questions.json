@@ -1,0 +1,119 @@
+{
+  "diagnostic_questions": [
+    {
+      "target_id": "G2_KT1",
+      "status": "ready",
+      "question": "According to the `metabase.util.currency` namespace in the repository, what does the `make-currency` function (and the currency metadata it stores) provide, and what is it NOT designed to do?",
+      "options": {
+        "A": "It provides real-time exchange rates fetched from an external API, along with symbol and name metadata for display purposes.",
+        "B": "It provides exchange rate data for common currency pairs (USD, EUR, CNY) while storing symbol metadata for less common currencies.",
+        "C": "It provides formatting metadata such as symbol, name, decimal_digits, rounding, code, and name_plural — but it does not contain exchange rates or perform numeric conversion between currencies.",
+        "D": "It provides only the currency symbol and code, and delegates all formatting decisions (including decimal places) to the frontend layer."
+      },
+      "correct_answer": "C",
+      "reference_explanation": "The `metabase.util.currency` namespace is described as 'The list of currencies, and associated metadata, used by Metabase for number formatting.' The `make-currency` function stores fields like symbol, name, decimal_digits, rounding, code, and name_plural. There is no exchange rate data present in the file; it is purely formatting metadata.",
+      "evidence_ids": [
+        "G2_E1",
+        "G2_E2",
+        "G2_E3"
+      ],
+      "question_id": "G2_KT1_Q1"
+    },
+    {
+      "target_id": "G2_KT2",
+      "status": "ready",
+      "question": "In the Metabase codebase, what is the purpose of the `supports-symbol?` function in `metabase.util.currency`, and how is it referenced elsewhere in the system?",
+      "options": {
+        "A": "It determines whether a given currency code should be displayed using its symbol (e.g., '$' for USD, 'CN¥' for CNY) rather than its code string, and is referenced during XLSX export to achieve parity in currency formatting.",
+        "B": "It validates whether a currency code is a recognized ISO 4217 code, returning false for unofficial currencies like BTC.",
+        "C": "It checks whether a currency supports fractional units (i.e., decimal_digits > 0), used to decide whether to show decimal places in exports.",
+        "D": "It determines whether a currency is supported for automatic exchange-rate conversion, returning true only for major currencies."
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The docstring for `supports-symbol?` states: 'Currencies for which the Metabase frontend supports formatting with its symbol, rather than just its code or name. This list is referenced during XLSX export to achieve parity in currency formatting.' The frontend's `CURRENCIES_WITH_SYMBOLS` set (e.g., USD, CAD, EUR, CNY, BTC) mirrors this, and `getDefaultCurrencyStyle` returns 'symbol' for currencies in that set.",
+      "evidence_ids": [
+        "G2_E1",
+        "G2_E5",
+        "G2_E6"
+      ],
+      "question_id": "G2_KT2_Q1"
+    },
+    {
+      "target_id": "G3_KT1",
+      "status": "ready",
+      "question": "When writing a test `test-currency-formatter-with-null-values` where the test data has two rows — `[1 nil]` (first row) and `[2 150.00]` (last row) — which assertion correctly verifies that a nil value in the currency column is skipped without error?",
+      "options": {
+        "A": "`(nil? (nth (first @rows) 1))` — checks that the second element of the first row is nil.",
+        "B": "`(nil? (nth (first @rows) 0))` — checks that the first element of the first row is nil.",
+        "C": "`(nil? (nth (last @rows) 0))` — checks that the first element of the last row is nil.",
+        "D": "`(nil? (nth (last @rows) 1))` — checks that the second element of the last row is nil."
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The test data has the first row as `[1 nil]` and the last row as `[2 150.00]`. To assert that the nil currency value (index 1) in the first row is preserved without error, the correct expression is `(nil? (nth (first @rows) 1))`. Using `(nth (last @rows) 1)` would check whether 150.00 is nil, which is always false and would cause the assertion to fail.",
+      "evidence_ids": [
+        "G3_E4",
+        "G3_E5",
+        "G3_E6"
+      ],
+      "question_id": "G3_KT1_Q1"
+    },
+    {
+      "target_id": "G4_KT1",
+      "status": "ready",
+      "question": "What is the correct namespace and file path for the setting model framework in this Metabase repository, and how is the `defsetting` macro imported in a settings file like `src/metabase/system/settings.clj`?",
+      "options": {
+        "A": "The namespace is `metabase.config.settings` at `src/metabase/config/settings.clj`; `defsetting` is imported via `[metabase.config.settings :as settings]`.",
+        "B": "The namespace is `metabase.settings.models.setting` at `src/metabase/settings/models/setting.clj`; `defsetting` is imported via `[metabase.settings.core :as setting :refer [defsetting]]`.",
+        "C": "The namespace is `metabase.settings.core` at `src/metabase/settings/core.clj`; `defsetting` is defined directly there and imported via `[metabase.settings.core :refer [defsetting]]`.",
+        "D": "The namespace is `metabase.models.setting` at `src/metabase/models/setting.clj`; `defsetting` is imported via `[metabase.models.setting :refer [defsetting]]`."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The file `src/metabase/settings/models/setting.clj` begins with `(ns metabase.settings.models.setting ...)`, confirming the namespace. In `src/metabase/system/settings.clj`, the require form is `[metabase.settings.core :as setting :refer [defsetting]]`, showing how `defsetting` is accessed.",
+      "evidence_ids": [
+        "G4_E1",
+        "G4_E4",
+        "G4_E5"
+      ],
+      "question_id": "G4_KT1_Q1"
+    },
+    {
+      "target_id": "G4_KT2",
+      "status": "ready",
+      "question": "According to the clj-kondo linting rules in this repository, where must `defsetting` forms be placed, and what namespace pattern is enforced?",
+      "options": {
+        "A": "All `defsetting` forms must reside in namespaces ending in `.config`, such as `metabase.system.config`, to separate configuration from business logic.",
+        "B": "All `defsetting` forms must reside in namespaces matching `metabase[-enterprise].<module>.settings`; placing them elsewhere triggers a linting error.",
+        "C": "All `defsetting` forms must reside in `metabase.settings.models.setting` itself, since that is the canonical location for all setting definitions.",
+        "D": "There is no namespace restriction enforced by linting; `defsetting` can be placed in any namespace as long as the file is loaded at startup."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The clj-kondo hook in `.clj-kondo/src/hooks/metabase/settings/models/setting.clj` enforces: `(when-not (re-matches #\"^metabase(?:-enterprise)?\\.[^\\.]+\\.settings$\" (name (:ns context))) ...)` with the message 'All defsettings should live in metabase[-enterprise].<module>.settings namespaces'. This means a new `site-currency` setting must go into a `*.settings` namespace.",
+      "evidence_ids": [
+        "G4_E7",
+        "G4_E8",
+        "G4_E4"
+      ],
+      "question_id": "G4_KT2_Q1"
+    },
+    {
+      "target_id": "G4_KT3",
+      "status": "ready",
+      "question": "Based on examples of `defsetting` usage in `src/metabase/system/settings.clj`, which of the following represents a valid minimal `defsetting` form for a `site-currency` setting with a string type, public visibility, and a default of \"USD\"?",
+      "options": {
+        "A": "`(defsetting :site-currency \"Default currency for the site\" {:type :string :default \"USD\" :visibility :public})`",
+        "B": "`(def site-currency (setting/make-setting :type :string :default \"USD\" :visibility :public))`",
+        "C": "`(defsetting site-currency (deferred-tru \"Default currency for the site\") :type :string :default \"USD\" :visibility :public)`",
+        "D": "`(defsetting site-currency {:type :string :default \"USD\" :visibility :public})`"
+      },
+      "correct_answer": "C",
+      "reference_explanation": "The `defsetting` forms in `src/metabase/system/settings.clj` follow the pattern `(defsetting <name> <docstring> :<option> <value> ...)` where the name is an unquoted symbol, the docstring is a `(deferred-tru ...)` form, and options like `:type`, `:default`, `:visibility` follow as keyword-value pairs. Option A matches this pattern.",
+      "evidence_ids": [
+        "G4_E5",
+        "G4_E6",
+        "G4_E2",
+        "G4_E3"
+      ],
+      "question_id": "G4_KT3_Q1"
+    }
+  ]
+}

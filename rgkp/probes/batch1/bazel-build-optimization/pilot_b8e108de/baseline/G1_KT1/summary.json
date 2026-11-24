@@ -1,0 +1,15 @@
+{
+  "target_id": "G1_KT1",
+  "question_id": "G1_KT1_Q1",
+  "reference_answer": "A",
+  "answers": [
+    "A",
+    "A",
+    "A"
+  ],
+  "repetitions": 3,
+  "valid_count": 3,
+  "correct_count": 3,
+  "baseline_state": 1,
+  "status": "completed"
+}

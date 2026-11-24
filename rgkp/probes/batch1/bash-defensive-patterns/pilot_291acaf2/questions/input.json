@@ -1,0 +1,91 @@
+{
+  "task_description": "# Task: Add Defensive Bash Scripts to ShellCheck Test Suite\n\n## Background\n\nAdd example shell scripts to the ShellCheck repository's `test/` directory that demonstrate robust, production-quality Bash patterns and pass ShellCheck analysis without warnings.\n\n## Files to Create/Modify\n\n- `test/safe_backup.sh` - Backup script demonstrating defensive coding\n- `test/common_utils.sh` - Reusable utility functions library\n- `test/test_scripts.bats` - BATS test suite for the scripts (optional)\n\n## Requirements\n\n### safe_backup.sh\n- `set -euo pipefail` at script start\n- Proper quoting of all variable expansions\n- `trap` for cleanup on `EXIT` / `ERR`\n- Input validation for directory arguments\n- Meaningful exit codes on errors\n\n### common_utils.sh\n- Logging functions (info, warn, error)\n- Error handling helpers\n- Argument parsing template using `getopts` or manual parsing\n\n### Static Analysis\n- Both `.sh` files must pass `shellcheck --severity=warning` with exit code 0\n- Consistent formatting (shfmt-compatible)\n\n## Acceptance Criteria\n\n- `shellcheck --severity=warning test/*.sh` exits with code 0\n- Scripts demonstrate defensive coding patterns\n- Utility functions are reusable and well-structured\n",
+  "knowledge_targets": [
+    {
+      "target_id": "G2_KT1",
+      "knowledge_target": "BATS test files use the `.bats` extension and define tests using `@test 'description' { ... }` blocks. ShellCheck recognizes this extension for shell type inference and treats `@test` blocks as function-like scopes. The BATS `run` command is treated as a command wrapper similar to `builtin` or `command`.",
+      "evidence_ids": [
+        "G2_E1",
+        "G2_E2",
+        "G2_E3",
+        "G2_E4",
+        "G2_E7",
+        "G2_E8"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "CHANGELOG.md",
+          "start_line": 171,
+          "end_line": 187,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "171: - SC1081: Keywords are now correctly parsed case sensitively, with a warning\n172: \n173: \n174: ## v0.7.0 - 2019-07-28\n175: ### Added\n176: - Precompiled binaries for macOS and Linux aarch64\n177: - Preliminary support for fix suggestions\n178: - New `-f diff` unified diff format for auto-fixes\n179: - Files containing Bats tests can now be checked\n180: - Directory wide directives can now be placed in a `.shellcheckrc`\n181: - Optional checks: Use `--list-optional` to show a list of tests,\n182:                    Enable with `-o` flags or `enable=name` directives\n183: - Source paths: Use `-P dir1:dir2` or a `source-path=dir1` directive\n184:                 to specify search paths for sourced files.\n185: - json1 format like --format=json but treats tabs as single characters\n186: - Recognize FLAGS variables created by the shflags library.\n187: - Site-specific changes can now be made in Custom.hs for ease of patching",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "CHANGELOG.md",
+          "start_line": 193,
+          "end_line": 209,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "193: - SC2248: Warn about unquoted variables without special chars (optional)\n194: - SC2247: Warn about $\"(cmd)\" and $\"{var}\"\n195: - SC2246: Warn if a shebang's interpreter ends with /\n196: - SC2245: Warn that Ksh ignores all but the first glob result in `[`\n197: - SC2243/SC2244: Suggest using explicit -n for `[ $foo ]` (optional)\n198: - SC1135: Suggest not ending double quotes just to make $ literal\n199: \n200: ### Changed\n201: - If a directive or shebang is not specified, a `.bash/.bats/.dash/.ksh`\n202:   extension will be used to infer the shell type when present.\n203: - Disabling SC2120 on a function now disables SC2119 on call sites\n204: \n205: ### Fixed\n206: - SC2183 no longer warns about missing printf args for `%()T`\n207: \n208: ## v0.6.0 - 2018-12-02\n209: ### Added",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "shellcheck.1.md",
+          "start_line": 95,
+          "end_line": 111,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "95:     `;` on Windows. This is equivalent to specifying `search-path`\n96:     directives.\n97: \n98: **-s**\\ *shell*,\\ **--shell=***shell*\n99: \n100: :   Specify Bourne shell dialect. Valid values are *sh*, *bash*, *dash*, *ksh*,\n101:     and *busybox*.\n102:     The default is to deduce the shell from the file's `shell` directive,\n103:     shebang, or `.bash/.bats/.dash/.ksh` extension, in that order. *sh* refers to\n104:     POSIX `sh` (not the system's), and will warn of portability issues.\n105: \n106: **-S**\\ *SEVERITY*,\\ **--severity=***severity*\n107: \n108: :   Specify minimum severity of errors to consider. Valid values in order of\n109:     severity are *error*, *warning*, *info* and *style*.\n110:     The default is *style*.\n111: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "src/ShellCheck/AST.hs",
+          "start_line": 138,
+          "end_line": 154,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "138:     | Inner_T_While\n139:     | Inner_T_WhileExpression [t] [t]\n140:     | Inner_T_Annotation [Annotation] t\n141:     | Inner_T_Pipe String\n142:     | Inner_T_CoProc (Maybe Token) t\n143:     | Inner_T_CoProcBody t\n144:     | Inner_T_Include t\n145:     | Inner_T_SourceCommand t t\n146:     | Inner_T_BatsTest String t\n147:     deriving (Show, Eq, Functor, Foldable, Traversable)\n148: \n149: data Annotation =\n150:     DisableComment Integer Integer -- [from, to)\n151:     | EnableComment String\n152:     | SourceOverride String\n153:     | ShellOverride String\n154:     | SourcePath String",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "src/ShellCheck/ASTLib.hs",
+          "start_line": 542,
+          "end_line": 558,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "542:                 arg <- listToMaybe args\n543:                 guard . not $ isFlag arg\n544:                 return arg\n545:         in\n546:             case str of\n547:                 \"busybox\" -> firstArg\n548:                 \"builtin\" -> firstArg\n549:                 \"command\" -> firstArg\n550:                 \"run\" -> firstArg -- Used by bats\n551:                 \"exec\" -> do\n552:                     opts <- getBsdOpts \"cla:\" args\n553:                     (_, (t, _)) <- find (null . fst) opts\n554:                     return t\n555:                 _ -> fail \"\"\n556: \n557: -- If a command substitution is a single command, get its name.\n558: --  $(date +%s) = Just \"date\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "src/ShellCheck/ASTLib.hs",
+          "start_line": 585,
+          "end_line": 601,
+          "retrieval_score": 3.004,
+          "matched_cues": [
+            "bats"
+          ],
+          "content": "585:         T_Pipeline _ _ [x] -> isOnlyRedirection x\n586:         T_Annotation _ _ w -> isOnlyRedirection w\n587:         T_Redirecting _ (_:_) c -> isOnlyRedirection c\n588:         T_SimpleCommand _ [] [] -> True\n589:         _ -> False\n590: \n591: isFunction t = case t of T_Function {} -> True; _ -> False\n592: \n593: -- Bats tests are functions for the purpose of 'local' and such\n594: isFunctionLike t =\n595:     case t of\n596:         T_Function {} -> True\n597:         T_BatsTest {} -> True\n598:         _ -> False\n599: \n600: \n601: isBraceExpansion t = case t of T_BraceExpansion {} -> True; _ -> False",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

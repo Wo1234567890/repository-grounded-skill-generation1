@@ -1,0 +1,70 @@
+experiment:
+  name: targeted_rgkp
+  benchmark: swe-skills-bench
+
+dataset:
+  total_tasks: 99
+  batch1_tasks: 49
+  batch2_tasks: 50
+
+trajectory:
+  condition: no_skill
+  run_id: 1
+  use_same_run_for_all_stages: true
+
+execution:
+  repetitions_per_condition: 4
+
+gap_grounding:
+  max_knowledge_targets_per_gap: 3
+
+diagnostic_probing:
+  repetitions: 3
+  decision_rule: majority_vote
+
+repository_evidence:
+  use_prescriptive_for_repository_provides: true
+  allow_descriptive_for_gap_understanding: true
+
+candidate_generation:
+  candidates_per_target: 3
+  fixed_candidate_count: true
+
+intervention:
+  repetitions_per_candidate: 3
+  decision_rule: majority_vote
+  effective_condition: baseline_incorrect_to_intervention_correct
+
+candidate_selection:
+  strategy: shortest_effective_candidate
+  preserve_repository_specific_information: true
+
+residual_skill:
+  include_validated_knowledge: true
+  include_execution_guidance: true
+  deduplicate: true
+  allow_new_facts: false
+
+logging:
+  record_input_tokens: true
+  record_output_tokens: true
+  record_cached_tokens: true
+  record_wall_time: true
+  record_api_cost: true
+  record_errors: true
+
+paths:
+  tasks: tasks
+  no_skill_trajectories: trajectories/no_skill
+
+  gaps: rgkp/gaps
+  evidence: rgkp/evidence
+  targets: rgkp/targets
+  probes: rgkp/probes
+  candidates: rgkp/candidates
+  interventions: rgkp/interventions
+  residual_skills: rgkp/residual_skills
+
+  executions: executions
+  logs: logs
+  results: results

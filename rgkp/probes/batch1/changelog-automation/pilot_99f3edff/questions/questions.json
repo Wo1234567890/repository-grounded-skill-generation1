@@ -1,0 +1,42 @@
+{
+  "diagnostic_questions": [
+    {
+      "target_id": "G1_KT1",
+      "status": "ready",
+      "question": "In a `.github_changelog_generator` configuration file, which of the following correctly specifies that only issues labeled 'feature' or 'enhancement' should be included in the changelog?",
+      "options": {
+        "A": "include-labels=feature,enhancement",
+        "B": "include-labels=[feature, enhancement]",
+        "C": "labels-include=feature,enhancement",
+        "D": "include_labels=feature,enhancement"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The CLI argument is `--include-labels x,y,z`, and config file keys use the same hyphenated form as the CLI flag (without the leading `--`). The config file format is `option-name=value1,value2`, so the correct key is `include-labels` with comma-separated values: `include-labels=feature,enhancement`. Underscore form (`include_labels`) is used internally in Ruby code but not as the config file key.",
+      "evidence_ids": [
+        "G1_E2",
+        "G1_E4",
+        "G1_E8"
+      ],
+      "question_id": "G1_KT1_Q1"
+    },
+    {
+      "target_id": "G3_KT1",
+      "status": "ready",
+      "question": "When configuring label-based sections in a `.github_changelog_generator` file, which of the following correctly demonstrates the format for the `exclude-labels` option?",
+      "options": {
+        "A": "exclude_labels: [duplicate, wontfix]",
+        "B": "exclude-labels: duplicate, wontfix",
+        "C": "exclude_labels=duplicate,wontfix",
+        "D": "exclude-labels=duplicate,wontfix"
+      },
+      "correct_answer": "D",
+      "reference_explanation": "The config file uses hyphenated key names matching the CLI flags (e.g., `--exclude-labels x,y,z` becomes `exclude-labels=value1,value2` in the config file). The repository's own `.github_changelog_generator` file demonstrates this with `exclude-labels=duplicate,question,invalid,wontfix,weekly-digest,dependencies`, and the spec file also shows `exclude-labels=...` with comma-separated values.",
+      "evidence_ids": [
+        "G3_E1",
+        "G3_E2",
+        "G3_E6"
+      ],
+      "question_id": "G3_KT1_Q1"
+    }
+  ]
+}

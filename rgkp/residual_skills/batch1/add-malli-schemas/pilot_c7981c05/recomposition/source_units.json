@@ -1,0 +1,29 @@
+{
+  "source_units": [
+    {
+      "source_id": "G1_KT2_C2",
+      "type": "validated_knowledge",
+      "content": "The repository convention maps source paths to namespaces using the directory structure under `src/` and `test/`. The alert API source file is `src/metabase/pulse/api/alert.clj` → namespace `metabase.pulse.api.alert`. Its test file is `test/metabase/pulse/api/alert_test.clj` → namespace `metabase.pulse.api.alert-test`. When adding a new Malli validation test file for alerts, the correct path following this convention would be `test/metabase/pulse/api/alert_malli_test.clj` with namespace `metabase.pulse.api.alert-malli-test`, not `test/metabase/api/alert_malli_test.clj` as listed in the task requirements."
+    },
+    {
+      "source_id": "G2_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "When writing tests in `test/metabase/api/alert_malli_test.clj`, every `mt/user-http-request` call that is meant to verify a status code must be wrapped in `(is ...)`. For tests that only check the status code, use the pattern:\n```clojure\n(is (mt/user-http-request :crowberto :post 400 \"alert\" {...}))\n```\nor if you want to assert on the response value:\n```clojure\n(is (= expected-value (mt/user-http-request :crowberto :post 400 \"alert\" {...})))\n```\nApply this fix specifically to `post-alert-invalid-card-id-test`, `post-alert-missing-card-id-test`, `post-alert-empty-channels-test`, `post-alert-missing-channels-test`, `post-alert-invalid-channel-type-test`, `post-alert-invalid-alert-condition-test`, `post-alert-missing-alert-condition-test`, `put-alert-empty-channels-test`, `put-alert-invalid-condition-test`, and `post-alert-nonexistent-card-test` — all of which currently call `mt/user-http-request` without an `is` wrapper."
+    },
+    {
+      "source_id": "G3_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "In `src/metabase/pulse/api/alert.clj`, the POST endpoint body should call `notification.api/create-notification!` and then convert the result with `notification->pulse`, rather than returning a stub map. The `notification.api/create-notification!` function is already required in this namespace. After schema validation passes, build a notification-shaped map and delegate to it:\n```clojure\n(-> (notification.api/create-notification! <notification-map>)\n    notification->pulse)\n```\nSimilarly, the PUT endpoint should call the appropriate update function rather than returning a stub. Look at how `notification.api/list-notifications` results are piped through `notification->pulse` in the existing GET endpoint (lines 96–101) to see the established pattern."
+    },
+    {
+      "source_id": "G3_KT2_EG1",
+      "type": "execution_guidance",
+      "content": "The new POST endpoint in `src/metabase/pulse/api/alert.clj` should follow the same pattern as the existing GET endpoints: call `notification.api/create-notification!` to persist the alert, then wrap the returned notification with `notification->pulse` before returning it. This function (`notification->pulse`) is already defined in the same namespace and handles converting the internal notification structure to the legacy pulse API shape expected by callers."
+    },
+    {
+      "source_id": "G3_KT3_EG1",
+      "type": "execution_guidance",
+      "content": "Before calling `notification.api/create-notification!` in the POST endpoint, the alert request body fields must be transformed into the notification shape. The `create-notification!` function expects a map with `:payload_type` (keyword), `:creator_id`, `:payload` (containing `:card_id` and the send condition derived from `alert_condition`), `:subscriptions`, and `:handlers` (derived from `channels`). See the notification test at line 564–568 of `test/metabase/notification/api/notification_test.clj` for an example of the shape, and study `notification->pulse` (the reverse transform) in the same `alert.clj` file to understand the field mapping in the other direction."
+    }
+  ]
+}

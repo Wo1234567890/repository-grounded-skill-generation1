@@ -1,0 +1,33 @@
+{
+  "input": {
+    "question": "When writing a BUILD file that uses the `py_binary` rule from `rules_python`, which `load()` statement is correct?",
+    "options": {
+      "A": "load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")",
+      "B": "load(\"//python:py_binary.bzl\", \"py_binary\")",
+      "C": "load(\"@rules_python//python:defs.bzl\", \"py_binary\")",
+      "D": "load(\"@bazel_tools//tools/python:py_binary.bzl\", \"py_binary\")"
+    },
+    "candidate_knowledge": "To use `py_binary`, `py_library`, and `py_test` from `rules_python` in Bazel BUILD files, you must add explicit `load()` statements at the top of each BUILD file. The correct module paths are:\n\n- `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")`\n- `load(\"@rules_python//python:py_library.bzl\", \"py_library\")`\n- `load(\"@rules_python//python:py_test.bzl\", \"py_test\")`\n\nEach rule lives in its own `.bzl` file under `@rules_python//python:`. Without these load statements, Bazel will not recognize `py_binary`, `py_library`, or `py_test` as valid rule functions, even if the repository is declared in WORKSPACE or MODULE.bazel. Example usage in a BUILD file:\n\n```python\nload(\"@rules_python//python:py_binary.bzl\", \"py_binary\")\nload(\"@rules_python//python:py_library.bzl\", \"py_library\")\nload(\"@rules_python//python:py_test.bzl\", \"py_test\")\n\npy_library(\n    name = \"lib\",\n    srcs = [\"lib.py\"],\n)\n\npy_binary(\n    name = \"main\",\n    srcs = [\"main.py\"],\n    deps = [\":lib\"],\n)\n\npy_test(\n    name = \"main_test\",\n    srcs = [\"main_test.py\"],\n    deps = [\":lib\"],\n)\n```\n\nThis pattern is used in the repository's own `examples/py/BUILD` file."
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.5573807919863611,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 643,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

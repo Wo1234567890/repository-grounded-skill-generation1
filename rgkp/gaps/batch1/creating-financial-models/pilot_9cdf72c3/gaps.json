@@ -1,0 +1,190 @@
+{
+  "execution_gaps": [
+    {
+      "gap_id": "G1",
+      "local_state": "The agent created DCFDemo.cpp but could not build or run it to verify correctness.",
+      "agent_action": "The agent created the source files and updated CMakeLists.txt but stopped without verifying compilation or output correctness.",
+      "observed_problem": "The acceptance criteria explicitly require that the example 'compiles and links against installed QuantLib' and 'output shows correct NPV calculations'. The agent was denied Bash execution and did not verify these criteria, leaving the code unvalidated.",
+      "trajectory_evidence": [
+        {
+          "line": 54,
+          "description": "Agent attempted to run cmake to build the example but was denied Bash permission."
+        },
+        {
+          "line": 57,
+          "description": "Agent terminated without compiling or running DCFDemo, stating it could not verify acceptance criteria."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "Examples/DCFValuation/DCFDemo.cpp",
+          "Examples/DCFValuation/CMakeLists.txt"
+        ],
+        "file_names": [
+          "DCFDemo.cpp",
+          "CMakeLists.txt"
+        ],
+        "functions_or_classes": [
+          "DCFAnalyzer",
+          "valuate",
+          "sensitivityAnalysis"
+        ],
+        "modules_or_packages": [
+          "ql/termstructures/yield/flatforward.hpp",
+          "ql/cashflows/cashflows.hpp"
+        ],
+        "commands": [
+          "cmake",
+          "cmake --build"
+        ],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [
+          "QL_BUILD_EXAMPLES",
+          "ql_library",
+          "QL_THREAD_LIBRARIES"
+        ],
+        "other_keywords": [
+          "DCFDemo",
+          "FlatForward",
+          "NPV"
+        ]
+      }
+    },
+    {
+      "gap_id": "G2",
+      "local_state": "The agent created DCFDemo.cpp with an unused include for 'ql/indexes/swap/euribor.hpp'.",
+      "agent_action": "The agent included the header `<ql/indexes/swap/euribor.hpp>` in DCFDemo.cpp but never uses any Euribor index class in the code.",
+      "observed_problem": "An unnecessary include that references a non-existent path ('ql/indexes/swap/euribor.hpp' — the actual QuantLib header is typically 'ql/indexes/ibor/euribor.hpp') may cause a compilation error or at minimum is misleading dead code.",
+      "trajectory_evidence": [
+        {
+          "line": 28,
+          "description": "DCFDemo.cpp was written with the include '#include <ql/indexes/swap/euribor.hpp>' which does not match the standard QuantLib path seen in the Bonds.cpp example (which uses 'ql/indexes/ibor/euribor.hpp')."
+        },
+        {
+          "line": 17,
+          "description": "In Bonds.cpp, the agent observed that Euribor is included as 'ql/indexes/ibor/euribor.hpp', not 'ql/indexes/swap/euribor.hpp'."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "Examples/DCFValuation/DCFDemo.cpp",
+          "Examples/Bonds/Bonds.cpp"
+        ],
+        "file_names": [
+          "DCFDemo.cpp"
+        ],
+        "functions_or_classes": [],
+        "modules_or_packages": [
+          "ql/indexes/swap/euribor.hpp",
+          "ql/indexes/ibor/euribor.hpp"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [],
+        "other_keywords": [
+          "Euribor",
+          "include path"
+        ]
+      }
+    },
+    {
+      "gap_id": "G3",
+      "local_state": "Agent created DCFDemo.cpp using FlatForward with a Handle<Quote> argument incorrectly.",
+      "agent_action": "The agent instantiated FlatForward as `new FlatForward(evaluationDate_, Handle<Quote>(), discountRate, Actual365Fixed())`, passing an empty Handle<Quote>() as the second argument, which is not the correct FlatForward constructor signature for a fixed rate.",
+      "observed_problem": "The standard QuantLib FlatForward constructor for a fixed rate takes `(const Date& referenceDate, Rate forward, const DayCounter& dayCounter)` or similar overloads. Passing an empty `Handle<Quote>()` with a plain `Rate` argument simultaneously is likely a constructor mismatch that would cause a compilation error without being caught during review (since no build was performed).",
+      "trajectory_evidence": [
+        {
+          "line": 28,
+          "description": "In DCFDemo.cpp the FlatForward is constructed as 'new FlatForward(evaluationDate_, Handle<Quote>(), discountRate, Actual365Fixed())' — mixing a Handle<Quote> and a Rate in the same call without verification."
+        },
+        {
+          "line": 54,
+          "description": "No build was performed to catch this potential API misuse."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "Examples/DCFValuation/DCFDemo.cpp",
+          "ql/termstructures/yield/flatforward.hpp"
+        ],
+        "file_names": [
+          "flatforward.hpp",
+          "DCFDemo.cpp"
+        ],
+        "functions_or_classes": [
+          "FlatForward"
+        ],
+        "modules_or_packages": [
+          "ql/termstructures/yield/flatforward.hpp"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [],
+        "other_keywords": [
+          "Handle<Quote>",
+          "FlatForward constructor",
+          "discount rate"
+        ]
+      }
+    },
+    {
+      "gap_id": "G4",
+      "local_state": "The task requires demonstrating QuantLib::CashFlows::npv and QuantLib::Schedule but DCFDemo.cpp does not use them.",
+      "agent_action": "The agent implemented a custom DCFAnalyzer class that manually computes NPV using raw discount factors from the yield curve, without using QuantLib::CashFlows::npv or QuantLib::Schedule as required by the task.",
+      "observed_problem": "The task description explicitly requires 'Present value calculation using QuantLib::CashFlows::npv' and 'Creating cash flow schedules with QuantLib::Schedule'. Neither QuantLib::CashFlows::npv nor QuantLib::Schedule appear in DCFDemo.cpp, so the stated requirements are unmet.",
+      "trajectory_evidence": [
+        {
+          "line": 28,
+          "description": "DCFDemo.cpp includes 'ql/cashflows/cashflows.hpp' but the actual CashFlows::npv() function is never called in the code; instead NPV is computed manually in a loop."
+        },
+        {
+          "line": 28,
+          "description": "DCFDemo.cpp does not include 'ql/time/schedule.hpp' or use the Schedule class, contradicting the task requirement for 'Creating cash flow schedules with QuantLib::Schedule'."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "Examples/DCFValuation/DCFDemo.cpp",
+          "ql/cashflows/cashflows.hpp",
+          "ql/time/schedule.hpp"
+        ],
+        "file_names": [
+          "DCFDemo.cpp",
+          "cashflows.hpp",
+          "schedule.hpp"
+        ],
+        "functions_or_classes": [
+          "CashFlows::npv",
+          "Schedule",
+          "FixedRateCoupon"
+        ],
+        "modules_or_packages": [
+          "ql/cashflows/cashflows.hpp",
+          "ql/time/schedule.hpp",
+          "ql/cashflows/fixedratecoupon.hpp"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [],
+        "configuration_terms": [],
+        "other_keywords": [
+          "NPV",
+          "QuantLib::CashFlows",
+          "QuantLib::Schedule"
+        ]
+      }
+    }
+  ],
+  "environment_blockers": [
+    {
+      "description": "Bash execution was denied in 'don't ask mode', preventing the agent from running cmake to build the DCFDemo example and verify compilation and output correctness.",
+      "evidence_lines": [
+        24,
+        54
+      ]
+    }
+  ]
+}

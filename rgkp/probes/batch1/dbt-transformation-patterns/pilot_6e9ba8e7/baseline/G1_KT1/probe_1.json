@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "According to the dbt-core repository's schema.yml conventions (as seen in starter project and functional test fixtures), which top-level structure is used to define models with column-level descriptions and built-in tests such as `unique` and `not_null`?",
+    "options": {
+      "A": "A `version: 2` document with a `models:` list, where each entry has `name`, `description`, and `columns:` containing `data_tests:`",
+      "B": "A `version: 1` document with a `models:` list, where each entry has `name`, `description`, and `columns:` containing `data_tests:`",
+      "C": "A `version: 2` document with a `data_tests:` list, where each entry has `name`, `description`, and `columns:` containing `unique` and `not_null`",
+      "D": "A `version: 2` document with a `sources:` list, where each entry has `name`, `description`, and `columns:` containing `tests:`"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6385682910040487,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 284,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

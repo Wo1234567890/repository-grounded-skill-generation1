@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In a `.github_changelog_generator` configuration file, which of the following correctly specifies that only issues labeled 'feature' or 'enhancement' should be included in the changelog?",
+    "options": {
+      "A": "include-labels=feature,enhancement",
+      "B": "include-labels=[feature, enhancement]",
+      "C": "labels-include=feature,enhancement",
+      "D": "include_labels=feature,enhancement"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.7214169159997255,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 144,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

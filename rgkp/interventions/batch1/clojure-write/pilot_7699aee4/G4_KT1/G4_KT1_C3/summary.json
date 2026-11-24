@@ -1,0 +1,18 @@
+{
+  "candidate_id": "G4_KT1_C3",
+  "target_id": "G4_KT1",
+  "question_id": "G4_KT1_Q1",
+  "knowledge": "How to add and consume a new `defsetting` in this codebase:\n\n1. **Where to add it**: Place `site-currency` in `src/metabase/system/settings.clj` (namespace `metabase.system.settings`), not in a non-existent `src/metabase/models/setting.clj`. This file already uses the `defsetting` macro for other site-wide settings.\n\n2. **Macro import**: The file already has `[metabase.settings.core :as setting :refer [defsetting]]` in its `:require` block, so no extra import is needed there.\n\n3. **Example definition**:\n```clojure\n(defsetting site-currency\n  (deferred-tru \"The default currency for this Metabase instance.\")\n  :visibility :public\n  :type       :string\n  :default    \"USD\")\n```\n\n4. **Consuming in the new middleware** (`src/metabase/query_processor/middleware/currency_formatter.clj`):\n```clojure\n(ns metabase.query_processor.middleware.currency-formatter\n  (:require\n   [metabase.system.settings :as sys-settings]))\n\n(defn current-currency []\n  (sys-settings/site-currency))\n```\nThis avoids any reference to the non-existent `src/metabase/models/setting.clj` path.",
+  "baseline_state": 0,
+  "intervention_state": 0,
+  "delta": 0,
+  "answers": [
+    "C",
+    "C",
+    "C"
+  ],
+  "valid_count": 3,
+  "correct_count": 0,
+  "repetitions": 3,
+  "candidate_tokens": null
+}

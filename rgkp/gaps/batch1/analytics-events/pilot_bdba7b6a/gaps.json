@@ -1,0 +1,119 @@
+{
+  "execution_gaps": [
+    {
+      "gap_id": "G1",
+      "local_state": "The agent created the test file at `frontend/test/metabase/lib/analytics.test.ts` using the `.test.ts` suffix.",
+      "agent_action": "The agent named the test file `analytics.test.ts` as specified in the task description, without checking or matching the existing test file naming convention in the directory.",
+      "observed_problem": "All existing test files in `frontend/test/metabase/lib/` use the `.unit.spec.ts` (or `.unit.spec.js`) naming convention (e.g., `browser.unit.spec.ts`, `schema_metadata.unit.spec.ts`, `string.unit.spec.ts`). The agent observed this listing at line 36 but did not adapt the file name to match the project convention, potentially causing the test file to not be picked up by the Jest test runner configured for `.unit.spec.ts` files.",
+      "trajectory_evidence": [
+        {
+          "line": 36,
+          "description": "Agent listed the directory contents showing all existing test files use `.unit.spec.ts` or `.unit.spec.js` naming: `browser.unit.spec.ts`, `schema_metadata.unit.spec.ts`, `string.unit.spec.ts`, etc."
+        },
+        {
+          "line": 50,
+          "description": "Agent created the test file as `analytics.test.ts` instead of `analytics.unit.spec.ts`, deviating from the observed project convention."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "frontend/test/metabase/lib/analytics.test.ts",
+          "frontend/test/metabase/lib/browser.unit.spec.ts",
+          "frontend/test/metabase/lib/schema_metadata.unit.spec.ts"
+        ],
+        "file_names": [
+          "analytics.test.ts",
+          "browser.unit.spec.ts",
+          "jest.unit.conf.js",
+          "jest.config.js"
+        ],
+        "functions_or_classes": [],
+        "modules_or_packages": [],
+        "commands": [
+          "jest --maxWorkers=4"
+        ],
+        "error_messages": [],
+        "tests": [
+          "analytics.test.ts",
+          "analytics.unit.spec.ts"
+        ],
+        "configuration_terms": [
+          "testMatch",
+          "testRegex",
+          "jest configuration"
+        ],
+        "other_keywords": [
+          "unit.spec.ts",
+          "test naming convention"
+        ]
+      }
+    },
+    {
+      "gap_id": "G2",
+      "local_state": "The agent completed writing both the implementation and test files and was ready to verify correctness.",
+      "agent_action": "The agent attempted to run `npm run type-check` but was denied. It did not attempt to run the Jest tests to verify the test suite actually passes. It claimed in the final summary that 'Code compiles without type errors' without actual verification.",
+      "observed_problem": "The agent never ran the tests or any form of verification after the permission denial for type-check. The claim that code compiles without type errors is unverified. The test file imports `trackDashboardViewed`, `trackQuestionSaved`, `trackFilterApplied` from `metabase/lib/analytics` — if mocking of Snowplow or Settings is not set up, the tests could fail at import time since the module imports from `@snowplow/browser-tracker` and `metabase/env`.",
+      "trajectory_evidence": [
+        {
+          "line": 53,
+          "description": "Agent attempted `npm run type-check 2>&1 | head -50` and was denied with a permission error."
+        },
+        {
+          "line": 54,
+          "description": "Permission denial: 'Permission to use Bash has been denied because Claude Code is running in don't ask mode.'"
+        },
+        {
+          "line": 91,
+          "description": "Agent's final summary claims '✅ Code compiles without type errors' and 'All events return properly typed AnalyticsEvent objects' without any actual compilation or test execution verification."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "frontend/src/metabase/lib/analytics.ts",
+          "frontend/test/metabase/lib/analytics.test.ts"
+        ],
+        "file_names": [
+          "analytics.ts",
+          "analytics.test.ts"
+        ],
+        "functions_or_classes": [
+          "trackDashboardViewed",
+          "trackQuestionSaved",
+          "trackFilterApplied"
+        ],
+        "modules_or_packages": [
+          "@snowplow/browser-tracker",
+          "metabase/env",
+          "metabase/lib/settings"
+        ],
+        "commands": [
+          "npm run type-check",
+          "jest --maxWorkers=4",
+          "bun run test-unit"
+        ],
+        "error_messages": [],
+        "tests": [
+          "analytics.test.ts"
+        ],
+        "configuration_terms": [
+          "type-check",
+          "type-check-pure",
+          "tsc --noEmit"
+        ],
+        "other_keywords": [
+          "TypeScript compilation",
+          "jest mock",
+          "module resolution"
+        ]
+      }
+    }
+  ],
+  "environment_blockers": [
+    {
+      "description": "Bash permission was denied when the agent attempted to run `npm run type-check` to verify TypeScript compilation.",
+      "evidence_lines": [
+        54
+      ]
+    }
+  ]
+}

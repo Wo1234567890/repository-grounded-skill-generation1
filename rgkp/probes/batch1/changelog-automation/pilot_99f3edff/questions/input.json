@@ -1,0 +1,104 @@
+{
+  "task_description": "# Task: Add GitHub Changelog Generator Configuration Example\n\n## Background\n   Add a complete changelog generation\n   configuration example demonstrating the github-changelog-generator\n   tool's capabilities and customization options.\n\n## Files to Create/Modify\n   - examples/advanced_config/.github_changelog_generator (configuration)\n   - examples/advanced_config/CHANGELOG.md (sample output)\n   - examples/advanced_config/README.md (documentation)\n\n## Requirements\n   \n   Configuration File (.github_changelog_generator):\n   - user and project settings\n   - since_tag and due_tag options\n   - issue/PR label filtering\n   - Section customization (enhancement, bug, etc.)\n   \n   Label Configuration:\n   - enhancement-labels: [\"enhancement\", \"feature\"]\n   - bug-labels: [\"bug\", \"fix\"]\n   - breaking-labels: [\"breaking-change\"]\n   - exclude-labels: [\"duplicate\", \"wontfix\"]\n   \n   Output Formatting:\n   - Custom header template\n   - Date format configuration\n   - Compare URL inclusion\n   - Unreleased section handling\n\n4. Configuration Options to Demonstrate:\n   - unreleased: true/false\n   - base: HISTORY.md (optional base file)\n   - header: Custom header text\n   - include_labels: Label filtering\n   - breaking_prefix: \"**Breaking Changes:**\"\n\n## Acceptance Criteria\n   - Configuration file is valid and parseable\n   - README explains each configuration option\n   - `github_changelog_generator --config examples/advanced_config/.github_changelog_generator --help` validates\n",
+  "knowledge_targets": [
+    {
+      "target_id": "G1_KT1",
+      "knowledge_target": "The `include-labels` option is a valid configuration key in `.github_changelog_generator` config files, corresponding to the `--include-labels x,y,z` CLI argument that filters issues to only include those with specified labels. It should be written as `include-labels=label1,label2` in the config file.",
+      "evidence_ids": [
+        "G1_E2",
+        "G1_E4",
+        "G1_E8"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E2",
+          "file_path": "lib/github_changelog_generator/argv_parser.rb",
+          "start_line": 110,
+          "end_line": 126,
+          "retrieval_score": 38.903,
+          "matched_cues": [
+            "argvparser",
+            "github_changelog_generator",
+            "include-labels",
+            "include_labels"
+          ],
+          "content": "110:           options[:unreleased] = v\n111:         end\n112:         opts.on(\"--unreleased-label LABEL\", \"Set up custom label for unreleased closed issues section. Default is \\\"**Unreleased:**\\\".\") do |v|\n113:           options[:unreleased_label] = v\n114:         end\n115:         opts.on(\"--[no-]compare-link\", \"Include compare link (Full Changelog) between older version and newer version. Default is true.\") do |v|\n116:           options[:compare_link] = v\n117:         end\n118:         opts.on(\"--include-labels  x,y,z\", Array, \"Of the labeled issues, only include the ones with the specified labels.\") do |list|\n119:           options[:include_labels] = list\n120:         end\n121:         opts.on(\"--exclude-labels  x,y,z\", Array, \"Issues with the specified labels will be excluded from changelog. Default is 'duplicate,question,invalid,wontfix'.\") do |list|\n122:           options[:exclude_labels] = list\n123:         end\n124:         opts.on(\"--summary-labels x,y,z\", Array, 'Issues with these labels will be added to a new section, called \"Release Summary\". The section display only body of issues. Default is \\'release-summary,summary\\'.') do |list|\n125:           options[:summary_labels] = list\n126:         end",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": ".github_changelog_generator",
+          "start_line": 1,
+          "end_line": 4,
+          "retrieval_score": 25.0,
+          "matched_cues": [],
+          "content": "1: project=github-changelog-generator\n2: user=github-changelog-generator\n3: exclude-labels=duplicate,question,invalid,wontfix,weekly-digest,dependencies\n4: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E8",
+          "file_path": "man/git-generate-changelog.1.html",
+          "start_line": 204,
+          "end_line": 220,
+          "retrieval_score": 6.126,
+          "matched_cues": [
+            "github_changelog_generator",
+            "include-labels"
+          ],
+          "content": "204: <p>  --unreleased-label LABEL</p>\n205: \n206: <p>  Set up custom label for unreleased closed issues section. Default is \"<strong>Unreleased:</strong>\".</p>\n207: \n208: <p>  --[no-]compare-link</p>\n209: \n210: <p>  Include compare link (Full Changelog) between older version and newer version. Default is true.</p>\n211: \n212: <p>  --include-labels x,y,z</p>\n213: \n214: <p>  Of the labeled issues, only include the ones with the specified labels.</p>\n215: \n216: <p>  --exclude-labels x,y,z</p>\n217: \n218: <p>  Issues with the specified labels will be excluded from changelog. Default is 'duplicate,question,invalid,wontfix'.</p>\n219: \n220: <p>  --summary-labels x,y,z</p>",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT1",
+      "knowledge_target": "The label configuration options in `.github_changelog_generator` use hyphenated key names (`enhancement-labels`, `bug-labels`, `breaking-labels`, `exclude-labels`) with comma-separated values. The config file format is `option-name=value1,value2` matching the CLI `--option-name x,y,z` syntax.",
+      "evidence_ids": [
+        "G3_E1",
+        "G3_E2",
+        "G3_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E1",
+          "file_path": ".github_changelog_generator",
+          "start_line": 1,
+          "end_line": 4,
+          "retrieval_score": 28.531,
+          "matched_cues": [
+            "exclude-labels"
+          ],
+          "content": "1: project=github-changelog-generator\n2: user=github-changelog-generator\n3: exclude-labels=duplicate,question,invalid,wontfix,weekly-digest,dependencies\n4: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "lib/github_changelog_generator/argv_parser.rb",
+          "start_line": 119,
+          "end_line": 135,
+          "retrieval_score": 15.358,
+          "matched_cues": [
+            "breaking-labels",
+            "bug-labels",
+            "enhancement-labels",
+            "exclude-labels"
+          ],
+          "content": "119:           options[:include_labels] = list\n120:         end\n121:         opts.on(\"--exclude-labels  x,y,z\", Array, \"Issues with the specified labels will be excluded from changelog. Default is 'duplicate,question,invalid,wontfix'.\") do |list|\n122:           options[:exclude_labels] = list\n123:         end\n124:         opts.on(\"--summary-labels x,y,z\", Array, 'Issues with these labels will be added to a new section, called \"Release Summary\". The section display only body of issues. Default is \\'release-summary,summary\\'.') do |list|\n125:           options[:summary_labels] = list\n126:         end\n127:         opts.on(\"--breaking-labels x,y,z\", Array, 'Issues with these labels will be added to a new section, called \"Breaking changes\". Default is \\'backwards-incompatible,breaking\\'.') do |list|\n128:           options[:breaking_labels] = list\n129:         end\n130:         opts.on(\"--enhancement-labels  x,y,z\", Array, 'Issues with the specified labels will be added to \"Implemented enhancements\" section. Default is \\'enhancement,Enhancement\\'.') do |list|\n131:           options[:enhancement_labels] = list\n132:         end\n133:         opts.on(\"--bug-labels  x,y,z\", Array, 'Issues with the specified labels will be added to \"Fixed bugs\" section. Default is \\'bug,Bug\\'.') do |list|\n134:           options[:bug_labels] = list\n135:         end",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "spec/unit/parser_file_spec.rb",
+          "start_line": 64,
+          "end_line": 80,
+          "retrieval_score": 3.531,
+          "matched_cues": [
+            "exclude-labels"
+          ],
+          "content": "64:           .from(options_before_change)\n65:           .to(options_before_change.merge(unreleased_label: \"staging\",\n66:                                           unreleased: false,\n67:                                           header: \"=== Changelog ===\",\n68:                                           max_issues: 123,\n69:                                           simple_list: true))\n70:       end\n71: \n72:       context \"turns exclude-labels into an Array\", bug: \"#327\" do\n73:         let(:file) do\n74:           <<~FILE\n75:             exclude-labels=73a91042-da6f-11e5-9335-1040f38d7f90,7adf83b4-da6f-11e5-ae18-1040f38d7f90\n76:             header_label=# My changelog\n77:           FILE\n78:         end\n79: \n80:         it \"reads exclude_labels into an Array\" do",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

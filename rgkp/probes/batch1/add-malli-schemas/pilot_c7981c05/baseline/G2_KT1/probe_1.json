@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "When writing Clojure tests with `clojure.test`, what is required for a call to `mt/user-http-request` to register as a test assertion in the test results?",
+    "options": {
+      "A": "The call must be wrapped in `(is ...)` (e.g., `(is (= expected (mt/user-http-request ...)))`) so the assertion is registered; a bare call may throw on status mismatch but does not register as a test assertion.",
+      "B": "The call must use `(are ...)` instead of `(is ...)` to register multiple status-code assertions in a single test.",
+      "C": "The call must be made inside a `(testing ...)` block; a bare `mt/user-http-request` call automatically registers an assertion based on the status code argument.",
+      "D": "The call must be assigned to a `let` binding and then passed to `assert`; wrapping in `is` is optional for status-code checks."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.5924495829967782,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 274,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

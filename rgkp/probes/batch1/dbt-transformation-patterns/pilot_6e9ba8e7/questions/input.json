@@ -1,0 +1,344 @@
+{
+  "task_description": "# Task: Add dbt Model Transformation Tests for dbt-core\n\n## Background\n\nAdd comprehensive transformation test coverage for dbt-core's model compilation and execution, including staging model examples and custom test definitions.\n\n## Files to Create/Modify\n\n- `tests/functional/staging/test_stg_orders.py` - Python test for model compilation\n- `tests/functional/staging/fixtures.py` - Test fixtures with model SQL and schema YAML\n- `core/dbt/tests/staging/stg_orders.sql` - Example staging model (optional fixture)\n- `core/dbt/tests/staging/schema.yml` - Model documentation and tests (optional fixture)\n\n## Requirements\n\n### Staging Model Definition (stg_orders.sql)\n- Source reference using `{{ source() }}` macro\n- Column transformations (renaming, type casting)\n- Appropriate materialization config block (`{{ config(materialized='view') }}`)\n\n### Schema Documentation (schema.yml)\n- Model description\n- Column-level descriptions\n- Built-in tests: `unique`, `not_null` on key columns\n- Custom test reference for positive amount validation\n\n### Custom Test\n- SQL-based test that returns rows that fail the condition\n- `assert_positive_amounts` test on the amount column\n\n### Python Test (test_stg_orders.py)\n- Verify model SQL compiles without errors\n- Verify schema.yml contains model description\n- Verify custom test file exists with valid SQL\n\n## Acceptance Criteria\n\n- `core/dbt/*.py` compiles without syntax errors\n- schema.yml contains model descriptions and test definitions\n- Custom test SQL file validates positive amounts\n",
+  "knowledge_targets": [
+    {
+      "target_id": "G1_KT1",
+      "knowledge_target": "The `core/dbt/tests/staging/` directory should contain `stg_orders.sql` with a `{{ config(materialized='view') }}` block, column transformations, and a `{{ source() }}` macro reference, plus a `schema.yml` with model description, column-level descriptions, built-in tests (`unique`, `not_null`), and a custom test reference (`assert_positive_amounts`). The schema.yml should follow `version: 2` format with a `models:` key containing a list of model entries, each with `name`, `description`, and `columns` (including `data_tests`).",
+      "evidence_ids": [
+        "G1_E1",
+        "G1_E4",
+        "G1_E5"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "core/dbt/include/starter_project/models/example/schema.yml",
+          "start_line": 1,
+          "end_line": 22,
+          "retrieval_score": 5.0,
+          "matched_cues": [],
+          "content": "1: \n2: version: 2\n3: \n4: models:\n5:   - name: my_first_dbt_model\n6:     description: \"A starter dbt model\"\n7:     columns:\n8:       - name: id\n9:         description: \"The primary key for this table\"\n10:         data_tests:\n11:           - unique\n12:           - not_null\n13: \n14:   - name: my_second_dbt_model\n15:     description: \"A starter dbt model\"\n16:     columns:\n17:       - name: id\n18:         description: \"The primary key for this table\"\n19:         data_tests:\n20:           - unique\n21:           - not_null\n22: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "tests/functional/fixtures/happy_path_project/models/schema.yml",
+          "start_line": 1,
+          "end_line": 35,
+          "retrieval_score": 5.0,
+          "matched_cues": [],
+          "content": "1: version: 2\n2: models:\n3:   - name: outer\n4:     description: The outer table\n5:     columns:\n6:       - name: id\n7:         description: The id value\n8:         data_tests:\n9:           - unique\n10:           - not_null\n11:   - name: metricflow_time_spine\n12:     description: Day time spine\n13:     time_spine:\n14:       standard_granularity_column: date_day\n15:     columns:\n16:       - name: date_day\n17:         granularity: day\n18:     config:\n19:       tags:\n20:         - \"list\"\n21:         - \"of\"\n22:         - \"tags\"\n23:       pre_hook:\n24:         - \"SELECT 'string_pre_hook' as my_pre_hook;\"\n25:       post_hook:\n26:         - \"SELECT 'string_post_hook' as my_post_hook;\"\n27:       group: \"finance\"\n28:   - name: metricflow_time_spine_second\n29:     description: Second time spine\n30:     config:\n31:       event_time: ts_second\n32:     columns:\n33:       - name: ts_second\n34:         granularity: second\n35:   - name: model_with_lots_of_schema_configs",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "tests/functional/fixtures/happy_path_project/tests/schema.yml",
+          "start_line": 1,
+          "end_line": 29,
+          "retrieval_score": 5.0,
+          "matched_cues": [],
+          "content": "1: version: 2\n2: \n3: data_tests:\n4:   - name: t\n5:     description: \"Single Data Test in happy path fixture\"\n6:     config:\n7:       alias: \"test_alias\"\n8:       database: \"dbt\"\n9:       group: \"important_tests\"\n10:       enabled: true\n11:       error_if: \"!= 0\"\n12:       fail_calc: \"count(*)\"\n13:       limit: 10\n14:       meta:\n15:         my_custom_meta_key: \"my_custom_meta_value\"\n16:       schema: \"dbt_test__audit\"\n17:       severity: \"warn\"\n18:       store_failures: true\n19:       store_failures_as: \"table\"\n20:       tags:\n21:         - \"test_tag\"\n22:       warn_if: \"!= 0\"\n23:       where: \"1 = 1\"\n24: \n25: groups:\n26:   - name: important_tests\n27:     owner:\n28:       email: data@example.com\n29: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G1_KT2",
+      "knowledge_target": "Optional fixture SQL and YAML files for functional tests in dbt-core can be placed under `core/dbt/tests/` subdirectories (e.g., `core/dbt/tests/staging/`) as part of the `dbt.tests` package. The `core/dbt/tests/fixtures/` directory already exists as a package, establishing the precedent for adding new subdirectories under `core/dbt/tests/`.",
+      "evidence_ids": [
+        "G1_E6",
+        "G1_E7",
+        "G1_E8"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E6",
+          "file_path": "AGENTS.md",
+          "start_line": 104,
+          "end_line": 120,
+          "retrieval_score": 2.424,
+          "matched_cues": [
+            "dbt.tests"
+          ],
+          "content": "104: \n105: Schema-based parsers (`SchemaParser`, `YamlReader` subclasses) read YAML and apply patches to nodes.\n106: \n107: ## Testing\n108: \n109: ### Structure\n110: \n111: - **Unit tests** (`tests/unit/`): Pure Python, no database. Use mocks and helpers from `tests/unit/utils/`.\n112: - **Functional tests** (`tests/functional/`): Require Postgres. Use the `project` fixture from `dbt.tests.fixtures.project`.\n113: \n114: ### Running Tests\n115: \n116: ```sh\n117: cd core\n118: hatch run unit-tests              # Unit tests only\n119: hatch run integration-tests       # Functional tests (requires Postgres)\n120: hatch run test                    # Unit tests + code quality checks",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E7",
+          "file_path": "AGENTS.md",
+          "start_line": 139,
+          "end_line": 155,
+          "retrieval_score": 2.424,
+          "matched_cues": [
+            "dbt.tests"
+          ],
+          "content": "139:     def models(self):\n140:         return {\"my_model.sql\": \"select 1 as id\"}\n141: \n142:     def test_run_succeeds(self, project):\n143:         results = run_dbt([\"run\"])\n144:         assert len(results) == 1\n145: ```\n146: \n147: Key utilities: `run_dbt()`, `run_dbt_and_capture()`, `get_manifest()`, `get_artifact()` from `dbt.tests.util`.\n148: \n149: Having multiple tests in a functional test class will mean that those tests **will share** the underlying dbt project fixture of the class. This means that if a test modifies the underlying project that will affect other tests in the same class. This leads to flakiness and means it is generally best practice to have one test per functional test class.\n150: \n151: ### Database Setup for Functional Tests\n152: \n153: ```sh\n154: cd core && hatch run setup-db\n155: # or manually:",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E8",
+          "file_path": "core/dbt/tests/fixtures/__init__.py",
+          "start_line": 1,
+          "end_line": 2,
+          "retrieval_score": 2.424,
+          "matched_cues": [
+            "dbt.tests"
+          ],
+          "content": "1: # dbt.tests.fixtures directory\n2: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT1",
+      "knowledge_target": "When iterating over the results returned by `run_dbt(['compile'])` or similar commands, each result object is a `RunResult` whose node name must be accessed via `result.node.name` (not `result.name`). The utility function `check_result_nodes_by_name(results, names)` demonstrates this by doing `result_names.append(result.node.name)` for each result. Similarly, `get_unique_ids_in_results` uses `result.node.unique_id`.",
+      "evidence_ids": [
+        "G2_E2",
+        "G2_E3"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "core/dbt/tests/util.py",
+          "start_line": 260,
+          "end_line": 276,
+          "retrieval_score": 37.826,
+          "matched_cues": [
+            "check_result_nodes_by_name",
+            "node.name",
+            "run_dbt"
+          ],
+          "content": "260: def get_unique_ids_in_results(results):\n261:     unique_ids = []\n262:     for result in results:\n263:         unique_ids.append(result.node.unique_id)\n264:     return unique_ids\n265: \n266: \n267: # Check the nodes in the results returned by a dbt run command\n268: def check_result_nodes_by_name(results, names):\n269:     result_names = []\n270:     for result in results:\n271:         result_names.append(result.node.name)\n272:     assert set(names) == set(result_names)\n273: \n274: \n275: # Check the nodes in the results returned by a dbt run command\n276: def check_result_nodes_by_unique_id(results, unique_ids):",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "core/dbt/tests/util.py",
+          "start_line": 60,
+          "end_line": 76,
+          "retrieval_score": 37.826,
+          "matched_cues": [
+            "check_result_nodes_by_name",
+            "node.name",
+            "run_dbt"
+          ],
+          "content": "60: # Classes for comparing fields in dictionaries\n61: #   AnyFloat\n62: #   AnyInteger\n63: #   AnyString\n64: #   AnyStringWith\n65: # =============================================================================\n66: \n67: \n68: # 'run_dbt' is used in pytest tests to run dbt commands. It will return\n69: # different objects depending on the command that is executed.\n70: # For a run command (and most other commands) it will return a list\n71: # of results. For the 'docs generate' command it returns a CatalogArtifact.\n72: # The first parameter is a list of dbt command line arguments, such as\n73: #   run_dbt([\"run\", \"--vars\", \"seed_name: base\"])\n74: # If the command is expected to fail, pass in \"expect_pass=False\"):\n75: #   run_dbt([\"test\"], expect_pass=False)\n76: def run_dbt(",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT2",
+      "knowledge_target": "Instead of manually iterating with `any(node.name == 'stg_orders' for node in results)`, the preferred repository pattern for checking node names in compile results is to use the utility `check_result_nodes_by_name(results, ['stg_orders'])` from `dbt.tests.util`, which correctly accesses `result.node.name` for each result.",
+      "evidence_ids": [
+        "G2_E2",
+        "G2_E1"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "core/dbt/tests/util.py",
+          "start_line": 260,
+          "end_line": 276,
+          "retrieval_score": 37.826,
+          "matched_cues": [
+            "check_result_nodes_by_name",
+            "node.name",
+            "run_dbt"
+          ],
+          "content": "260: def get_unique_ids_in_results(results):\n261:     unique_ids = []\n262:     for result in results:\n263:         unique_ids.append(result.node.unique_id)\n264:     return unique_ids\n265: \n266: \n267: # Check the nodes in the results returned by a dbt run command\n268: def check_result_nodes_by_name(results, names):\n269:     result_names = []\n270:     for result in results:\n271:         result_names.append(result.node.name)\n272:     assert set(names) == set(result_names)\n273: \n274: \n275: # Check the nodes in the results returned by a dbt run command\n276: def check_result_nodes_by_unique_id(results, unique_ids):",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "core/dbt/tests/util.py",
+          "start_line": 36,
+          "end_line": 52,
+          "retrieval_score": 37.826,
+          "matched_cues": [
+            "check_result_nodes_by_name",
+            "node.name",
+            "run_dbt"
+          ],
+          "content": "36: #   write_file\n37: #   read_file\n38: #   mkdir\n39: #   rm_dir\n40: #   get_artifact\n41: #   update_config_file\n42: #   write_config_file\n43: #   get_unique_ids_in_results\n44: #   check_result_nodes_by_name\n45: #   check_result_nodes_by_unique_id\n46: \n47: # SQL related utilities that use the adapter\n48: #   run_sql_with_adapter\n49: #   relation_from_name\n50: #   check_relation_types (table/view)\n51: #   check_relations_equal\n52: #   check_relation_has_expected_schema",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT1",
+      "knowledge_target": "Before calling `get_manifest(project.project_root)` or `get_artifact(project.project_root, 'target', 'manifest.json')` in a test method, `run_dbt(['compile'])` (or `run_dbt(['parse'])`) must be called first within the same test method to generate the manifest.json in the target directory. The pattern is: `run_dbt(['compile'])` → `manifest = get_manifest(project.project_root)`.",
+      "evidence_ids": [
+        "G3_E7",
+        "G3_E1",
+        "G3_E3"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E7",
+          "file_path": "tests/functional/data_test_patch/test_singular_test_patch.py",
+          "start_line": 18,
+          "end_line": 34,
+          "retrieval_score": 17.26,
+          "matched_cues": [
+            "dbt.tests.util",
+            "get_manifest",
+            "run_dbt",
+            "run_dbt([\"compile\"])",
+            "run_dbt([\"parse\"])"
+          ],
+          "content": "18:     def tests(self):\n19:         return {\n20:             \"my_singular_test.sql\": tests__my_singular_test_sql,\n21:             \"schema.yml\": tests__schema_yml,\n22:             \"doc_block.md\": tests__doc_block_md,\n23:         }\n24: \n25:     def test_compile(self, project):\n26:         run_dbt([\"compile\"])\n27:         manifest = get_manifest(project.project_root)\n28:         assert len(manifest.nodes) == 1\n29: \n30:         my_singular_test_node = manifest.nodes[\"test.test.my_singular_test\"]\n31:         assert my_singular_test_node.description == \"Some docs from a doc block\"\n32:         assert my_singular_test_node.config.error_if == \">10\"\n33:         assert my_singular_test_node.config.meta == {\"some_key\": \"some_val\"}\n34:         assert my_singular_test_node.meta == {\"some_key\": \"some_val\"}",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E1",
+          "file_path": "tests/functional/generic_test_description/test_generic_test_description.py",
+          "start_line": 13,
+          "end_line": 29,
+          "retrieval_score": 33.593,
+          "matched_cues": [
+            "dbt.tests.util",
+            "manifest.json",
+            "run_dbt",
+            "run_dbt([\"compile\"])"
+          ],
+          "content": "13:     def models(self):\n14:         return {\n15:             \"my_model.sql\": models__my_model_sql,\n16:             \"schema.yml\": models__schema_yml,\n17:             \"doc_block.md\": models__doc_block_md,\n18:         }\n19: \n20:     def test_compile(self, project):\n21:         run_dbt([\"compile\"])\n22:         manifest = get_artifact(project.project_root, \"target\", \"manifest.json\")\n23:         assert len(manifest[\"nodes\"]) == 4\n24: \n25:         nodes = {node[\"alias\"]: node for node in manifest[\"nodes\"].values()}\n26: \n27:         assert nodes[\"unique_my_model_id\"][\"description\"] == \"id must be unique\"\n28:         assert nodes[\"not_null_my_model_id\"][\"description\"] == \"\"\n29:         assert (",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "tests/functional/constraints/test_foreign_key_constraints.py",
+          "start_line": 46,
+          "end_line": 62,
+          "retrieval_score": 17.457,
+          "matched_cues": [
+            "dbt.tests.util",
+            "manifest.json",
+            "run_dbt",
+            "run_dbt([\"compile\"])",
+            "run_dbt([\"parse\"])"
+          ],
+          "content": "46:             to_columns=[\"id\"],\n47:         )\n48:         # Assert column-level constraint source included in node.depends_on\n49:         assert node_with_fk_constraint.refs == [RefArgs(\"my_model_to\")]\n50:         assert node_with_fk_constraint.depends_on.nodes == [\"model.test.my_model_to\"]\n51:         assert node_with_fk_constraint.sources == []\n52: \n53:         # Assert compilation renders to from 'ref' to relation identifer\n54:         run_dbt([\"compile\"])\n55:         manifest = get_artifact(project.project_root, \"target\", \"manifest.json\")\n56:         assert len(manifest[\"nodes\"][\"model.test.my_model\"][\"constraints\"]) == 1\n57: \n58:         compiled_constraint = manifest[\"nodes\"][\"model.test.my_model\"][\"constraints\"][0]\n59:         assert compiled_constraint[\"to\"] == f'\"dbt\".\"{unique_schema}\".\"my_model_to\"'\n60:         # Other constraint fields should remain as parsed\n61:         assert compiled_constraint[\"to_columns\"] == parsed_constraint.to_columns\n62:         assert compiled_constraint[\"columns\"] == parsed_constraint.columns",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT2",
+      "knowledge_target": "In dbt functional tests, each test method that needs to inspect the manifest must independently call `run_dbt(['compile'])` before accessing manifest data via `get_manifest()`. Since multiple tests in a class share the same project fixture but each test method is independent, relying on a manifest generated by another test method is unreliable. The correct pattern is to call `run_dbt(['compile'])` at the start of each test method that uses manifest data.",
+      "evidence_ids": [
+        "G3_E7",
+        "G3_E1",
+        "G3_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E7",
+          "file_path": "tests/functional/data_test_patch/test_singular_test_patch.py",
+          "start_line": 18,
+          "end_line": 34,
+          "retrieval_score": 17.26,
+          "matched_cues": [
+            "dbt.tests.util",
+            "get_manifest",
+            "run_dbt",
+            "run_dbt([\"compile\"])",
+            "run_dbt([\"parse\"])"
+          ],
+          "content": "18:     def tests(self):\n19:         return {\n20:             \"my_singular_test.sql\": tests__my_singular_test_sql,\n21:             \"schema.yml\": tests__schema_yml,\n22:             \"doc_block.md\": tests__doc_block_md,\n23:         }\n24: \n25:     def test_compile(self, project):\n26:         run_dbt([\"compile\"])\n27:         manifest = get_manifest(project.project_root)\n28:         assert len(manifest.nodes) == 1\n29: \n30:         my_singular_test_node = manifest.nodes[\"test.test.my_singular_test\"]\n31:         assert my_singular_test_node.description == \"Some docs from a doc block\"\n32:         assert my_singular_test_node.config.error_if == \">10\"\n33:         assert my_singular_test_node.config.meta == {\"some_key\": \"some_val\"}\n34:         assert my_singular_test_node.meta == {\"some_key\": \"some_val\"}",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E1",
+          "file_path": "tests/functional/generic_test_description/test_generic_test_description.py",
+          "start_line": 13,
+          "end_line": 29,
+          "retrieval_score": 33.593,
+          "matched_cues": [
+            "dbt.tests.util",
+            "manifest.json",
+            "run_dbt",
+            "run_dbt([\"compile\"])"
+          ],
+          "content": "13:     def models(self):\n14:         return {\n15:             \"my_model.sql\": models__my_model_sql,\n16:             \"schema.yml\": models__schema_yml,\n17:             \"doc_block.md\": models__doc_block_md,\n18:         }\n19: \n20:     def test_compile(self, project):\n21:         run_dbt([\"compile\"])\n22:         manifest = get_artifact(project.project_root, \"target\", \"manifest.json\")\n23:         assert len(manifest[\"nodes\"]) == 4\n24: \n25:         nodes = {node[\"alias\"]: node for node in manifest[\"nodes\"].values()}\n26: \n27:         assert nodes[\"unique_my_model_id\"][\"description\"] == \"id must be unique\"\n28:         assert nodes[\"not_null_my_model_id\"][\"description\"] == \"\"\n29:         assert (",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "tests/functional/data_test_patch/test_singular_test_patch.py",
+          "start_line": 1,
+          "end_line": 13,
+          "retrieval_score": 17.26,
+          "matched_cues": [
+            "dbt.tests.util",
+            "get_manifest",
+            "run_dbt",
+            "run_dbt([\"compile\"])",
+            "run_dbt([\"parse\"])"
+          ],
+          "content": "1: from pathlib import Path\n2: \n3: import pytest\n4: \n5: from dbt.tests.util import get_manifest, run_dbt, run_dbt_and_capture, write_file\n6: from tests.functional.data_test_patch.fixtures import (\n7:     tests__doc_block_md,\n8:     tests__invalid_name_schema_yml,\n9:     tests__malformed_schema_yml,\n10:     tests__my_singular_test_sql,\n11:     tests__schema_2_yml,\n12:     tests__schema_yml,\n13: )",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT3",
+      "knowledge_target": "The `get_manifest(project.project_root)` function returns a parsed manifest Python object (with `.nodes` as a dict), while `get_artifact(project.project_root, 'target', 'manifest.json')` returns the raw manifest as a dict. Both require a prior `run_dbt(['compile'])` call to populate the target directory with a current manifest.json.",
+      "evidence_ids": [
+        "G3_E7",
+        "G3_E3",
+        "G3_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E7",
+          "file_path": "tests/functional/data_test_patch/test_singular_test_patch.py",
+          "start_line": 18,
+          "end_line": 34,
+          "retrieval_score": 17.26,
+          "matched_cues": [
+            "dbt.tests.util",
+            "get_manifest",
+            "run_dbt",
+            "run_dbt([\"compile\"])",
+            "run_dbt([\"parse\"])"
+          ],
+          "content": "18:     def tests(self):\n19:         return {\n20:             \"my_singular_test.sql\": tests__my_singular_test_sql,\n21:             \"schema.yml\": tests__schema_yml,\n22:             \"doc_block.md\": tests__doc_block_md,\n23:         }\n24: \n25:     def test_compile(self, project):\n26:         run_dbt([\"compile\"])\n27:         manifest = get_manifest(project.project_root)\n28:         assert len(manifest.nodes) == 1\n29: \n30:         my_singular_test_node = manifest.nodes[\"test.test.my_singular_test\"]\n31:         assert my_singular_test_node.description == \"Some docs from a doc block\"\n32:         assert my_singular_test_node.config.error_if == \">10\"\n33:         assert my_singular_test_node.config.meta == {\"some_key\": \"some_val\"}\n34:         assert my_singular_test_node.meta == {\"some_key\": \"some_val\"}",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "tests/functional/constraints/test_foreign_key_constraints.py",
+          "start_line": 46,
+          "end_line": 62,
+          "retrieval_score": 17.457,
+          "matched_cues": [
+            "dbt.tests.util",
+            "manifest.json",
+            "run_dbt",
+            "run_dbt([\"compile\"])",
+            "run_dbt([\"parse\"])"
+          ],
+          "content": "46:             to_columns=[\"id\"],\n47:         )\n48:         # Assert column-level constraint source included in node.depends_on\n49:         assert node_with_fk_constraint.refs == [RefArgs(\"my_model_to\")]\n50:         assert node_with_fk_constraint.depends_on.nodes == [\"model.test.my_model_to\"]\n51:         assert node_with_fk_constraint.sources == []\n52: \n53:         # Assert compilation renders to from 'ref' to relation identifer\n54:         run_dbt([\"compile\"])\n55:         manifest = get_artifact(project.project_root, \"target\", \"manifest.json\")\n56:         assert len(manifest[\"nodes\"][\"model.test.my_model\"][\"constraints\"]) == 1\n57: \n58:         compiled_constraint = manifest[\"nodes\"][\"model.test.my_model\"][\"constraints\"][0]\n59:         assert compiled_constraint[\"to\"] == f'\"dbt\".\"{unique_schema}\".\"my_model_to\"'\n60:         # Other constraint fields should remain as parsed\n61:         assert compiled_constraint[\"to_columns\"] == parsed_constraint.to_columns\n62:         assert compiled_constraint[\"columns\"] == parsed_constraint.columns",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "tests/functional/data_test_patch/test_singular_test_patch.py",
+          "start_line": 1,
+          "end_line": 13,
+          "retrieval_score": 17.26,
+          "matched_cues": [
+            "dbt.tests.util",
+            "get_manifest",
+            "run_dbt",
+            "run_dbt([\"compile\"])",
+            "run_dbt([\"parse\"])"
+          ],
+          "content": "1: from pathlib import Path\n2: \n3: import pytest\n4: \n5: from dbt.tests.util import get_manifest, run_dbt, run_dbt_and_capture, write_file\n6: from tests.functional.data_test_patch.fixtures import (\n7:     tests__doc_block_md,\n8:     tests__invalid_name_schema_yml,\n9:     tests__malformed_schema_yml,\n10:     tests__my_singular_test_sql,\n11:     tests__schema_2_yml,\n12:     tests__schema_yml,\n13: )",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "residual_units": [
+    {
+      "type": "execution_guidance",
+      "content": "When writing `hack/gitops-demo/apps/overlays/dev/kustomization.yaml`, replace deprecated fields with their current equivalents as used in `manifests/openshift/kustomization.yaml`, `manifests/test/kustomization.yaml`, and `manifests/install/kustomization.yaml`:\n\n- Replace `bases:` with `resources:`:\n```yaml\nresources:\n  - ../../base\n```\n\n- Replace `patchesStrategicMerge:` with `patches:` using a `path:` key:\n```yaml\npatches:\n  - path: patch-replicas.yaml\n```",
+      "source_ids": [
+        "G1_KT1_EG1",
+        "G1_KT2_EG1"
+      ],
+      "residual_id": "R1"
+    }
+  ]
+}

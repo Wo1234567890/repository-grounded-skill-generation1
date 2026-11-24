@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "Based on examples of `defsetting` usage in `src/metabase/system/settings.clj`, which of the following represents a valid minimal `defsetting` form for a `site-currency` setting with a string type, public visibility, and a default of \"USD\"?",
+    "options": {
+      "A": "`(defsetting :site-currency \"Default currency for the site\" {:type :string :default \"USD\" :visibility :public})`",
+      "B": "`(def site-currency (setting/make-setting :type :string :default \"USD\" :visibility :public))`",
+      "C": "`(defsetting site-currency (deferred-tru \"Default currency for the site\") :type :string :default \"USD\" :visibility :public)`",
+      "D": "`(defsetting site-currency {:type :string :default \"USD\" :visibility :public})`"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "Looking at the structure of `defsetting` usage in Metabase's settings system:\n\nThe `defsetting` macro typically requires:\n1. A setting name (as a symbol, not a keyword)\n2. A docstring (description)\n3. Setting options as keyword arguments\n\nAnalyzing each option:\n\n**A**: Uses a keyword `:site-currency` instead of a symbol, and passes options in a map rather than as keyword arguments. ❌\n\n**B**: Uses `def` and `setting/make-setting` instead of the `defsetting` macro. ❌\n\n**C**: Uses a symbol `site-currency`, includes a docstring `(deferred-tru \"...\")`, and passes options as keyword arguments (`:type :string :default \"USD\" :visibility :public`). ✓\n\n**D**: Missing the required docstring between the setting name and the options map. ❌\n\nThe answer is **C**.",
+  "answer": null,
+  "valid": false,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 2.3712387919949833,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 256,
+    "output_tokens": 213,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

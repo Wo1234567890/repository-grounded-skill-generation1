@@ -1,0 +1,29 @@
+{
+  "source_units": [
+    {
+      "source_id": "G2_KT1_C2",
+      "type": "validated_knowledge",
+      "content": "In Bazel BUILD files that use `rules_python`, each Python rule symbol must be explicitly imported via a `load()` statement referencing the `@rules_python` external repository. The file-to-symbol mapping is:\n\n| Rule | Load statement |\n|------|---------------|\n| `py_binary` | `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")` |\n| `py_library` | `load(\"@rules_python//python:py_library.bzl\", \"py_library\")` |\n| `py_test` | `load(\"@rules_python//python:py_test.bzl\", \"py_test\")` |\n\nThese load statements must appear before the rules are used in the BUILD file. Omitting them causes a `name 'py_binary' is not defined` (or similar) error at analysis time. The repository evidence from `examples/py/BUILD` and test files in `src/test/py/bazel/bazel_external_repository_test.py` confirms all three paths. Note that `py_binary` and `py_library` are both used in `examples/py/BUILD`, while `py_test` appears in the test file at `load(\"@rules_python//python:py_test.bzl\", \"py_test\")`."
+    },
+    {
+      "source_id": "G1_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "When creating tests/BUILD.bazel, do not declare a py_binary as a dep of py_test. Instead: (1) extract the shared logic (e.g., the greet function) from src/main.py into a new src/lib.py file; (2) add a py_library target named 'lib' in src/BUILD.bazel with `srcs = [\"lib.py\"]` and `visibility = [\"//visibility:public\"]`; (3) have the py_binary //src:main depend on `deps = [\":lib\"]`; (4) have the py_test in tests/BUILD.bazel depend on `deps = [\"//src:lib\"]`. This mirrors the existing pattern in examples/py/BUILD where py_binary depends on a py_library. Update test_main.py to import from the library rather than duplicating functions."
+    },
+    {
+      "source_id": "G1_KT2_EG1",
+      "type": "execution_guidance",
+      "content": "Apply the py_library + py_binary pattern from examples/py/BUILD to examples/python-bazel. Create a py_library target in src/BUILD.bazel (e.g., name='lib', srcs=['lib.py']) containing the shared logic, make //src:main depend on it via deps=[':lib'], and make the py_test in tests/BUILD.bazel depend on deps=['//src:lib']. Do not point py_test deps at a py_binary."
+    },
+    {
+      "source_id": "G2_KT2_EG1",
+      "type": "execution_guidance",
+      "content": "The standalone workspace in examples/python-bazel must declare rules_python as a dependency. Since the project uses WORKSPACE (not MODULE.bazel), add http_archive to fetch rules_python in WORKSPACE, then call its setup functions. Also add explicit load() statements in src/BUILD.bazel and tests/BUILD.bazel (e.g., `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")` and `load(\"@rules_python//python:py_test.bzl\", \"py_test\")`), mirroring the pattern already present in examples/py/BUILD."
+    },
+    {
+      "source_id": "G3_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "After adding the rules_python http_archive to WORKSPACE, also call `python_register_toolchains` from `@rules_python//python:repositories.bzl`. Add to WORKSPACE after the http_archive setup: `load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\"); python_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")`. This registers a hermetic Python toolchain as required by the task."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "According to `core/dbt/tests/util.py`, what is the preferred utility function for asserting that compile results contain a specific set of node names (e.g., `['stg_orders']`)?",
+    "options": {
+      "A": "`check_result_nodes_by_name(results, ['stg_orders'])`",
+      "B": "`assert any(result.name == 'stg_orders' for result in results)`",
+      "C": "`check_result_nodes_by_unique_id(results, ['stg_orders'])`",
+      "D": "`assert results[0].name == 'stg_orders'`"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.5360989579930902,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 201,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

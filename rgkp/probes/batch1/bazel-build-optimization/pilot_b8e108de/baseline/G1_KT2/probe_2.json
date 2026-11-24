@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In a Bazel Python project, you want both a `py_binary` and a `py_test` to use a shared module `lib.py`. Based on Bazel's Python rules documentation, which BUILD file structure correctly expresses this relationship?",
+    "options": {
+      "A": "Define the `py_binary` with `srcs = [\"lib.py\", \"bin.py\"]` and separately define the `py_test` with `srcs = [\"lib.py\", \"test.py\"]`, duplicating the source.",
+      "B": "Define a `py_library` with `srcs = [\"lib.py\"]`, then have both the `py_binary` and the `py_test` reference it via `deps = [\":lib\"]`.",
+      "C": "List `lib.py` in the `data` attribute of both the `py_binary` and the `py_test`.",
+      "D": "Define a `py_binary` with `srcs = [\"lib.py\"]` and have the `py_test` list that binary in its `deps`."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "B",
+  "answer": "B",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.708614375005709,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 299,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

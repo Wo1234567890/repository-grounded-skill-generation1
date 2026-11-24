@@ -1,0 +1,6 @@
+{
+  "instance_id": "batch1/analyze-ci",
+  "repository_url": "https://github.com/getsentry/sentry",
+  "repository_commit": "6cabd8cddd3bfb4657c19ef7119b3293f7866bce",
+  "gap_evidence": []
+}

@@ -1,0 +1,9 @@
+{
+  "source_units": [
+    {
+      "source_id": "G1_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "When writing `examples/advanced_config/.github_changelog_generator`, add an `include-labels` entry to demonstrate label filtering. As seen in `lib/github_changelog_generator/argv_parser.rb` line 118, the CLI option `--include-labels x,y,z` maps to `options[:include_labels]`, meaning the config file key is `include-labels`. Add a line such as `include-labels=enhancement,bug,breaking-change,security` to the configuration file to demonstrate how to restrict changelog output to only issues/PRs with specific labels. This line should appear in the label configuration section alongside `exclude-labels`."
+    }
+  ]
+}

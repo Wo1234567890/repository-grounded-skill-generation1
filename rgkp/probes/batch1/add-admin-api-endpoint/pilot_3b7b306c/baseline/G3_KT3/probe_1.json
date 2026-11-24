@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "What error will Ghost's `admin-api-test-agent` throw if `agent.loginAsOwner()` is called but the owner user does not exist in the test database, and how can this be prevented?",
+    "options": {
+      "A": "It throws a database connection error; prevented by calling `dbUtils.truncate('users')` before `loginAsOwner()`.",
+      "B": "It silently returns a guest session instead of an owner session; prevented by calling `agent.loginAsOwner()` after the first API request.",
+      "C": "It throws a 403 Forbidden error; prevented by granting owner permissions explicitly in the test setup.",
+      "D": "It throws an `IncorrectUsageError` with the message indicating the user was not found and asking whether 'users' was passed to `fixtureManager.init()`; prevented by including 'users' in the `fixtureManager.init()` call."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "D",
+  "answer": "D",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6044609170057811,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 261,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

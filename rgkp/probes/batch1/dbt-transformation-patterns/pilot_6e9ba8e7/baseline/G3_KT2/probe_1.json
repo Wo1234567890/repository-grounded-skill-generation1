@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In a dbt functional test class with multiple test methods that each need to inspect the manifest, what is the correct pattern according to the repository's existing tests?",
+    "options": {
+      "A": "The `project` fixture automatically re-runs compilation before each test method, so no explicit `run_dbt(['compile'])` call is needed in individual test methods",
+      "B": "Only the first test method needs to call `run_dbt(['compile'])`; subsequent test methods can rely on the manifest left in the target directory",
+      "C": "A single `run_dbt(['compile'])` call in a `setup_method` or `setup_class` is sufficient for all test methods in the class to share the same manifest",
+      "D": "Each test method that uses manifest data should independently call `run_dbt(['compile'])` at the start of that method before accessing the manifest"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "D",
+  "answer": "D",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.7193037919932976,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 241,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

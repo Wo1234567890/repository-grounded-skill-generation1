@@ -1,0 +1,33 @@
+{
+  "knowledge_target": "The actual file path for the setting model in the repository is `src/metabase/settings/models/setting.clj` (namespace `metabase.settings.models.setting`), not `src/metabase/models/setting.clj` as the task description stated. The `defsetting` macro is accessed via `[metabase.settings.core :as setting :refer [defsetting]]` as shown in `src/metabase/system/settings.clj`.",
+  "prescriptive_evidence": [
+    {
+      "evidence_id": "G4_E7",
+      "file_path": ".clj-kondo/src/hooks/metabase/settings/models/setting.clj",
+      "start_line": 208,
+      "end_line": 224,
+      "retrieval_score": 21.244,
+      "matched_cues": [
+        "defsetting",
+        "metabase.settings.models.setting",
+        "settings"
+      ],
+      "content": "208:          (list\n209:           (hooks/token-node 'let)\n210:           ;; include description and the options map so they can get validated as well.\n211:           (hooks/vector-node\n212:            [anon-binding docstring\n213:             anon-binding (hooks/map-node options-list)])\n214:           (hooks/reg-keyword! (-> (hooks/keyword-node (keyword (hooks/sexpr setting-name)))\n215:                                   (with-meta (meta setting-name)))\n216:                               'metabase.settings.models.setting/defsetting)\n217:           getter-node\n218:           setter-node))\n219:         (with-meta (meta node)))))\n220: \n221: (defn defsetting\n222:   \"Rewrite a [[metabase.models.defsetting]] form like\n223: \n224:     (defsetting my-setting \\\"Description\\\" :type :boolean)",
+      "line_truncated": false
+    },
+    {
+      "evidence_id": "G4_E8",
+      "file_path": ".clj-kondo/src/hooks/metabase/settings/models/setting.clj",
+      "start_line": 1,
+      "end_line": 9,
+      "retrieval_score": 21.244,
+      "matched_cues": [
+        "defsetting",
+        "metabase.settings.models.setting",
+        "settings"
+      ],
+      "content": "1: (ns hooks.metabase.settings.models.setting\n2:   (:require\n3:    [clj-kondo.hooks-api :as hooks]\n4:    [hooks.common :as common]))\n5: \n6: (defn lint-defsetting-namespace [node context]\n7:   (when-not (re-matches #\"^metabase(?:-enterprise)?\\.[^\\.]+\\.settings$\" (name (:ns context)))\n8:     (hooks/reg-finding! (assoc (meta node)\n9:                                :message \"All defsettings should live in metabase[-enterprise].<module>.settings namespaces\"",
+      "line_truncated": false
+    }
+  ]
+}

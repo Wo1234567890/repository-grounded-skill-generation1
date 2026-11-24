@@ -1,0 +1,12 @@
+{
+  "routing_results": [
+    {
+      "target_id": "G2_KT1",
+      "gap_id": "G2",
+      "baseline_state": null,
+      "repository_provides": null,
+      "repository_check": null,
+      "route": "unresolved"
+    }
+  ]
+}

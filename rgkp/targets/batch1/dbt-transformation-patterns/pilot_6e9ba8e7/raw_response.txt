@@ -1,0 +1,195 @@
+```json
+{
+  "gap_results": [
+    {
+      "gap_id": "G1",
+      "assessment": "grounded",
+      "assessment_reason": "The repository contains multiple examples of schema.yml files with model descriptions, column-level descriptions, built-in tests (unique, not_null), and source definitions that demonstrate the expected structure for the optional fixture files.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G1_E1",
+          "type": "descriptive",
+          "reason": "Shows a schema.yml with model descriptions, column descriptions, and built-in tests (unique, not_null) under the data_tests key, directly relevant to creating schema.yml fixtures."
+        },
+        {
+          "evidence_id": "G1_E2",
+          "type": "descriptive",
+          "reason": "Shows a schema.yml with source definitions including schema and table references, relevant to the source reference pattern needed in stg_orders.sql."
+        },
+        {
+          "evidence_id": "G1_E3",
+          "type": "descriptive",
+          "reason": "Another example of a sources schema.yml with table identifiers, relevant to source reference structure."
+        },
+        {
+          "evidence_id": "G1_E4",
+          "type": "descriptive",
+          "reason": "Shows a comprehensive schema.yml with model descriptions, column descriptions, built-in data_tests (unique, not_null), and config blocks, directly relevant to the required schema.yml fixture structure."
+        },
+        {
+          "evidence_id": "G1_E5",
+          "type": "descriptive",
+          "reason": "Shows a tests/schema.yml with data_tests section and configuration, relevant to custom test reference structure."
+        },
+        {
+          "evidence_id": "G1_E6",
+          "type": "prescriptive",
+          "reason": "AGENTS.md explicitly describes the testing structure and locations, prescribing that functional tests live under tests/functional/ and use fixtures from dbt.tests.fixtures."
+        },
+        {
+          "evidence_id": "G1_E7",
+          "type": "prescriptive",
+          "reason": "AGENTS.md prescribes the use of run_dbt(), get_manifest(), and other key utilities from dbt.tests.util, and notes that the project fixture is shared within a test class."
+        },
+        {
+          "evidence_id": "G1_E8",
+          "type": "descriptive",
+          "reason": "Shows that core/dbt/tests/fixtures/ exists as a package, confirming the dbt.tests package structure where optional fixtures can be placed."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "The `core/dbt/tests/staging/` directory should contain `stg_orders.sql` with a `{{ config(materialized='view') }}` block, column transformations, and a `{{ source() }}` macro reference, plus a `schema.yml` with model description, column-level descriptions, built-in tests (`unique`, `not_null`), and a custom test reference (`assert_positive_amounts`). The schema.yml should follow `version: 2` format with a `models:` key containing a list of model entries, each with `name`, `description`, and `columns` (including `data_tests`).",
+          "target_descriptor": "What content and structure is required for the optional fixture files at core/dbt/tests/staging/stg_orders.sql and core/dbt/tests/staging/schema.yml, and what YAML schema format should be used.",
+          "evidence_ids": ["G1_E1", "G1_E4", "G1_E5"],
+          "rationale": "The existing schema.yml examples in the repository (G1_E1, G1_E4) demonstrate the exact YAML structure needed for the staging schema.yml fixture, including version, models list, description, columns, and data_tests. G1_E5 shows the custom test reference pattern."
+        },
+        {
+          "knowledge_target": "Optional fixture SQL and YAML files for functional tests in dbt-core can be placed under `core/dbt/tests/` subdirectories (e.g., `core/dbt/tests/staging/`) as part of the `dbt.tests` package. The `core/dbt/tests/fixtures/` directory already exists as a package, establishing the precedent for adding new subdirectories under `core/dbt/tests/`.",
+          "target_descriptor": "Where optional fixture files for dbt functional tests should be placed within the core/dbt/tests/ package hierarchy.",
+          "evidence_ids": ["G1_E6", "G1_E7", "G1_E8"],
+          "rationale": "AGENTS.md prescribes the testing structure and key utilities, while G1_E8 shows the existing fixtures package under core/dbt/tests/, confirming that creating a staging subdirectory there is the correct approach."
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "assessment": "grounded",
+      "assessment_reason": "The repository evidence clearly shows that run_dbt results are lists of RunResult objects whose node name is accessed via result.node.name, not result.name directly, as demonstrated in check_result_nodes_by_name and get_unique_ids_in_results.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G2_E1",
+          "type": "descriptive",
+          "reason": "Lists the utility functions available in util.py including check_result_nodes_by_name, which is relevant to understanding how to access node names in results."
+        },
+        {
+          "evidence_id": "G2_E2",
+          "type": "descriptive",
+          "reason": "Shows the implementation of check_result_nodes_by_name and get_unique_ids_in_results, explicitly accessing result.node.name and result.node.unique_id, demonstrating the correct attribute path."
+        },
+        {
+          "evidence_id": "G2_E3",
+          "type": "descriptive",
+          "reason": "Documents the run_dbt function behavior, confirming it returns a list of results for most commands."
+        },
+        {
+          "evidence_id": "G2_E4",
+          "type": "descriptive",
+          "reason": "Shows run_dbt(['compile']) used in a test, with results checked via len(results), establishing usage patterns."
+        },
+        {
+          "evidence_id": "G2_E5",
+          "type": "descriptive",
+          "reason": "Another example of run_dbt(['compile']) with result length checking, further establishing the results list structure."
+        },
+        {
+          "evidence_id": "G2_E6",
+          "type": "descriptive",
+          "reason": "Shows imports from dbt.tests.util including run_dbt and other relevant utilities."
+        },
+        {
+          "evidence_id": "G2_E7",
+          "type": "descriptive",
+          "reason": "Shows run_dbt(['compile']) used before accessing manifest data via get_artifact, demonstrating the correct pattern."
+        },
+        {
+          "evidence_id": "G2_E8",
+          "type": "descriptive",
+          "reason": "Another example of the compile-then-access-manifest pattern."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "When iterating over the results returned by `run_dbt(['compile'])` or similar commands, each result object is a `RunResult` whose node name must be accessed via `result.node.name` (not `result.name`). The utility function `check_result_nodes_by_name(results, names)` demonstrates this by doing `result_names.append(result.node.name)` for each result. Similarly, `get_unique_ids_in_results` uses `result.node.unique_id`.",
+          "target_descriptor": "How to correctly access the model name from a dbt RunResult object returned by run_dbt.",
+          "evidence_ids": ["G2_E2", "G2_E3"],
+          "rationale": "G2_E2 explicitly shows the correct attribute path (result.node.name) in the check_result_nodes_by_name function. G2_E3 documents run_dbt's return value as a list of results, confirming the structure."
+        },
+        {
+          "knowledge_target": "Instead of manually iterating with `any(node.name == 'stg_orders' for node in results)`, the preferred repository pattern for checking node names in compile results is to use the utility `check_result_nodes_by_name(results, ['stg_orders'])` from `dbt.tests.util`, which correctly accesses `result.node.name` for each result.",
+          "target_descriptor": "What is the correct utility function and attribute path to use when asserting that a specific model name exists in dbt compile results.",
+          "evidence_ids": ["G2_E2", "G2_E1"],
+          "rationale": "G2_E2 shows the check_result_nodes_by_name function that correctly accesses result.node.name, and G2_E1 lists it as an available utility, making it the preferred approach over manual iteration with incorrect attribute access."
+        }
+      ]
+    },
+    {
+      "gap_id": "G3",
+      "assessment": "grounded",
+      "assessment_reason": "The repository evidence clearly shows that run_dbt(['compile']) must be called before get_manifest() or get_artifact() to ensure the manifest.json file exists in the target directory. Multiple test examples demonstrate this required ordering.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G3_E1",
+          "type": "descriptive",
+          "reason": "Shows the correct pattern: run_dbt(['compile']) called first, then get_artifact() to read the manifest, in a test method."
+        },
+        {
+          "evidence_id": "G3_E2",
+          "type": "descriptive",
+          "reason": "Shows imports used in a test file that calls run_dbt before get_artifact, establishing the import and usage pattern."
+        },
+        {
+          "evidence_id": "G3_E3",
+          "type": "descriptive",
+          "reason": "Shows run_dbt(['compile']) followed by get_artifact() for manifest access, confirming the required ordering."
+        },
+        {
+          "evidence_id": "G3_E4",
+          "type": "descriptive",
+          "reason": "Another example of run_dbt(['compile']) before get_artifact() for manifest data access."
+        },
+        {
+          "evidence_id": "G3_E5",
+          "type": "descriptive",
+          "reason": "Another compile-then-get_artifact pattern example."
+        },
+        {
+          "evidence_id": "G3_E6",
+          "type": "descriptive",
+          "reason": "Shows imports of get_manifest and run_dbt together from dbt.tests.util, used in combination."
+        },
+        {
+          "evidence_id": "G3_E7",
+          "type": "descriptive",
+          "reason": "Explicitly shows run_dbt(['compile']) called before get_manifest(project.project_root), demonstrating the exact pattern needed for the gap."
+        },
+        {
+          "evidence_id": "G3_E8",
+          "type": "descriptive",
+          "reason": "Shows run_dbt_and_capture(['compile']) before reading manifest data, further confirming that compilation must precede manifest access."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "Before calling `get_manifest(project.project_root)` or `get_artifact(project.project_root, 'target', 'manifest.json')` in a test method, `run_dbt(['compile'])` (or `run_dbt(['parse'])`) must be called first within the same test method to generate the manifest.json in the target directory. The pattern is: `run_dbt(['compile'])` → `manifest = get_manifest(project.project_root)`.",
+          "target_descriptor": "What dbt command must be called before get_manifest() or get_artifact() to ensure the manifest file exists and is current.",
+          "evidence_ids": ["G3_E7", "G3_E1", "G3_E3"],
+          "rationale": "G3_E7 and G3_E1 both show the exact pattern of run_dbt(['compile']) immediately followed by get_manifest() or get_artifact() in the same test method, establishing that compilation is a prerequisite for manifest access."
+        },
+        {
+          "knowledge_target": "In dbt functional tests, each test method that needs to inspect the manifest must independently call `run_dbt(['compile'])` before accessing manifest data via `get_manifest()`. Since multiple tests in a class share the same project fixture but each test method is independent, relying on a manifest generated by another test method is unreliable. The correct pattern is to call `run_dbt(['compile'])` at the start of each test method that uses manifest data.",
+          "target_descriptor": "Whether manifest generation via run_dbt must be called in every test method that uses get_manifest, or can be shared across test methods in a class.",
+          "evidence_ids": ["G3_E7", "G3_E1", "G3_E6"],
+          "rationale": "G3_E7 and G3_E1 show that each individual test_compile method calls run_dbt before get_manifest within its own scope. AGENTS.md (referenced via G3_E6's util import context) notes that tests in a class share the project fixture but can be affected by each other's modifications, making independent compilation calls the safe pattern."
+        },
+        {
+          "knowledge_target": "The `get_manifest(project.project_root)` function returns a parsed manifest Python object (with `.nodes` as a dict), while `get_artifact(project.project_root, 'target', 'manifest.json')` returns the raw manifest as a dict. Both require a prior `run_dbt(['compile'])` call to populate the target directory with a current manifest.json.",
+          "target_descriptor": "What is the difference between get_manifest and get_artifact for manifest access, and what prerequisite command both require.",
+          "evidence_ids": ["G3_E7", "G3_E3", "G3_E6"],
+          "rationale": "G3_E7 uses get_manifest() and accesses manifest.nodes as Python objects, while G3_E3 uses get_artifact() and accesses manifest['nodes'] as dict keys. Both are preceded by run_dbt(['compile']), confirming the shared prerequisite."
+        }
+      ]
+    }
+  ]
+}
+```

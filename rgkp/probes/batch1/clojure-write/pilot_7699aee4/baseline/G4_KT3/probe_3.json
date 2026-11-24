@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "Based on examples of `defsetting` usage in `src/metabase/system/settings.clj`, which of the following represents a valid minimal `defsetting` form for a `site-currency` setting with a string type, public visibility, and a default of \"USD\"?",
+    "options": {
+      "A": "`(defsetting :site-currency \"Default currency for the site\" {:type :string :default \"USD\" :visibility :public})`",
+      "B": "`(def site-currency (setting/make-setting :type :string :default \"USD\" :visibility :public))`",
+      "C": "`(defsetting site-currency (deferred-tru \"Default currency for the site\") :type :string :default \"USD\" :visibility :public)`",
+      "D": "`(defsetting site-currency {:type :string :default \"USD\" :visibility :public})`"
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6296657500206493,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 256,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "task_description": "# Task: Add Frontend Analytics Event Definitions for Metabase\n\n## Background\n\nWe need to define and implement key user behavior analytics events for Metabase's frontend, enabling better understanding of user interactions.\n\n## Files to Create/Modify\n\n- `frontend/src/metabase/lib/analytics.ts` - Event definitions and types\n- `frontend/test/metabase/lib/analytics.test.ts` - Unit tests\n\n## Requirements\n\n### Event Definitions (2-3 key events)\n\n**1. dashboard_viewed**\n- Payload: `dashboard_id`, `view_duration_ms`, `card_count`\n\n**2. question_saved**\n- Payload: `question_id`, `question_type`, `database_id`, `save_duration_ms`\n\n**3. filter_applied**\n- Payload: `dashboard_id`, `filter_type`, `filter_value_count`\n\n### Event Interface\n\n```typescript\ninterface AnalyticsEvent {\n  event_name: string;\n  payload: Record<string, unknown>;\n  timestamp: number;\n}\n```\n\n### Naming Convention\n\n- Use `snake_case` for event names and payload field names\n- Include TypeScript type definitions for each event payload\n\n### Expected Functionality\n\n- Event triggers produce correct payload structure\n- All required fields are present in each payload\n- Field names follow `snake_case` convention consistently\n- Timestamps are valid Unix timestamps\n- Payloads conform to their TypeScript type definitions\n\n## Acceptance Criteria\n\n- Event definitions have proper TypeScript types\n- Payload fields are complete and correctly named\n- Implementation follows naming conventions\n- Code compiles without type errors\n",
+  "knowledge_targets": [
+    {
+      "target_id": "G1_KT1",
+      "knowledge_target": "Test files in the Metabase frontend must use the `.unit.spec.ts` (or `.unit.spec.{js,jsx,tsx}`) naming suffix, not `.test.ts`, because the Jest configuration's `testMatch` patterns exclusively match `*.unit.spec.{js,jsx,ts,tsx}` files. A file named `analytics.test.ts` will not be discovered or executed by the test runner.",
+      "evidence_ids": [
+        "G1_E1",
+        "G1_E2",
+        "G1_E3",
+        "G1_E4",
+        "G1_E5"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "frontend/test/metabase/lib/browser.unit.spec.ts",
+          "start_line": 1,
+          "end_line": 35,
+          "retrieval_score": 25.0,
+          "matched_cues": [],
+          "content": "1: import { parseHashOptions, stringifyHashOptions } from \"metabase/lib/browser\";\n2: \n3: describe(\"browser\", () => {\n4:   describe(\"parseHashOptions\", () => {\n5:     it(\"should parse with prepended '#'\", () => {\n6:       expect(parseHashOptions(\"#foo=bar\")).toEqual({ foo: \"bar\" });\n7:     });\n8: \n9:     it(\"should parse without prepended '#'\", () => {\n10:       expect(parseHashOptions(\"foo=bar\")).toEqual({ foo: \"bar\" });\n11:     });\n12: \n13:     it(\"should parse strings\", () => {\n14:       expect(parseHashOptions(\"#foo=bar\")).toEqual({ foo: \"bar\" });\n15:     });\n16: \n17:     it(\"should parse numbers\", () => {\n18:       expect(parseHashOptions(\"#foo=123\")).toEqual({ foo: 123 });\n19:     });\n20: \n21:     it(\"should parse negative numbers\", () => {\n22:       expect(parseHashOptions(\"#foo=-123\")).toEqual({ foo: -123 });\n23:     });\n24: \n25:     it(\"should parse base key as true\", () => {\n26:       expect(parseHashOptions(\"#foo\")).toEqual({ foo: true });\n27:     });\n28: \n29:     it(\"should parse true\", () => {\n30:       expect(parseHashOptions(\"#foo=true\")).toEqual({ foo: true });\n31:     });\n32: \n33:     it(\"should parse false\", () => {\n34:       expect(parseHashOptions(\"#foo=false\")).toEqual({ foo: false });\n35:     });",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E2",
+          "file_path": "frontend/test/metabase/lib/schema_metadata.unit.spec.ts",
+          "start_line": 1,
+          "end_line": 35,
+          "retrieval_score": 20.0,
+          "matched_cues": [],
+          "content": "1: import {\n2:   foreignKeyCountsByOriginTable,\n3:   getSemanticTypeIcon,\n4:   getSemanticTypeName,\n5: } from \"metabase/lib/schema_metadata\";\n6: import type ForeignKey from \"metabase-lib/v1/metadata/ForeignKey\";\n7: import { TYPE } from \"metabase-lib/v1/types/constants\";\n8: \n9: describe(\"schema_metadata\", () => {\n10:   describe(\"foreignKeyCountsByOriginTable\", () => {\n11:     it(\"should count occurrences by origin.table.id\", () => {\n12:       expect(\n13:         foreignKeyCountsByOriginTable([\n14:           { origin: { table: { id: 123 } } },\n15:           { origin: { table: { id: 123 } } },\n16:           { origin: { table: { id: 123 } } },\n17:           { origin: { table: { id: 456 } } },\n18:         ] as ForeignKey[]),\n19:       ).toEqual({ 123: 3, 456: 1 });\n20:     });\n21:   });\n22: \n23:   describe(\"getSemanticTypeIcon\", () => {\n24:     it(\"should return an icon associated with the given semantic type\", () => {\n25:       expect(getSemanticTypeIcon(TYPE.PK)).toEqual(\"label\");\n26:       expect(getSemanticTypeIcon(TYPE.Category)).toEqual(\"string\");\n27:       expect(getSemanticTypeIcon(TYPE.Price)).toEqual(\"int\");\n28:     });\n29: \n30:     it(\"should return undefined if the semantic type does not exist\", () => {\n31:       expect(getSemanticTypeIcon(TYPE.Boolean)).toBeUndefined();\n32:       expect(getSemanticTypeIcon(\"foo\")).toBeUndefined();\n33:     });\n34: \n35:     it(\"should accept fallback argument for unknown types\", () => {",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E3",
+          "file_path": "jest.config.js",
+          "start_line": 43,
+          "end_line": 59,
+          "retrieval_score": 14.694,
+          "matched_cues": [
+            "testmatch"
+          ],
+          "content": "43:     // - Flat: node_modules/<pkg>/ where <pkg> is NOT in esmPackages\n44:     // - Bun:  node_modules/.bun/<pkg>@<ver>/ where <pkg> is NOT in esmPackages\n45:     `<rootDir>/node_modules/(?:\\\\.bun/(?!(${esmPackages.join(\"|\")})@)|(?!\\\\.bun)(?!(${esmPackages.join(\"|\")})/))`,\n46:   ],\n47:   testPathIgnorePatterns: [\n48:     \"<rootDir>/frontend/.*/.*.tz.unit.spec.{js,jsx,ts,tsx}\",\n49:     \"<rootDir>/release/.*\",\n50:   ],\n51:   testMatch: [\n52:     \"<rootDir>/**/*.unit.spec.js\",\n53:     \"<rootDir>/**/*.unit.spec.{js,jsx,ts,tsx}\",\n54:   ],\n55:   modulePaths: [\n56:     \"<rootDir>/frontend/test\",\n57:     \"<rootDir>/frontend/src\",\n58:     \"<rootDir>/enterprise/frontend/src\",\n59:   ],",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "jest.config.js",
+          "start_line": 99,
+          "end_line": 115,
+          "retrieval_score": 14.694,
+          "matched_cues": [
+            "testmatch"
+          ],
+          "content": "99:     \"jest-watch-typeahead/testname\",\n100:   ],\n101:   testTimeout: 30000,\n102:   projects: [\n103:     {\n104:       ...baseConfig,\n105:       displayName: \"sdk\",\n106: \n107:       testMatch: [\n108:         \"<rootDir>/frontend/src/embedding-sdk-{bundle,shared}/**/*.unit.spec.{js,jsx,ts,tsx}\",\n109:         \"<rootDir>/enterprise/frontend/src/embedding-sdk-package/**/*.unit.spec.{js,jsx,ts,tsx}\",\n110:         \"<rootDir>/enterprise/frontend/src/embedding-sdk-ee/**/*.unit.spec.{js,jsx,ts,tsx}\",\n111:       ],\n112: \n113:       setupFiles: [\n114:         ...baseConfig.setupFiles,\n115:         \"<rootDir>/frontend/src/embedding-sdk-shared/jest/setup-env.js\",",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "jest.config.js",
+          "start_line": 130,
+          "end_line": 146,
+          "retrieval_score": 14.694,
+          "matched_cues": [
+            "testmatch"
+          ],
+          "content": "130:         \"<rootDir>/frontend/src/embedding-sdk-shared\",\n131:         \"<rootDir>/enterprise/frontend/src/embedding-sdk-package\",\n132:         \"<rootDir>/enterprise/frontend/src/embedding-sdk-ee\",\n133:         \"<rootDir>/frontend/lint/tests\",\n134:       ],\n135:     },\n136:     {\n137:       displayName: \"lint-rules\",\n138:       testMatch: [\"<rootDir>/frontend/lint/tests/**/*.unit.spec.js\"],\n139:       testEnvironment: \"node\",\n140:       transformIgnorePatterns: baseConfig.transformIgnorePatterns,\n141:     },\n142:   ],\n143: };\n144: \n145: module.exports = config;\n146: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT1",
+      "knowledge_target": "The correct command to run TypeScript type checking in this project is `bun run type-check-pure` (which runs `tsc --noEmit`), not `npm run type-check`. The command `bun run type-check` additionally requires a CLJS build first. For running a specific unit test file, the command is `bun run test-unit-keep-cljs path/to/file.unit.spec.ts`.",
+      "evidence_ids": [
+        "G2_E1",
+        "G2_E5",
+        "G2_E6",
+        "G2_E7"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "package.json",
+          "start_line": 528,
+          "end_line": 544,
+          "retrieval_score": 54.251,
+          "matched_cues": [
+            "@snowplow/browser-tracker",
+            "bun run test-unit",
+            "jest --maxworkers=4",
+            "tsc --noemit",
+            "type-check",
+            "type-check-pure"
+          ],
+          "content": "528:     \"test-unit-watch:cljs\": \"bun run concurrently -n 'cljs,tests' 'bun run build-watch:cljs' 'bun run test-unit-keep-cljs --watch'\",\n529:     \"test-visual:loki\": \"NODE_ENV=development loki test --chromeFlags='--headless --disable-gpu' \",\n530:     \"test-visual:loki:ci\": \"bun run build-storybook && bun run test-visual:loki --reactUri file:./storybook-static --verboseRenderer\",\n531:     \"test-visual:loki-approve-diff\": \"ls .loki/difference | xargs -I _ find .loki/current -name _ | xargs -I _ cp _ .loki/reference/\",\n532:     \"test-visual:loki-prune\": \"ls .loki/reference | grep -v \\\"$(ls .loki/current)\\\" | xargs -I {} rm .loki/reference/{}\",\n533:     \"test-visual:loki-report\": \"node frontend/test/generate-loki-report-json.js && reg-cli --from .loki/report.json --report .loki/report.html\",\n534:     \"test-visual:loki-report-open\": \"bun run test-visual:loki || (echo 'Visual test failed, opening report...' && bun run test-visual:loki-report && open-cli .loki/report.html)\",\n535:     \"type-check\": \"bun run clean:cljs && bun run build:cljs && bun run type-check-pure\",\n536:     \"type-check-pure\": \"NODE_OPTIONS=--max-old-space-size=8192 tsc --noEmit\",\n537:     \"types:generate\": \"openapi-ts -f ./frontend/build/openapi/openapi-ts.config.ts\",\n538:     \"types:generate:watch\": \"npx chokidar 'resources/openapi/openapi.json' --initial -c 'openapi-ts -f ./frontend/build/openapi/openapi-ts.config.ts' --debounce 1000\",\n539:     \"validate-e2e-filenames\": \"node e2e/validate-e2e-test-files.js\",\n540:     \"wait:cljs\": \"echo Waiting for first CLJS build; until [ -f target/cljs_dev/cljs.core.js ]; do sleep 1; done; echo CLJS build done\",\n541:     \"generate:expression-parser\": \"lezer-generator frontend/src/metabase/querying/expressions/tokenizer/grammar.lezer -o frontend/src/metabase/querying/expressions/tokenizer/lezer.js\",\n542:     \"generate-license-disclaimer\": \"node bin/generate-license-disclaimer.js\",\n543:     \"cloud:dev\": \"bun install && clojure -A:dev:drivers:drivers-dev:ee:ee-dev:cljs -P && bun run concurrently -n 'FE,BE' -c 'blue,green' 'bun run build-hot' 'clojure -M:dev:socket:dev-start:drivers:drivers-dev:ee:ee-dev'\"\n544:   },",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": ".claude/skills/_shared/typescript-commands.md",
+          "start_line": 1,
+          "end_line": 15,
+          "retrieval_score": 25.275,
+          "matched_cues": [
+            "bun run test-unit",
+            "type-check",
+            "type-check-pure"
+          ],
+          "content": "1: ## Linting and Formatting\n2: \n3: - **Lint:** `bun run lint-eslint-pure`\n4:   - Run ESLint on the codebase\n5: - **Format:** `bun run prettier`\n6:   - Format code using Prettier\n7: - **Type Check:** `bun run type-check-pure`\n8:   - Run TypeScript type checking\n9: \n10: ## Testing\n11: \n12: ### JavaScript/TypeScript Tests\n13: \n14: - **Test a specific file:** `bun run test-unit-keep-cljs path/to/file.unit.spec.js`\n15: - **Test by pattern:** `bun run test-unit-keep-cljs -t \"pattern\"`",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": ".github/workflows/frontend.yml",
+          "start_line": 63,
+          "end_line": 79,
+          "retrieval_score": 25.275,
+          "matched_cues": [
+            "bun run test-unit",
+            "type-check",
+            "type-check-pure"
+          ],
+          "content": "63:     steps:\n64:       - uses: actions/checkout@v4\n65:       - name: Prepare front-end environment\n66:         uses: ./.github/actions/prepare-frontend\n67:       - name: Prepare back-end environment\n68:         uses: ./.github/actions/prepare-backend\n69:       - run: bun run build-pure:cljs\n70:         name: Compile CLJS\n71:       - run: bun run type-check-pure\n72:         name: Check types\n73: \n74:   fe-tests-unit:\n75:     if: ${{ !inputs.skip }}\n76:     runs-on: ${{ vars.DEFAULT_RUNNER_KEY }}\n77:     timeout-minutes: 30\n78:     strategy:\n79:       fail-fast: false",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": ".github/workflows/frontend.yml",
+          "start_line": 86,
+          "end_line": 102,
+          "retrieval_score": 25.275,
+          "matched_cues": [
+            "bun run test-unit",
+            "type-check",
+            "type-check-pure"
+          ],
+          "content": "86:     steps:\n87:       - uses: actions/checkout@v4\n88:       - name: Prepare front-end environment\n89:         uses: ./.github/actions/prepare-frontend\n90:       - name: Prepare back-end environment\n91:         uses: ./.github/actions/prepare-backend\n92:       - name: Run frontend unit tests\n93:         id: fe-tests\n94:         run: bun run test-unit --silent --shard=${{ matrix.shard }}/${{ env.SHARDS }}\n95:         # Trunk Quarantine controls the final state of the run in the CI!\n96:         # Even if this step fails we let it pass, and then `trunk-io/analytics-uploader` determines\n97:         # whether to fail or to pass the whole job, based on the quarantine list.\n98:         continue-on-error: true\n99:       - name: Upload Test Results\n100:         uses: ./.github/actions/upload-test-results\n101:         if: always() && github.event_name != 'workflow_dispatch'\n102:         with:",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT2",
+      "knowledge_target": "The `analytics.ts` module imports from `@snowplow/browser-tracker`, `metabase/env`, and `metabase/lib/settings`. Test files that import from `analytics.ts` may fail at import time unless these modules are mocked, since `@snowplow/browser-tracker` performs side effects (tracker initialization) and `metabase/env`/`metabase/lib/settings` depend on runtime configuration.",
+      "evidence_ids": [
+        "G2_E4",
+        "G2_E2"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "frontend/src/metabase/lib/analytics.ts",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 47.045,
+          "matched_cues": [
+            "@snowplow/browser-tracker",
+            "metabase/env",
+            "metabase/lib/settings"
+          ],
+          "content": "1: import * as Snowplow from \"@snowplow/browser-tracker\";\n2: \n3: import { shouldLogAnalytics } from \"metabase/env\";\n4: import Settings from \"metabase/lib/settings\";\n5: import type {\n6:   SchemaEvent,\n7:   SchemaType,\n8:   SimpleEvent,\n9: } from \"metabase-types/analytics\";",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "package.json",
+          "start_line": 40,
+          "end_line": 56,
+          "retrieval_score": 54.251,
+          "matched_cues": [
+            "@snowplow/browser-tracker",
+            "bun run test-unit",
+            "jest --maxworkers=4",
+            "tsc --noemit",
+            "type-check",
+            "type-check-pure"
+          ],
+          "content": "40:     \"@lezer/lr\": \"^1.4.2\",\n41:     \"@loki/browser\": \"0.35.0\",\n42:     \"@mantine/core\": \"8.3.5\",\n43:     \"@mantine/dates\": \"8.3.5\",\n44:     \"@mantine/hooks\": \"8.3.5\",\n45:     \"@popperjs/core\": \"^2.11.8\",\n46:     \"@react-oauth/google\": \"^0.11.1\",\n47:     \"@reduxjs/toolkit\": \"^2.5.0\",\n48:     \"@snowplow/browser-tracker\": \"^3.1.6\",\n49:     \"@tanstack/react-table\": \"^8.21.3\",\n50:     \"@tanstack/react-virtual\": \"^3.13.2\",\n51:     \"@tippyjs/react\": \"^4.2.6\",\n52:     \"@tiptap/core\": \"^3.2.0\",\n53:     \"@tiptap/extension-blockquote\": \"^3.15.3\",\n54:     \"@tiptap/extension-bold\": \"^3.15.3\",\n55:     \"@tiptap/extension-bubble-menu\": \"^3.2.0\",\n56:     \"@tiptap/extension-bullet-list\": \"^3.15.3\",",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

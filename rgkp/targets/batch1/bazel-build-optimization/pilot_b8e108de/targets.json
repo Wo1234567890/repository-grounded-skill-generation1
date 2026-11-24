@@ -1,0 +1,312 @@
+{
+  "gap_results": [
+    {
+      "gap_id": "G1",
+      "assessment": "grounded",
+      "assessment_reason": "The repository documentation explicitly states that the `deps` attribute of `py_binary`, `py_library`, and `py_test` accepts `py_library` rules, not `py_binary` rules. The existing example at `examples/py/BUILD` demonstrates the correct pattern of separating library code into a `py_library` target that is then depended upon by both a `py_binary` and other targets.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G1_E1",
+          "type": "prescriptive",
+          "reason": "Explicitly states that `deps` for `py_binary` are 'generally `py_library` rules', prescribing the correct dependency type."
+        },
+        {
+          "evidence_id": "G1_E2",
+          "type": "prescriptive",
+          "reason": "Documents that `py_library`'s `deps` are 'generally `py_library` rules', reinforcing the pattern."
+        },
+        {
+          "evidence_id": "G1_E3",
+          "type": "prescriptive",
+          "reason": "Documents that `py_test`'s `deps` are 'generally `py_library` rules', prescribing what is valid in the deps list."
+        },
+        {
+          "evidence_id": "G1_E4",
+          "type": "prescriptive",
+          "reason": "Same as G1_E1 for a different version — prescribes that `deps` accepts `py_library` rules."
+        },
+        {
+          "evidence_id": "G1_E5",
+          "type": "prescriptive",
+          "reason": "Same as G1_E2 for a different version."
+        },
+        {
+          "evidence_id": "G1_E6",
+          "type": "prescriptive",
+          "reason": "Same as G1_E3 for a different version."
+        },
+        {
+          "evidence_id": "G1_E7",
+          "type": "descriptive",
+          "reason": "Shows the `py_library` rule signature indicating it is the correct target type for shared code."
+        },
+        {
+          "evidence_id": "G1_E8",
+          "type": "descriptive",
+          "reason": "Shows the `py_test` rule signature indicating its `deps` attribute accepts library targets."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "In Bazel, the `deps` attribute of `py_test` (and `py_binary`) accepts `py_library` targets, not `py_binary` targets. To share Python code between a binary and a test, the shared logic must be placed in a `py_library` target. The `py_binary` can then depend on the `py_library`, and the `py_test` can independently depend on the same `py_library`.",
+          "target_descriptor": "What target type must be used as a dependency in `py_test.deps`, and how should shared Python source code be structured in BUILD files to be accessible to both a binary and a test.",
+          "evidence_ids": [
+            "G1_E1",
+            "G1_E3",
+            "G1_E6"
+          ],
+          "rationale": "The agent placed a `py_binary` in `py_test`'s `deps`, which is invalid. The documentation explicitly states `deps` accepts `py_library` rules. This knowledge target directly addresses the structural mistake in the BUILD file.",
+          "target_id": "G1_KT1"
+        },
+        {
+          "knowledge_target": "The existing repository example at `examples/py/BUILD` demonstrates the correct Bazel Python project structure: a `py_library` target holds the shared source (e.g., `lib.py`), and a `py_binary` depends on that library via `deps = [\":lib\"]`. A `py_test` would similarly reference the `py_library`, not the `py_binary`.",
+          "target_descriptor": "How the existing repository Python example structures the relationship between `py_library`, `py_binary`, and their `deps` to serve as a correct reference pattern.",
+          "evidence_ids": [
+            "G1_E2",
+            "G1_E5"
+          ],
+          "rationale": "The `examples/py/BUILD` pattern directly shows how shared Python code should be factored into a `py_library` for reuse by dependent targets, which is precisely the pattern the agent should follow in the new example project.",
+          "target_id": "G1_KT2"
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "assessment": "grounded",
+      "assessment_reason": "The repository contains a direct example (`examples/py/BUILD`) showing that `py_binary` and `py_library` must be loaded from `@rules_python` via explicit `load()` statements. The test code also shows how `bazel_dep` is used in MODULE.bazel to declare the `rules_python` dependency. This directly contradicts the agent's approach of using bare `py_binary` and `py_test` without load statements or dependency declarations.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G2_E1",
+          "type": "descriptive",
+          "reason": "Shows that the root BUILD file of the bazel repository itself loads `py_binary` from `@rules_python//python:defs.bzl`, demonstrating the required load statement pattern."
+        },
+        {
+          "evidence_id": "G2_E2",
+          "type": "descriptive",
+          "reason": "Shows a concrete `py_binary` target usage following the load statement pattern from G2_E1."
+        },
+        {
+          "evidence_id": "G2_E4",
+          "type": "descriptive",
+          "reason": "The direct repository analog (`examples/py/BUILD`) explicitly loads `py_binary` from `@rules_python//python:py_binary.bzl` and `py_library` from `@rules_python//python:py_library.bzl`, showing the required pattern for the new example project."
+        },
+        {
+          "evidence_id": "G2_E5",
+          "type": "descriptive",
+          "reason": "Continuation of `examples/py/BUILD` showing full usage of the loaded rules."
+        },
+        {
+          "evidence_id": "G2_E6",
+          "type": "descriptive",
+          "reason": "Shows `load(\"@rules_python//python:py_test.bzl\", \"py_test\")` being used in test BUILD files, demonstrating the required load statement for `py_test`."
+        },
+        {
+          "evidence_id": "G2_E7",
+          "type": "descriptive",
+          "reason": "Shows `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")` and `bazel_dep(name = \"rules_python\", version = \"0.40.0\")` in MODULE.bazel, demonstrating the dependency declaration pattern."
+        },
+        {
+          "evidence_id": "G2_E8",
+          "type": "descriptive",
+          "reason": "Shows `bazel_dep(name = \"rules_python\", version = \"0.40.0\")` as the MODULE.bazel declaration needed to make rules_python available."
+        },
+        {
+          "evidence_id": "G2_E3",
+          "type": "irrelevant",
+          "reason": "Relates to Maven dependency packaging, not Python rule loading."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "BUILD files using `py_binary`, `py_library`, or `py_test` must include explicit `load()` statements to import these symbols from `rules_python`. The correct load paths are: `load(\"@rules_python//python:py_binary.bzl\", \"py_binary\")`, `load(\"@rules_python//python:py_library.bzl\", \"py_library\")`, and `load(\"@rules_python//python:py_test.bzl\", \"py_test\")`. This pattern is used in the existing `examples/py/BUILD` file in the repository.",
+          "target_descriptor": "What explicit `load()` statements are required in Bazel BUILD files to use `py_binary`, `py_library`, and `py_test` rules from `rules_python`, and what are the correct module paths for each.",
+          "evidence_ids": [
+            "G2_E4",
+            "G2_E5",
+            "G2_E6",
+            "G2_E7"
+          ],
+          "rationale": "The agent wrote BUILD files with bare rule names and no load statements, which will fail because these symbols are not built-in. The existing example in the repository shows the exact load statements required.",
+          "target_id": "G2_KT1"
+        },
+        {
+          "knowledge_target": "A standalone Bazel workspace using `rules_python` must declare it as a dependency. When using Bzlmod (MODULE.bazel), the declaration is `bazel_dep(name = \"rules_python\", version = \"0.40.0\")`. When using the legacy WORKSPACE approach, `http_archive` must be used to fetch the `rules_python` release and its setup functions must be called.",
+          "target_descriptor": "How to declare `rules_python` as a project dependency in either MODULE.bazel (Bzlmod) or WORKSPACE so that its rules are available to BUILD files.",
+          "evidence_ids": [
+            "G2_E7",
+            "G2_E8"
+          ],
+          "rationale": "The agent's WORKSPACE contained only `workspace(name = ...)` with no dependency declarations for `rules_python`, making the load statements non-functional. The test code shows the correct `bazel_dep` declaration needed.",
+          "target_id": "G2_KT2"
+        }
+      ]
+    },
+    {
+      "gap_id": "G3",
+      "assessment": "grounded",
+      "assessment_reason": "The repository documentation shows two distinct approaches to registering a hermetic Python toolchain with `rules_python`: (1) the legacy WORKSPACE approach using `python_register_toolchains` from `@rules_python//python:repositories.bzl`, and (2) the Bzlmod approach using `python.toolchain()` via a `use_extension` on `@rules_python//python/extensions:python.bzl` in MODULE.bazel.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G3_E1",
+          "type": "descriptive",
+          "reason": "Shows the WORKSPACE-based `python_register_toolchains` call with `python_version = \"3.11\"`, demonstrating the legacy toolchain registration pattern."
+        },
+        {
+          "evidence_id": "G3_E2",
+          "type": "descriptive",
+          "reason": "Same pattern as G3_E1 from a different documentation context, corroborating the WORKSPACE toolchain registration approach."
+        },
+        {
+          "evidence_id": "G3_E3",
+          "type": "descriptive",
+          "reason": "Shows the MODULE.bazel Bzlmod equivalent: `python = use_extension(\"@rules_python//python/extensions:python.bzl\", \"python\")` followed by `python.toolchain(python_version = \"3.11\")`, demonstrating the modern hermetic toolchain registration pattern."
+        },
+        {
+          "evidence_id": "G3_E4",
+          "type": "descriptive",
+          "reason": "Corroborates G3_E1 from another documentation version."
+        },
+        {
+          "evidence_id": "G3_E5",
+          "type": "descriptive",
+          "reason": "Corroborates G3_E2 from another documentation version."
+        },
+        {
+          "evidence_id": "G3_E6",
+          "type": "descriptive",
+          "reason": "Corroborates G3_E3 from another documentation version, showing both `python.defaults` and `python.toolchain` calls."
+        },
+        {
+          "evidence_id": "G3_E7",
+          "type": "descriptive",
+          "reason": "Corroborates the WORKSPACE-based toolchain registration pattern."
+        },
+        {
+          "evidence_id": "G3_E8",
+          "type": "descriptive",
+          "reason": "Corroborates the WORKSPACE-based toolchain registration pattern from another source."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "To configure a hermetic Python toolchain in a Bazel project using the legacy WORKSPACE approach, the WORKSPACE file must load and call `python_register_toolchains` from `@rules_python//python:repositories.bzl`, specifying a `name` and `python_version`. Example: `load(\"@rules_python//python:repositories.bzl\", \"python_register_toolchains\"); python_register_toolchains(name = \"python_3_11\", python_version = \"3.11\")`.",
+          "target_descriptor": "How to register a hermetic Python toolchain in a WORKSPACE-based Bazel project using `rules_python`, including the required load path and function call.",
+          "evidence_ids": [
+            "G3_E1",
+            "G3_E2",
+            "G3_E7"
+          ],
+          "rationale": "The agent produced no toolchain registration code in the WORKSPACE file. This knowledge target provides the exact mechanism needed to satisfy the hermetic toolchain requirement.",
+          "target_id": "G3_KT1"
+        },
+        {
+          "knowledge_target": "To configure a hermetic Python toolchain in a Bazel project using Bzlmod (MODULE.bazel), the module file must use `use_extension` on `@rules_python//python/extensions:python.bzl` to get a `python` extension object, then call `python.toolchain(python_version = \"3.11\")` (optionally also `python.defaults(python_version = \"3.11\")`). This replaces `python_register_toolchains` from the WORKSPACE approach.",
+          "target_descriptor": "How to register a hermetic Python toolchain in a Bzlmod MODULE.bazel file using the `rules_python` Python extension, including the `use_extension` call and `python.toolchain()` invocation.",
+          "evidence_ids": [
+            "G3_E3",
+            "G3_E6"
+          ],
+          "rationale": "If the new project uses MODULE.bazel instead of WORKSPACE, the toolchain registration syntax is different. This knowledge target covers the modern Bzlmod path for hermetic toolchain setup.",
+          "target_id": "G3_KT2"
+        }
+      ]
+    },
+    {
+      "gap_id": "G4",
+      "assessment": "insufficient_evidence",
+      "assessment_reason": "The repository evidence does not contain any examples, templates, or prescriptive guidance for creating a `//:format` target in a root BUILD.bazel file. The evidence fragments mentioning `native.sh_binary` describe its use in Starlark macros for running Bash scripts, not for creating a formatting target. The `buildifier` reference in G4_E1 is only a code comment disabling a lint rule, not an example of creating a format target. There is no repository-grounded pattern to construct a knowledge target from.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G4_E1",
+          "type": "irrelevant",
+          "reason": "This shows internal Starlark docgen code that uses `# buildifier: disable=bzl-visibility` as a lint suppression comment, not any guidance on creating a format target."
+        },
+        {
+          "evidence_id": "G4_E2",
+          "type": "irrelevant",
+          "reason": "Describes `native.sh_binary()` usage in Starlark macros for running Bash scripts on Windows, not for creating a formatting target."
+        },
+        {
+          "evidence_id": "G4_E3",
+          "type": "irrelevant",
+          "reason": "Same as G4_E2, different documentation version."
+        },
+        {
+          "evidence_id": "G4_E4",
+          "type": "irrelevant",
+          "reason": "Same as G4_E2, different documentation version."
+        },
+        {
+          "evidence_id": "G4_E5",
+          "type": "irrelevant",
+          "reason": "Same as G4_E2, different documentation version."
+        },
+        {
+          "evidence_id": "G4_E6",
+          "type": "irrelevant",
+          "reason": "Same as G4_E2, different documentation version."
+        },
+        {
+          "evidence_id": "G4_E7",
+          "type": "irrelevant",
+          "reason": "Same as G4_E2, different documentation version."
+        },
+        {
+          "evidence_id": "G4_E8",
+          "type": "irrelevant",
+          "reason": "Same as G4_E2, different documentation version."
+        }
+      ],
+      "knowledge_targets": []
+    },
+    {
+      "gap_id": "G5",
+      "assessment": "environment_only",
+      "assessment_reason": "The agent's failure to verify build correctness by running `bazel build //...` and `bazel test //...` is entirely attributable to the environment blocker: the Bash tool was denied in 'don't ask mode', preventing execution of any shell commands. The repository evidence (best-practices documentation) only confirms that projects should be buildable, but provides no information that would help the agent validate correctness without executing Bazel. This is a pure execution environment limitation, not a knowledge gap.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G5_E1",
+          "type": "prescriptive",
+          "reason": "States that projects should always be able to run `bazel build //...` and `bazel test //...` successfully, confirming the acceptance criterion is a recognized best practice."
+        },
+        {
+          "evidence_id": "G5_E2",
+          "type": "descriptive",
+          "reason": "Shows the `//...` wildcard usage for running all tests, demonstrating the command the agent needed to verify."
+        },
+        {
+          "evidence_id": "G5_E3",
+          "type": "descriptive",
+          "reason": "Shows `bazel build //...` wildcard usage, demonstrating the command the agent needed to verify."
+        },
+        {
+          "evidence_id": "G5_E4",
+          "type": "prescriptive",
+          "reason": "Corroborates G5_E1 from another documentation version."
+        },
+        {
+          "evidence_id": "G5_E5",
+          "type": "descriptive",
+          "reason": "Shows CI configuration using `bazel build //...` and `bazel test //...` as build/test steps."
+        },
+        {
+          "evidence_id": "G5_E6",
+          "type": "prescriptive",
+          "reason": "Corroborates G5_E1 from another documentation version."
+        },
+        {
+          "evidence_id": "G5_E7",
+          "type": "prescriptive",
+          "reason": "Corroborates G5_E1 from another documentation version."
+        },
+        {
+          "evidence_id": "G5_E8",
+          "type": "prescriptive",
+          "reason": "Corroborates G5_E1 from another documentation version."
+        }
+      ],
+      "knowledge_targets": []
+    }
+  ],
+  "repository_commit": "cca38cb9d3b46e92ea008eea8dfef701efdcbb6b"
+}

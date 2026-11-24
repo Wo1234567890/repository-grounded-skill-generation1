@@ -1,0 +1,76 @@
+```json
+{
+  "diagnostic_questions": [
+    {
+      "target_id": "G2_KT1",
+      "status": "ready",
+      "question": "When including the Euribor index class in a QuantLib-based C++ project, which header path is correct?",
+      "options": {
+        "A": "#include <ql/indexes/ibor/euribor.hpp>",
+        "B": "#include <ql/indexes/swap/euribor.hpp>",
+        "C": "#include <ql/indexes/euribor.hpp>",
+        "D": "#include <ql/instruments/ibor/euribor.hpp>"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "Multiple QuantLib example files (Bonds.cpp, BermudanSwaption.cpp, CDS.cpp) consistently use '#include <ql/indexes/ibor/euribor.hpp>' to include the Euribor index class. The other paths do not appear in the repository evidence.",
+      "evidence_ids": ["G2_E1", "G2_E4", "G2_E6"]
+    },
+    {
+      "target_id": "G3_KT1",
+      "status": "ready",
+      "question": "When constructing a QuantLib FlatForward term structure using a plain floating-point rate (not a Quote object), which constructor call is correct?",
+      "options": {
+        "A": "FlatForward(referenceDate, Handle<Quote>(SimpleQuote(rate)), dayCounter)",
+        "B": "FlatForward(referenceDate, rate, dayCounter)",
+        "C": "FlatForward(referenceDate, make_shared<SimpleQuote>(rate), dayCounter)",
+        "D": "FlatForward(dayCounter, referenceDate, rate)"
+      },
+      "correct_answer": "B",
+      "reference_explanation": "According to flatforward.hpp, FlatForward has an overload taking (const Date& referenceDate, Rate forward, const DayCounter& dayCounter, ...) for plain rate values, and a separate overload taking (const Date& referenceDate, Handle<Quote> forward, const DayCounter& dayCounter, ...) for Quote handles. When using a plain Rate, the correct form is FlatForward(referenceDate, rate, dayCounter).",
+      "evidence_ids": ["G3_E2", "G3_E8"]
+    },
+    {
+      "target_id": "G4_KT1",
+      "status": "ready",
+      "question": "Which of the following statements about QuantLib::CashFlows is correct?",
+      "options": {
+        "A": "CashFlows can be instantiated and its npv() method called on an instance object.",
+        "B": "CashFlows::npv() can be called with a yield-based signature taking a Leg and an InterestRate, and CashFlows cannot be instantiated because all its constructors are deleted.",
+        "C": "CashFlows::npv() requires a YieldTermStructure handle rather than an InterestRate, and the class can be subclassed.",
+        "D": "CashFlows is a template class parameterized on the cash flow type, and npv() is an instance method."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The cashflows.hpp header shows that CashFlows has 'CashFlows() = delete', 'CashFlows(CashFlows&&) = delete', and 'CashFlows(const CashFlows&) = delete', making it a static-only utility class. The test-suite evidence shows CashFlows::npv(leg, no_discount, includeRef, today) where no_discount is an InterestRate, confirming the yield-based signature on a Leg.",
+      "evidence_ids": ["G4_E5", "G4_E7", "G4_E8"]
+    },
+    {
+      "target_id": "G4_KT2",
+      "status": "ready",
+      "question": "Which pattern correctly constructs a QuantLib Leg of FixedRateCoupon cash flows from a Schedule?",
+      "options": {
+        "A": "Leg leg = FixedRateLeg(schedule).withNotionals(notional).withCouponRates(rate, dayCounter);",
+        "B": "Leg leg = FixedRateCoupon(schedule, notional, rate, dayCounter);",
+        "C": "Leg leg = Schedule::toFixedRateLeg(notional, rate, dayCounter);",
+        "D": "Leg leg = CashFlows::buildFixedLeg(schedule, notional, rate, dayCounter);"
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The test-suite cashflows.cpp evidence shows the pattern: 'Leg leg3 = FixedRateLeg(schedule3).withNotionals(100.0).withCouponRates(0.01, ActualActual(ActualActual::ISMA));'. The required includes are ql/time/schedule.hpp and ql/cashflows/fixedratecoupon.hpp.",
+      "evidence_ids": ["G4_E1", "G4_E6"]
+    },
+    {
+      "target_id": "G4_KT3",
+      "status": "ready",
+      "question": "When computing modified duration on a QuantLib Leg using CashFlows::duration, which parameter must be explicitly passed to select the modified duration type?",
+      "options": {
+        "A": "A string literal \"Modified\" as the last argument",
+        "B": "Duration::Modified as a named enum value in the argument list",
+        "C": "A boolean flag 'true' for modified vs 'false' for Macaulay",
+        "D": "Duration is always modified by default; no extra parameter is needed"
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The test-suite bonds.cpp evidence shows: 'CashFlows::duration(leg, yield, dc, comp, freq, Duration::Modified, false, i.settlementDate)', confirming that Duration::Modified is passed as an explicit enum argument to select modified duration.",
+      "evidence_ids": ["G4_E2", "G4_E3"]
+    }
+  ]
+}
+```

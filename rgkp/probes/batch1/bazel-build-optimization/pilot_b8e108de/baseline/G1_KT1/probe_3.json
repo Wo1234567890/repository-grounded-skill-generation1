@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In Bazel, you have a `py_binary` target named `//src:main` and a `py_test` target named `//tests:main_test`. Both need to use the same Python module `helper.py`. According to Bazel's Python rules, what is the correct way to share `helper.py` between these two targets?",
+    "options": {
+      "A": "Create a `py_library` target containing `helper.py`, then have both `//src:main` and `//tests:main_test` depend on it via their `deps` attribute.",
+      "B": "Have `//tests:main_test` list `//src:main` in its `deps` attribute to reuse the binary's sources.",
+      "C": "Create a `py_binary` target containing `helper.py` and list it in the `deps` attribute of `//tests:main_test`.",
+      "D": "Add `helper.py` directly to the `srcs` attribute of both `//src:main` and `//tests:main_test`."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.5496141250187065,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 286,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

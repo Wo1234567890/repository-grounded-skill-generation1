@@ -1,0 +1,337 @@
+{
+  "task_description": "# Task: Add Malli Schema Validation for Metabase Alert API\n\n## Background\n   Add complete Malli Schema input validation for Metabase's Alert API endpoints\n   to ensure type safety and proper validation of incoming requests.\n\n## Files to Create/Modify\n   - src/metabase/api/alert.clj\n   - test/metabase/api/alert_malli_test.clj\n\n## Requirements\n   \n   Endpoints to Add Schema:\n   - POST /api/alert\n   - PUT /api/alert/:id\n   \n   Schema Fields:\n   - card_id: Positive integer, required\n   - channels: Non-empty array, each item must contain channel_type string\n   - alert_condition: Enum (\"rows\" or \"goal\"), required\n   - alert_first_only: Boolean, optional, default false\n   \n   Implementation:\n   - Use metabase.util.malli.schema existing base types\n   - Proper constraint definitions\n   - Clear error messages\n\n### Expected Functionality\n\n   1) Valid input → 200 OK\n   2) Missing card_id → 400 Bad Request\n   3) channels is empty array → 400 Bad Request\n   4) Invalid alert_condition value → 400 Bad Request\n\n## Acceptance Criteria\n\n   - All validation errors return proper status codes\n   - No schema validation bypasses\n",
+  "knowledge_targets": [
+    {
+      "target_id": "G1_KT1",
+      "knowledge_target": "The `/api/alert` endpoints in Metabase are implemented in `src/metabase/pulse/api/alert.clj` (namespace `metabase.pulse.api.alert`, marked `^:deprecated`). This namespace is wired into the application router via `metabase.pulse.api/alert-routes` using `(api.macros/ns-handler 'metabase.pulse.api.alert)`. There is no `src/metabase/api/alert.clj` file in the repository. Schema validation additions for alert endpoints must therefore be made to `src/metabase/pulse/api/alert.clj`.",
+      "evidence_ids": [
+        "G1_E1",
+        "G1_E4",
+        "G1_E5"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "src/metabase/pulse/api/alert.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 34.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "1: (ns ^:deprecated metabase.pulse.api.alert\n2:   \"/api/alert endpoints.\n3: \n4:   Deprecated: will soon be migrated to notification APIs.\"\n5:   (:require\n6:    [clojure.set :as set]\n7:    [metabase.api.common :as api]\n8:    [metabase.api.macros :as api.macros]\n9:    [metabase.classloader.core :as classloader]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "src/metabase/pulse/api.clj",
+          "start_line": 1,
+          "end_line": 17,
+          "retrieval_score": 9.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "1: (ns metabase.pulse.api\n2:   \"`/api/pulse` and `/api/alert` API routes. These routes are allegedly deprecated, but they're been deprecated for a\n3:   pretty long time now, so no telling how much longer they'll be around.\"\n4:   (:require\n5:    [metabase.api.macros :as api.macros]\n6:    [metabase.api.routes.common :as routes.common]\n7:    [metabase.api.util.handlers :as handlers]\n8:    ^{:clj-kondo/ignore [:deprecated-namespace]}\n9:    [metabase.pulse.api.alert]\n10:    ^{:clj-kondo/ignore [:deprecated-namespace]}\n11:    [metabase.pulse.api.pulse]\n12:    [metabase.pulse.api.unsubscribe]\n13:    [potemkin :as p]))\n14: \n15: (comment metabase.pulse.api.alert/keep-me\n16:          metabase.pulse.api.pulse/keep-me\n17:          metabase.pulse.api.unsubscribe/keep-me)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "src/metabase/pulse/api.clj",
+          "start_line": 25,
+          "end_line": 34,
+          "retrieval_score": 9.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "25:   logged in.\"\n26:   (handlers/routes\n27:    (handlers/route-map-handler\n28:     {\"/unsubscribe\" 'metabase.pulse.api.unsubscribe})\n29:    (routes.common/+auth metabase.pulse.api.pulse/routes)))\n30: \n31: (def ^{:arglists '([request respond raise])} alert-routes\n32:   \"`/api/alert` routes.\"\n33:   (api.macros/ns-handler 'metabase.pulse.api.alert))\n34: ",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G1_KT2",
+      "knowledge_target": "The existing tests for the deprecated alert API endpoints live in `test/metabase/pulse/api/alert_test.clj` (namespace `metabase.pulse.api.alert-test`). New Malli validation tests for the same endpoints should either extend this file or create a companion test file consistent with the `metabase.pulse.api.*` namespace convention.",
+      "evidence_ids": [
+        "G1_E6",
+        "G1_E1"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G1_E6",
+          "file_path": "test/metabase/pulse/api/alert_test.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 9.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "1: (ns metabase.pulse.api.alert-test\n2:   \"Tests for `/api/alert` endpoints.\"\n3:   (:require\n4:    [clojure.test :refer :all]\n5:    [clojure.walk :as walk]\n6:    [medley.core :as m]\n7:    [metabase.notification.models :as models.notification]\n8:    [metabase.notification.test-util :as notification.tu]\n9:    [metabase.pulse.models.pulse :as models.pulse]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "src/metabase/pulse/api/alert.clj",
+          "start_line": 1,
+          "end_line": 9,
+          "retrieval_score": 34.001,
+          "matched_cues": [
+            "metabase.pulse.api.alert"
+          ],
+          "content": "1: (ns ^:deprecated metabase.pulse.api.alert\n2:   \"/api/alert endpoints.\n3: \n4:   Deprecated: will soon be migrated to notification APIs.\"\n5:   (:require\n6:    [clojure.set :as set]\n7:    [metabase.api.common :as api]\n8:    [metabase.api.macros :as api.macros]\n9:    [metabase.classloader.core :as classloader]",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT1",
+      "knowledge_target": "In Metabase tests, `mt/user-http-request` accepts an expected HTTP status code as its third argument and will throw/fail if the actual status does not match. However, to record a test assertion that shows up in test results, the call must also be wrapped in `(is ...)` (or `(is (= ...) ...)` / `(is (=? ...) ...)`). A bare `mt/user-http-request` call without an `is` wrapper does not register as a test assertion even though it may throw on status mismatch. Every status-code verification in a `deftest` must use the pattern `(is (= expected-value (mt/user-http-request ...)))` or `(is (=? expected-map (mt/user-http-request ...)))`.",
+      "evidence_ids": [
+        "G2_E1",
+        "G2_E2",
+        "G2_E5"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "dev/test/dev/api/prototype_test.clj",
+          "start_line": 6,
+          "end_line": 22,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "6:    [toucan2.core :as t2]))\n7: \n8: (deftest create-table\n9:   (t2/query (#'proto/create-table-query)))\n10: \n11: (deftest e2e-test\n12:   (let [key (name (gensym \"prototype-e2e-test-\"))]\n13:     (testing \"when nothing is in a key, the API returns an empty list\"\n14:       (is (empty? (mt/user-http-request :crowberto :get 200\n15:                                         (format \"dev/prototype/%s/\" key)))))\n16:     (testing \"invalid ids return 404\"\n17:       (is (= \"Not found.\" (mt/user-http-request :crowberto :get 404\n18:                                                 (format \"dev/prototype/%s/9999\" key)))))\n19:     (testing \"can create records in the API\"\n20:       (let [response1 (mt/user-http-request :crowberto :post 200\n21:                                             (format \"dev/prototype/%s/\" key)\n22:                                             {:type    \"test1\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "dev/test/dev/api/prototype_test.clj",
+          "start_line": 35,
+          "end_line": 51,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "35:         (is (pos? (:id response2)))\n36:         (is (not= (:id response1) (:id response2)))\n37:         (testing \"can retrieve created records\"\n38:           (is (= {:id      (:id response1)\n39:                   :type    \"test1\"\n40:                   :age     1\n41:                   :num-val 4\n42:                   :str-val \"hi\"}\n43:                  (mt/user-http-request :crowberto :get 200\n44:                                        (format \"dev/prototype/%s/%s\" key (:id response1)))))\n45:           (is (= {:id      (:id response2)\n46:                   :type    \"test2\"\n47:                   :age     2\n48:                   :num-val 4\n49:                   :str-val \"hi\"}\n50:                  (mt/user-http-request :crowberto :get 200\n51:                                        (format \"dev/prototype/%s/%s\" key (:id response2))))))",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "enterprise/backend/test/metabase_enterprise/action_v2/api_test.clj",
+          "start_line": 263,
+          "end_line": 279,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "263:                                :message     \"Other rows refer to this row so it cannot be deleted.\",\n264:                                :errors      {}\n265:                                :status-code 400}\n266:                               {:index       1,\n267:                                :type        \"metabase.actions.error/violate-foreign-key-constraint\",\n268:                                :message     \"Other rows refer to this row so it cannot be deleted.\",\n269:                                :errors      {},\n270:                                :status-code 400}]}\n271:                     (mt/user-http-request :crowberto :post 400 execute-bulk-url\n272:                                           body))))\n273: \n274:           ;; TODO: an edge case we could handle in the future\n275:           #_(testing \"success with delete-children options\"\n276:               (is (=? {:outputs [{:table-id (mt/id :products) :op \"deleted\" :row {(keyword (mt/format-name :id)) 1}}\n277:                                  {:table-id (mt/id :products) :op \"deleted\" :row {(keyword (mt/format-name :id)) 2}}]}\n278:                       (mt/user-http-request :crowberto :post 200 execute-bulk-url\n279:                                             (assoc body :params {:delete-children true}))))",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G2_KT2",
+      "knowledge_target": "In Clojure's `clojure.test`, every `deftest` body forms a single top-level expression scope. Parenthesis mismatch that closes the `deftest` body early causes subsequent `is` forms to become top-level expressions evaluated at compile/load time rather than inside the test. The correct structure is: `(deftest my-test (is ...) (is ...))` where both `is` forms are inside the single outer `deftest` closing paren. When multiple `testing` or `is` blocks are needed, they must all appear before the final closing paren of `deftest`.",
+      "evidence_ids": [
+        "G2_E1",
+        "G2_E4"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "dev/test/dev/api/prototype_test.clj",
+          "start_line": 6,
+          "end_line": 22,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "6:    [toucan2.core :as t2]))\n7: \n8: (deftest create-table\n9:   (t2/query (#'proto/create-table-query)))\n10: \n11: (deftest e2e-test\n12:   (let [key (name (gensym \"prototype-e2e-test-\"))]\n13:     (testing \"when nothing is in a key, the API returns an empty list\"\n14:       (is (empty? (mt/user-http-request :crowberto :get 200\n15:                                         (format \"dev/prototype/%s/\" key)))))\n16:     (testing \"invalid ids return 404\"\n17:       (is (= \"Not found.\" (mt/user-http-request :crowberto :get 404\n18:                                                 (format \"dev/prototype/%s/9999\" key)))))\n19:     (testing \"can create records in the API\"\n20:       (let [response1 (mt/user-http-request :crowberto :post 200\n21:                                             (format \"dev/prototype/%s/\" key)\n22:                                             {:type    \"test1\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "enterprise/backend/test/metabase_enterprise/action_v2/api_test.clj",
+          "start_line": 34,
+          "end_line": 50,
+          "retrieval_score": 9.146,
+          "matched_cues": [
+            "deftest",
+            "mt/user-http-request"
+          ],
+          "content": "34:      :query    {:source-table table-id}})))\n35: \n36: (def ^:private execute-url \"/ee/action-v2/execute\")\n37: (def ^:private execute-bulk-url \"/ee/action-v2/execute-bulk\")\n38: (def ^:private execute-form-url \"/ee/action-v2/execute-form\")\n39: \n40: (deftest feature-flag-required-test\n41:   (mt/with-premium-features #{}\n42:     (mt/assert-has-premium-feature-error \"Table Data Editing\" (mt/user-http-request :crowberto :post 402 execute-url))\n43:     (mt/assert-has-premium-feature-error \"Table Data Editing\" (mt/user-http-request :crowberto :post 402 execute-bulk-url))\n44:     (mt/assert-has-premium-feature-error \"Table Data Editing\" (mt/user-http-request :crowberto :post 402 execute-form-url))))\n45: \n46: ;; TODO have a similar test to this next one, but for single execution (which data apps will use)\n47: \n48: (deftest table-operations-via-action-execute-test\n49:   (mt/with-premium-features #{actions-feature-flag}\n50:     (mt/test-drivers (mt/normal-drivers-with-feature :actions/data-editing)",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT1",
+      "knowledge_target": "The `create-notification!` function in `metabase.notification.api.notification` (also exported from `metabase.notification.api`) performs the full alert/notification creation workflow: it calls `api/create-check`, invokes `models.notification/create-notification!` to persist the record, hydrates the result via `models.notification/hydrate-notification`, sends email notifications, and publishes a `:event/notification-create` event. The POST endpoint in `metabase.pulse.api.alert` should call `notification.api/create-notification!` with a properly shaped notification map (containing `:payload_type`, `:creator_id`, `:payload`, `:subscriptions`, `:handlers`) rather than returning a stub map.",
+      "evidence_ids": [
+        "G3_E2",
+        "G3_E3",
+        "G3_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "src/metabase/notification/api/notification.clj",
+          "start_line": 169,
+          "end_line": 185,
+          "retrieval_score": 62.985,
+          "matched_cues": [
+            "create-notification!",
+            "defendpoint :post",
+            "defendpoint :put",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "169:   (when (channel.settings/email-configured?)\n170:     (let [current-user? #{(:email @api/*current-user*)}]\n171:       (when-let [recipients-except-creator (->> (all-email-recipients notification)\n172:                                                 (remove current-user?)\n173:                                                 seq)]\n174:         (messages/send-you-were-added-card-notification-email!\n175:          (update notification :payload t2/hydrate :card) recipients-except-creator @api/*current-user*)))))\n176: \n177: (mu/defn create-notification! :- ::models.notification/FullyHydratedNotification\n178:   \"Create a notification with permission checks, hydration, email notifications, and event publishing.\"\n179:   [notification-info :- ::models.notification/FullyHydratedNotification]\n180:   (api/create-check :model/Notification notification-info)\n181:   (let [notification (models.notification/hydrate-notification\n182:                       (models.notification/create-notification!\n183:                        (dissoc notification-info :handlers :subscriptions)\n184:                        (:subscriptions notification-info)\n185:                        (:handlers notification-info)))]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "src/metabase/notification/api/notification.clj",
+          "start_line": 187,
+          "end_line": 203,
+          "retrieval_score": 62.985,
+          "matched_cues": [
+            "create-notification!",
+            "defendpoint :post",
+            "defendpoint :put",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "187:       (send-you-were-added-card-notification-email! notification))\n188:     (events/publish-event! :event/notification-create {:object notification :user-id api/*current-user-id*})\n189:     notification))\n190: \n191: (api.macros/defendpoint :post \"/\" :- ::models.notification/FullyHydratedNotification\n192:   \"Create a new notification, return the created notification.\"\n193:   [_route _query body :- ::NotificationApiInput request]\n194:   (check-no-resource-templates! (:handlers body))\n195:   (create-notification!\n196:    (-> body\n197:        (update :payload_type keyword)\n198:        (assoc :creator_id api/*current-user-id*)\n199:        (assoc-in [:payload :disable_links]\n200:                  (embed.util/is-modular-embedding-or-modular-embedding-sdk-request? request)))))\n201: \n202: (defn- notify-notification-updates!\n203:   \"Send notification emails based on changes between updated and existing notification\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "src/metabase/notification/api.clj",
+          "start_line": 1,
+          "end_line": 14,
+          "retrieval_score": 24.951,
+          "matched_cues": [
+            "create-notification!",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "1: (ns metabase.notification.api\n2:   (:require\n3:    [metabase.api.macros :as api.macros]\n4:    [metabase.api.routes.common :as routes.common]\n5:    [metabase.api.util.handlers :as handlers]\n6:    [metabase.notification.api.notification]\n7:    [metabase.notification.api.unsubscribe]\n8:    [potemkin :as p]))\n9: \n10: (p/import-vars\n11:  [metabase.notification.api.notification\n12:   create-notification!\n13:   list-notifications\n14:   get-notification",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT2",
+      "knowledge_target": "The existing `metabase.pulse.api.alert` namespace already requires `metabase.notification.api` (aliased as `notification.api`) and uses it for read operations via `notification.api/list-notifications`. The `notification->pulse` function converts a fully-hydrated notification back to the legacy pulse wire format for backward compatibility. The POST endpoint for creating an alert should: (1) call `notification.api/create-notification!` with the notification data shaped appropriately, (2) convert the returned notification using `notification->pulse`, and (3) return the pulse-shaped map — mirroring how the GET list endpoint works.",
+      "evidence_ids": [
+        "G3_E4",
+        "G3_E5",
+        "G3_E6"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E4",
+          "file_path": "src/metabase/pulse/api/alert.clj",
+          "start_line": 13,
+          "end_line": 29,
+          "retrieval_score": 42.847,
+          "matched_cues": [
+            "metabase.notification.api",
+            "notification->pulse"
+          ],
+          "content": "13:    [metabase.util.malli.schema :as ms]\n14:    [toucan2.core :as t2]))\n15: \n16: (set! *warn-on-reflection* true)\n17: \n18: (when config/ee-available?\n19:   (classloader/require 'metabase-enterprise.advanced-permissions.common))\n20: \n21: (defn- notification->pulse\n22:   \"Convert a notification to the legacy pulse structure for backward compatibility.\"\n23:   [notification]\n24:   (let [subscription      (-> notification :subscriptions first)\n25:         notification-card (-> notification :payload)\n26:         card              (->> notification :payload :card_id (t2/select-one :model/Card))]\n27:     (merge\n28:      (select-keys notification [:id :creator_id :creator :created_at :updated_at])\n29:      {:name                nil",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E5",
+          "file_path": "src/metabase/pulse/api/alert.clj",
+          "start_line": 92,
+          "end_line": 108,
+          "retrieval_score": 42.847,
+          "matched_cues": [
+            "metabase.notification.api",
+            "notification->pulse"
+          ],
+          "content": "92:                                   [:user_id  {:optional true} [:maybe ms/PositiveInt]]]]\n93:   (let [user-id (if api/*is-superuser?*\n94:                   user_id\n95:                   api/*current-user-id*)]\n96:     (->> (notification.api/list-notifications\n97:           {:payload_type   :notification/card\n98:            :legacy-user-id user-id\n99:            :legacy-active  (not archived)})\n100:          (map notification->pulse)\n101:          (remove nil?))))\n102: \n103: ;; TODO (Cam 2025-11-25) please add a response schema to this API endpoint, it makes it easier for our customers to\n104: ;; use our API + we will need it when we make auto-TypeScript-signature generation happen\n105: ;;\n106: #_{:clj-kondo/ignore [:metabase/validate-defendpoint-has-response-schema]}\n107: (api.macros/defendpoint :get \"/:id\"\n108:   \"Fetch an alert by ID\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "src/metabase/notification/api.clj",
+          "start_line": 1,
+          "end_line": 14,
+          "retrieval_score": 24.951,
+          "matched_cues": [
+            "create-notification!",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "1: (ns metabase.notification.api\n2:   (:require\n3:    [metabase.api.macros :as api.macros]\n4:    [metabase.api.routes.common :as routes.common]\n5:    [metabase.api.util.handlers :as handlers]\n6:    [metabase.notification.api.notification]\n7:    [metabase.notification.api.unsubscribe]\n8:    [potemkin :as p]))\n9: \n10: (p/import-vars\n11:  [metabase.notification.api.notification\n12:   create-notification!\n13:   list-notifications\n14:   get-notification",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "target_id": "G3_KT3",
+      "knowledge_target": "The `notification.api/create-notification!` function expects a `::models.notification/FullyHydratedNotification` shaped map, which includes `:payload_type` (keyword), `:creator_id` (user id), `:payload` (map with at minimum `:card_id`), `:subscriptions` (seq), and `:handlers` (seq). When constructing the input from an alert API request body (which uses fields like `card_id`, `channels`, `alert_condition`, `alert_first_only`), the alert POST endpoint must transform these fields into the notification shape before calling `create-notification!`.",
+      "evidence_ids": [
+        "G3_E2",
+        "G3_E3",
+        "G3_E8"
+      ],
+      "supporting_evidence": [
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "src/metabase/notification/api/notification.clj",
+          "start_line": 169,
+          "end_line": 185,
+          "retrieval_score": 62.985,
+          "matched_cues": [
+            "create-notification!",
+            "defendpoint :post",
+            "defendpoint :put",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "169:   (when (channel.settings/email-configured?)\n170:     (let [current-user? #{(:email @api/*current-user*)}]\n171:       (when-let [recipients-except-creator (->> (all-email-recipients notification)\n172:                                                 (remove current-user?)\n173:                                                 seq)]\n174:         (messages/send-you-were-added-card-notification-email!\n175:          (update notification :payload t2/hydrate :card) recipients-except-creator @api/*current-user*)))))\n176: \n177: (mu/defn create-notification! :- ::models.notification/FullyHydratedNotification\n178:   \"Create a notification with permission checks, hydration, email notifications, and event publishing.\"\n179:   [notification-info :- ::models.notification/FullyHydratedNotification]\n180:   (api/create-check :model/Notification notification-info)\n181:   (let [notification (models.notification/hydrate-notification\n182:                       (models.notification/create-notification!\n183:                        (dissoc notification-info :handlers :subscriptions)\n184:                        (:subscriptions notification-info)\n185:                        (:handlers notification-info)))]",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "src/metabase/notification/api/notification.clj",
+          "start_line": 187,
+          "end_line": 203,
+          "retrieval_score": 62.985,
+          "matched_cues": [
+            "create-notification!",
+            "defendpoint :post",
+            "defendpoint :put",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "187:       (send-you-were-added-card-notification-email! notification))\n188:     (events/publish-event! :event/notification-create {:object notification :user-id api/*current-user-id*})\n189:     notification))\n190: \n191: (api.macros/defendpoint :post \"/\" :- ::models.notification/FullyHydratedNotification\n192:   \"Create a new notification, return the created notification.\"\n193:   [_route _query body :- ::NotificationApiInput request]\n194:   (check-no-resource-templates! (:handlers body))\n195:   (create-notification!\n196:    (-> body\n197:        (update :payload_type keyword)\n198:        (assoc :creator_id api/*current-user-id*)\n199:        (assoc-in [:payload :disable_links]\n200:                  (embed.util/is-modular-embedding-or-modular-embedding-sdk-request? request)))))\n201: \n202: (defn- notify-notification-updates!\n203:   \"Send notification emails based on changes between updated and existing notification\"",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E8",
+          "file_path": "test/metabase/notification/api/notification_test.clj",
+          "start_line": 556,
+          "end_line": 572,
+          "retrieval_score": 24.951,
+          "matched_cues": [
+            "create-notification!",
+            "metabase.notification.api",
+            "metabase.notification.api.notification"
+          ],
+          "content": "556:   (mt/with-model-cleanup [:model/Notification]\n557:     (binding [collection/*allow-deleting-personal-collections* true]\n558:       (with-disabled-subscriptions-permissions!\n559:         (mt/with-user-in-groups [group {:name \"test notification perm\"}\n560:                                  user  [group]]\n561:           (mt/with-temp\n562:             [:model/Collection {collection-id :id} {:personal_owner_id (:id user)}\n563:              :model/Card       {card-id :id}       {:collection_id collection-id}]\n564:             (let [create-notification! (fn [user-or-id expected-status]\n565:                                          (mt/user-http-request user-or-id :post expected-status \"notification\"\n566:                                                                {:payload_type \"notification/card\"\n567:                                                                 :creator_id   (mt/user->id :rasta)\n568:                                                                 :payload      {:card_id card-id}}))]\n569:               (mt/with-premium-features #{}\n570:                 (testing \"admin can create\"\n571:                   (create-notification! :crowberto 200))\n572: ",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

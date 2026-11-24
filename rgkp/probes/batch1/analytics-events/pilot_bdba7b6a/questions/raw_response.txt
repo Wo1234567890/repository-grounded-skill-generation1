@@ -1,0 +1,48 @@
+```json
+{
+  "diagnostic_questions": [
+    {
+      "target_id": "G1_KT1",
+      "status": "ready",
+      "question": "A developer creates a new test file at `frontend/test/metabase/lib/analytics.test.ts` to test analytics utilities in the Metabase frontend. After running the Jest test suite, they notice none of the tests in that file were executed. What is the most likely reason?",
+      "options": {
+        "A": "The Jest configuration's `testMatch` patterns only match files ending in `.unit.spec.{js,jsx,ts,tsx}`, so a file named `analytics.test.ts` is never discovered by the test runner.",
+        "B": "Test files placed under `frontend/test/` are excluded by `testPathIgnorePatterns`, so only files under `frontend/src/` are executed.",
+        "C": "TypeScript test files must be compiled to JavaScript before Jest can run them; a `.ts` file without a prior build step is silently skipped.",
+        "D": "The file must be co-located with the source file it tests (i.e., next to `analytics.ts`) rather than placed in a separate `test/` directory."
+      },
+      "correct_answer": "A",
+      "reference_explanation": "The `jest.config.js` file defines `testMatch` as `[\"<rootDir>/**/*.unit.spec.js\", \"<rootDir>/**/*.unit.spec.{js,jsx,ts,tsx}\"]`. A file named `analytics.test.ts` does not match either pattern, so Jest will never discover or execute it. The correct naming convention is `analytics.unit.spec.ts`, as demonstrated by existing test files such as `browser.unit.spec.ts` and `schema_metadata.unit.spec.ts`.",
+      "evidence_ids": ["G1_E1", "G1_E2", "G1_E3"]
+    },
+    {
+      "target_id": "G2_KT1",
+      "status": "ready",
+      "question": "A developer wants to run TypeScript type checking on the Metabase frontend without triggering a ClojureScript build first. According to the project's npm scripts and documentation, which command should they use?",
+      "options": {
+        "A": "npm run type-check",
+        "B": "bun run type-check",
+        "C": "bun run type-check-pure",
+        "D": "tsc --build --force"
+      },
+      "correct_answer": "C",
+      "reference_explanation": "In `package.json`, the `type-check` script is defined as `bun run clean:cljs && bun run build:cljs && bun run type-check-pure`, which requires a CLJS build first. The `type-check-pure` script is defined as `NODE_OPTIONS=--max-old-space-size=8192 tsc --noEmit` and runs TypeScript checking alone without any CLJS dependency. The `.claude/skills/_shared/typescript-commands.md` document also explicitly lists `bun run type-check-pure` as the command for TypeScript type checking.",
+      "evidence_ids": ["G2_E1", "G2_E5", "G2_E6"]
+    },
+    {
+      "target_id": "G2_KT2",
+      "status": "ready",
+      "question": "A developer writes a unit test file that directly imports from `frontend/src/metabase/lib/analytics.ts`. When running the tests, the entire test suite fails at import time before any test cases execute. Which of the following is the most likely cause based on the contents of `analytics.ts`?",
+      "options": {
+        "A": "The `analytics.ts` file uses ES module syntax (`import`/`export`), which Jest cannot process without a Babel or ts-jest transform configured.",
+        "B": "The `analytics.ts` file imports from `@snowplow/browser-tracker`, `metabase/env`, and `metabase/lib/settings`, which perform side effects or depend on runtime configuration not available in the test environment unless mocked.",
+        "C": "The `analytics.ts` file re-exports types from `metabase-types/analytics`, and Jest cannot handle `import type` declarations without special configuration.",
+        "D": "The `analytics.ts` file imports from `metabase/lib/settings`, which is a circular dependency that causes a module resolution error at import time."
+      },
+      "correct_answer": "B",
+      "reference_explanation": "The top of `analytics.ts` imports `* as Snowplow from \"@snowplow/browser-tracker\"`, `shouldLogAnalytics` from `\"metabase/env\"`, and `Settings` from `\"metabase/lib/settings\"`. The `@snowplow/browser-tracker` package performs tracker initialization as a side effect, and `metabase/env`/`metabase/lib/settings` depend on runtime configuration. Without mocking these modules in the test environment, importing `analytics.ts` can cause failures before any test cases run.",
+      "evidence_ids": ["G2_E4", "G2_E2"]
+    }
+  ]
+}
+```

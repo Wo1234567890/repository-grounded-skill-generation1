@@ -1,0 +1,6 @@
+Answer the following multiple-choice question.
+
+Select exactly one option from A, B, C, or D.
+
+Return only the letter of your selected answer.
+Do not provide an explanation.

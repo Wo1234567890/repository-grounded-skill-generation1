@@ -1,0 +1,30 @@
+```json
+{
+  "application_results": [
+    {
+      "target_id": "G2_KT1",
+      "application_state": "not_applied",
+      "reason": "The agent explicitly acknowledged that `metabase.util.currency` provides currency metadata including symbols, codes, and names. However, the `format-currency-value` function was implemented as a no-op stub that returns the value unchanged, with a comment 'returns the value as-is'. The agent did not use the currency metadata from `currency.cljc` to apply any formatting (symbol prefix, code prefix, etc.) to the numeric values in currency columns.",
+      "trajectory_lines": [96, 141],
+      "evidence_ids": ["G2_E1", "G2_E2", "G2_E3"],
+      "execution_guidance": "When implementing `format-currency-value` in `currency_formatter.clj`, use `metabase.util.currency` to apply formatting to numeric values. Require the namespace and use `currency/currency` map and `currency/supports-symbol?` to determine how to prefix the value. For example, for a currency code like \"USD\", look up `(get-in currency/currency [:USD :symbol])` to get \"$\" and produce a formatted string like \"$100.50\". Use `supports-symbol?` to decide whether to use `:symbol` or `:code` as the prefix. The `format-currency-value` function should return a formatted string (e.g., \"$100.50\" for USD, \"CN¥100.50\" for CNY), not the raw numeric value. Apply this inside the `currency-formatter-xform` where values are processed per row."
+    },
+    {
+      "target_id": "G2_KT2",
+      "application_state": "not_applied",
+      "reason": "The agent read `metabase.util.currency` and saw `supports-symbol?` and the currency metadata map with symbol/code fields, but the `format-currency-value` function was left as a stub returning the value unchanged. The agent did not apply the symbol/code prefix pattern that Metabase uses for currency formatting.",
+      "trajectory_lines": [96, 108, 109, 141],
+      "evidence_ids": ["G2_E1", "G2_E5", "G2_E6"],
+      "execution_guidance": "In `format-currency-value`, require `metabase.util.currency` and use `currency/supports-symbol?` to decide the display style: if the currency code (e.g., \"USD\", \"CNY\") is in the supported set, use `(get-in currency/currency [(keyword currency-code) :symbol])` to get the symbol (e.g., \"$\", \"CN¥\"); otherwise use the currency code string directly. Concatenate the identifier with the numeric value as a string. This matches the pattern already used in `streaming/common.clj`'s `currency-identifier` function. The result should be a formatted string like \"$100.50\" or \"CN¥100.50\"."
+    },
+    {
+      "target_id": "G4_KT2",
+      "application_state": "applied",
+      "reason": "The agent correctly placed the `site-currency` defsetting in `src/metabase/system/settings.clj`, which matches the `metabase.system.settings` namespace conforming to the `metabase[-enterprise].<module>.settings` pattern enforced by clj-kondo linting. The agent did not place it in the framework definition file or any non-settings namespace.",
+      "trajectory_lines": [114, 161],
+      "evidence_ids": ["G4_E7", "G4_E8", "G4_E4"],
+      "execution_guidance": ""
+    }
+  ]
+}
+```

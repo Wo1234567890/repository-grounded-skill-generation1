@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "When writing a test `test-currency-formatter-with-null-values` where the test data has two rows — `[1 nil]` (first row) and `[2 150.00]` (last row) — which assertion correctly verifies that a nil value in the currency column is skipped without error?",
+    "options": {
+      "A": "`(nil? (nth (first @rows) 1))` — checks that the second element of the first row is nil.",
+      "B": "`(nil? (nth (first @rows) 0))` — checks that the first element of the first row is nil.",
+      "C": "`(nil? (nth (last @rows) 0))` — checks that the first element of the last row is nil.",
+      "D": "`(nil? (nth (last @rows) 1))` — checks that the second element of the last row is nil."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "A",
+  "answer": "A",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.5590381670044735,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 254,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

@@ -1,0 +1,201 @@
+```json
+{
+  "gap_results": [
+    {
+      "gap_id": "G1",
+      "assessment": "grounded",
+      "assessment_reason": "The reference documentation explicitly describes how `permissions: true` works in the api-framework controller, and existing endpoint implementations demonstrate the pattern. However, the gap concerns whether `audit_logs` must also be registered in a separate permissions configuration/fixture file for `permissions: true` to function. The reference.md content describes the permissions field behavior but does not address registration in permissions fixtures. The existing endpoint examples (actions.js, announcements.js) use `permissions: true` without showing any additional registration step, suggesting the docName drives permission lookup automatically.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G1_E1",
+          "type": "descriptive",
+          "reason": "Shows the controller structure with docName and permissions: true fields but does not prescribe registration in a permissions registry."
+        },
+        {
+          "evidence_id": "G1_E2",
+          "type": "prescriptive",
+          "reason": "Explicitly states permissions is a required field and describes what permissions: true means (use default permission handling), which is relevant to understanding how permissions work."
+        },
+        {
+          "evidence_id": "G1_E3",
+          "type": "descriptive",
+          "reason": "Code example showing permissions: true usage in a browse handler."
+        },
+        {
+          "evidence_id": "G1_E4",
+          "type": "descriptive",
+          "reason": "Real endpoint (actions.js) using permissions: true with docName implicitly set, demonstrating the actual pattern used in production code."
+        },
+        {
+          "evidence_id": "G1_E5",
+          "type": "descriptive",
+          "reason": "Real endpoint (announcements.js) showing permissions: true with explicit docName field."
+        },
+        {
+          "evidence_id": "G1_E6",
+          "type": "descriptive",
+          "reason": "Authentication endpoint showing permissions: true used in a handler."
+        },
+        {
+          "evidence_id": "G1_E7",
+          "type": "descriptive",
+          "reason": "Authentication endpoint resetAllPasswords handler with permissions: true."
+        },
+        {
+          "evidence_id": "G1_E8",
+          "type": "descriptive",
+          "reason": "Authentication controller showing docName field usage alongside permission settings."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "In Ghost's api-framework, the `docName` field in a controller determines how the permission system looks up allowed roles for that resource. Setting `permissions: true` instructs the framework to use its default permission handling, which resolves permissions based on the `docName` value against Ghost's internal permission registry. For `permissions: true` to function correctly for a new resource like `audit_logs`, the `docName` must match a resource name that is registered in Ghost's permissions configuration (e.g., fixtures or app-actions files), otherwise the permission check will fail or be bypassed.",
+          "target_descriptor": "How the docName field relates to Ghost's permission registry and what must be configured for permissions: true to work for a new resource",
+          "evidence_ids": ["G1_E1", "G1_E2", "G1_E4", "G1_E5"],
+          "rationale": "The agent set permissions: true without verifying that audit_logs is registered in Ghost's permissions configuration. Understanding that docName drives permission lookup and that new resources may require registration in fixture/configuration files is essential to making the endpoint's permission checking work correctly."
+        },
+        {
+          "knowledge_target": "Existing Ghost Admin API endpoints such as `actions` (actions.js) use `permissions: true` with a `docName` matching the resource name. The `docName` value used in the controller must correspond to a resource name defined in Ghost's permissions fixtures or configuration to enable proper role-based access control. For admin-only resources, the permissions configuration must list which roles (e.g., Owner, Administrator) are permitted to perform browse and read operations on that docName.",
+          "target_descriptor": "The relationship between a controller's docName and Ghost's permissions fixture/configuration entries for role-based access",
+          "evidence_ids": ["G1_E4", "G1_E1", "G1_E2"],
+          "rationale": "The actions.js endpoint demonstrates a working example with permissions: true, and the reference.md explains the semantics. Together they illustrate that docName must match a registered resource name for default permission handling to resolve correctly."
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "assessment": "grounded",
+      "assessment_reason": "The repository evidence shows the correct pattern for chaining test assertions in Ghost e2e tests. The existing test files demonstrate that `matchBodySnapshot()` and other assertion methods are chained directly on the agent call without destructuring body first—or that body is obtained in a separate step prior to any snapshot matching that depends on it. The agent's mistake of referencing `body` inside `matchBodySnapshot()` before it's resolved is directly contradicted by the patterns in the evidence.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G2_E1",
+          "type": "descriptive",
+          "reason": "Shows imports used in Ghost e2e admin tests, establishing the testing framework conventions."
+        },
+        {
+          "evidence_id": "G2_E2",
+          "type": "descriptive",
+          "reason": "Shows the before() setup pattern with agentProvider and fixtureManager.init() plus loginAsOwner()."
+        },
+        {
+          "evidence_id": "G2_E3",
+          "type": "descriptive",
+          "reason": "Shows matchBodySnapshot() with pre-defined matcher objects passed as arguments, not referencing a body variable that hasn't been resolved yet."
+        },
+        {
+          "evidence_id": "G2_E4",
+          "type": "descriptive",
+          "reason": "Another test file showing the same import conventions and matcher pattern."
+        },
+        {
+          "evidence_id": "G2_E5",
+          "type": "descriptive",
+          "reason": "Shows that body is obtained from a separate await call before being used, not referenced inside a chained matchBodySnapshot."
+        },
+        {
+          "evidence_id": "G2_E6",
+          "type": "prescriptive",
+          "reason": "Explicitly shows the correct pattern: matchBodySnapshot() receives a pre-defined matcher object (matchAutomatedEmail) rather than expressions that reference a body variable from the same await chain. This is the canonical pattern to follow."
+        },
+        {
+          "evidence_id": "G2_E7",
+          "type": "descriptive",
+          "reason": "Shows matcher object definition pattern for use in matchBodySnapshot calls."
+        },
+        {
+          "evidence_id": "G2_E8",
+          "type": "descriptive",
+          "reason": "Shows matchBodySnapshot() called with no arguments (for empty results) or with pre-defined matchers, not with expressions referencing body from the same chain."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "In Ghost e2e tests, `matchBodySnapshot()` is a chained assertion method called before `await` resolves the full response. Therefore, any matcher object passed to `matchBodySnapshot()` must be a pre-defined static value or a matcher constant—it cannot reference a `body` variable from the same `const {body} = await agent.get(...).matchBodySnapshot({...})` expression because `body` does not yet exist when the chained method arguments are evaluated. The correct pattern is to define matcher objects before the agent call (e.g., `const matchAuditLog = {id: anyObjectId, ...}`) and pass them directly.",
+          "target_descriptor": "The correct way to pass matcher arguments to matchBodySnapshot() without referencing unresolved response body variables in the same expression",
+          "evidence_ids": ["G2_E6", "G2_E8", "G2_E3"],
+          "rationale": "The agent's bug was referencing `body` inside `matchBodySnapshot()` before it was available. The existing test files show the correct pattern: pre-define matcher objects and pass them statically to matchBodySnapshot(), never referencing `body` from the same await expression."
+        },
+        {
+          "knowledge_target": "When a Ghost e2e test needs to match a response body with dynamic matchers (e.g., anyObjectId, anyISODateTime), the standard pattern is: (1) define a named matcher object before the test using the imported matcher constants, (2) pass that matcher object to `matchBodySnapshot()` in the chained call, and (3) only destructure `body` from the awaited result if it is needed for subsequent assertions in separate statements. For example: `const matchAuditLog = {id: anyObjectId, created_at: anyISODateTime}; await agent.get('audit_logs').expectStatus(200).matchBodySnapshot({audit_logs: [matchAuditLog]});`",
+          "target_descriptor": "The standard Ghost e2e test pattern for defining and using matcher objects with matchBodySnapshot()",
+          "evidence_ids": ["G2_E6", "G2_E7", "G2_E4", "G2_E1"],
+          "rationale": "The automated-emails and labels tests demonstrate the exact pre-define-then-pass pattern that avoids the undefined body reference bug the agent introduced."
+        },
+        {
+          "knowledge_target": "When a Ghost e2e browse test expects zero records (empty collection), `matchBodySnapshot()` can be called with no arguments or with `{audit_logs: []}` as the matcher, as demonstrated by the labels test `Can browse with no labels`. This avoids the need to conditionally check `Array.isArray(body.audit_logs)` inside the matcher argument—instead, test the empty case with a simple static matcher and test the non-empty case after explicitly creating test data.",
+          "target_descriptor": "How to correctly write matchBodySnapshot assertions for both empty and non-empty collection responses in Ghost e2e tests",
+          "evidence_ids": ["G2_E8", "G2_E6", "G2_E5"],
+          "rationale": "The agent attempted to use `Array.isArray(body.audit_logs)` as a conditional inside matchBodySnapshot to handle empty vs non-empty cases, but this fails because body is undefined at evaluation time. The repository pattern shows that empty and non-empty cases should be tested separately with static matchers."
+        }
+      ]
+    },
+    {
+      "gap_id": "G3",
+      "assessment": "grounded",
+      "assessment_reason": "The repository evidence shows the fixture initialization patterns used in e2e tests and how test data is typically seeded. The evidence demonstrates that tests which need to browse existing records must either use fixture sets that include that resource's data or explicitly create records before running browse assertions. The gap is that audit_logs has no fixture set and no mechanism to create test records, causing the browse test to always return empty.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G3_E1",
+          "type": "descriptive",
+          "reason": "Shows fixtureManager.init() with no arguments, then loginAsOwner() - pattern for minimal fixture initialization."
+        },
+        {
+          "evidence_id": "G3_E2",
+          "type": "descriptive",
+          "reason": "Shows fixtureManager.init() with specific fixture set names ('posts', 'newsletters', etc.) to seed data needed for the tests."
+        },
+        {
+          "evidence_id": "G3_E3",
+          "type": "descriptive",
+          "reason": "Shows fixtureManager.init() with multiple fixture sets including resource-specific data needed to run browse tests meaningfully."
+        },
+        {
+          "evidence_id": "G3_E4",
+          "type": "descriptive",
+          "reason": "Shows DataGenerator.Content.users usage and fixtureManager.init() with no arguments."
+        },
+        {
+          "evidence_id": "G3_E5",
+          "type": "descriptive",
+          "reason": "Shows that after fixtureManager.init(), specific model instances can be queried via models.User.findOne indicating fixtures populate real DB rows."
+        },
+        {
+          "evidence_id": "G3_E6",
+          "type": "prescriptive",
+          "reason": "Explicitly states in an error message that 'users' must be passed to fixtureManager.init() for loginAsOwner to work, demonstrating that fixture sets control what data is available in tests."
+        },
+        {
+          "evidence_id": "G3_E7",
+          "type": "descriptive",
+          "reason": "Shows DataGenerator import and roleMap, illustrating how test users are pre-generated from fixture data."
+        },
+        {
+          "evidence_id": "G3_E8",
+          "type": "descriptive",
+          "reason": "Shows DataGenerator.Content.users and DataGenerator.forKnex usage for pre-defined fixture data."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "Ghost e2e tests use `fixtureManager.init(...resourceNames)` to seed the test database with pre-defined fixture data. The string arguments passed to `fixtureManager.init()` correspond to named fixture sets defined in the fixtures system (e.g., 'users', 'posts', 'newsletters'). For a browse test to validate the response structure of a collection (non-empty), the fixture set for that resource must exist and be passed to `fixtureManager.init()`. If no named fixture set exists for `audit_logs`, the browse test will always receive an empty array and cannot validate audit log object structure using matchBodySnapshot matchers.",
+          "target_descriptor": "How fixtureManager.init() works and what is required for a browse test to return non-empty results for validation",
+          "evidence_ids": ["G3_E2", "G3_E3", "G3_E6"],
+          "rationale": "The agent's test initializes only 'users' fixtures with no audit_log data, so browse tests cannot validate structure. Understanding that fixture sets must exist and be explicitly initialized explains why the test design needs to either create test records programmatically or define a fixture set."
+        },
+        {
+          "knowledge_target": "When a Ghost e2e test needs to browse records of a new resource that has no pre-defined fixture set, the test must programmatically create records before the browse assertion. The pattern seen in automated-emails tests is: create a record via API (e.g., POST endpoint) or directly via models in a helper function, then perform the GET/browse assertion. Alternatively, use `dbUtils.truncate()` in beforeEach to control state. For audit_logs with no add endpoint, records must be created via direct model insertion before browse tests can validate non-empty responses.",
+          "target_descriptor": "How to seed test data for a new resource that has no pre-defined fixture set, in order to test browse endpoints with non-empty responses",
+          "evidence_ids": ["G3_E5", "G3_E3", "G3_E2"],
+          "rationale": "The agent's test cannot validate audit log structure because no audit_log records exist. The repository patterns show that tests either use fixture sets or programmatically create records before assertions. For audit_logs, programmatic creation via models is the appropriate path."
+        },
+        {
+          "knowledge_target": "In Ghost e2e tests, `loginAsOwner()` requires that the 'users' fixture set has been initialized via `fixtureManager.init('users')` or `fixtureManager.init()` (which includes users by default). The admin-api-test-agent explicitly throws an error if the user is not found, with the message 'Did you pass users to fixtureManager.init()?' This means the test setup for audit_logs must include 'users' in the fixtureManager.init() call, and any additional audit_log test data must be created separately since no 'audit_logs' fixture set exists in the repository.",
+          "target_descriptor": "The required fixture initialization for loginAsOwner() and the absence of a built-in audit_logs fixture set",
+          "evidence_ids": ["G3_E6", "G3_E7", "G3_E1"],
+          "rationale": "The agent's test uses fixtureManager.init('users') which is correct for enabling loginAsOwner, but no mechanism exists to create audit_log fixture data. This knowledge target clarifies that test authors must handle audit_log data creation themselves."
+        }
+      ]
+    }
+  ]
+}
+```

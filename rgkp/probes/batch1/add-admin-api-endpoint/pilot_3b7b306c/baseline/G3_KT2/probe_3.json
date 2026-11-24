@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "When implementing a Ghost e2e browse test for a new resource (`audit_logs`) that has no pre-defined fixture set and no POST/add endpoint, how should the test create records to validate a non-empty browse response?",
+    "options": {
+      "A": "Rely on Ghost's default test database which always contains sample audit log records regardless of fixture initialization.",
+      "B": "Use `agent.post('audit_logs')` with a test payload; Ghost's framework will automatically handle creation even without an explicit add endpoint.",
+      "C": "Create records programmatically via direct model insertion before the browse assertion, since neither a fixture set nor an add endpoint is available.",
+      "D": "Pass a custom fixture file path directly to `fixtureManager.init()` to load audit log records from a local JSON file."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6460956249793526,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 224,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "In Ghost e2e tests, what is the purpose of passing resource name strings to `fixtureManager.init()`, and what happens if no fixture set exists for `audit_logs`?",
+    "options": {
+      "A": "The strings configure which HTTP routes are registered; if `audit_logs` is not passed, the route will return 404.",
+      "B": "The strings seed the test database with pre-defined fixture data for named resource sets; without an `audit_logs` fixture set, browse tests will always receive an empty array and cannot validate audit log object structure using matchers.",
+      "C": "The strings configure which model classes are loaded; without `audit_logs`, the model's `findPage` method will not be available.",
+      "D": "The strings select which database migrations to run; without an `audit_logs` entry, the table will not be created."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "B",
+  "answer": "B",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.7109135840146337,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 238,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

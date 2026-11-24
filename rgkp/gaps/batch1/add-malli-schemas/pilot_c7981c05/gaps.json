@@ -1,0 +1,141 @@
+{
+  "execution_gaps": [
+    {
+      "gap_id": "G1",
+      "local_state": "The task requires modifying `src/metabase/api/alert.clj`, but this file does not exist. The actual alert API implementation lives in `src/metabase/pulse/api/alert.clj`.",
+      "agent_action": "The agent modified `src/metabase/pulse/api/alert.clj` instead of creating/modifying `src/metabase/api/alert.clj` as specified in the task requirements.",
+      "observed_problem": "The task explicitly listed `src/metabase/api/alert.clj` as a file to create/modify, but the agent never created or modified that path. Instead it modified a different file (`src/metabase/pulse/api/alert.clj`). The required file `src/metabase/api/alert.clj` does not exist after agent execution.",
+      "trajectory_evidence": [
+        {
+          "line": 4,
+          "description": "Agent attempts to read `/workspace/metabase/src/metabase/api/alert.clj` which does not exist."
+        },
+        {
+          "line": 6,
+          "description": "Tool result confirms: 'File does not exist.' for src/metabase/api/alert.clj — the file the task requires creating."
+        },
+        {
+          "line": 29,
+          "description": "Agent reads src/metabase/pulse/api/alert.clj and proceeds to modify that file instead of creating the required src/metabase/api/alert.clj."
+        },
+        {
+          "line": 53,
+          "description": "Agent edits src/metabase/pulse/api/alert.clj, not src/metabase/api/alert.clj as specified in the task."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "src/metabase/api/alert.clj",
+          "src/metabase/pulse/api/alert.clj"
+        ],
+        "file_names": [
+          "alert.clj"
+        ],
+        "functions_or_classes": [],
+        "modules_or_packages": [
+          "metabase.api.alert",
+          "metabase.pulse.api.alert"
+        ],
+        "commands": [],
+        "error_messages": [
+          "File does not exist"
+        ],
+        "tests": [],
+        "configuration_terms": [],
+        "other_keywords": []
+      }
+    },
+    {
+      "gap_id": "G2",
+      "local_state": "The task requires creating a test file at `test/metabase/api/alert_malli_test.clj`.",
+      "agent_action": "The agent created the test file at the correct path `test/metabase/api/alert_malli_test.clj`, but several tests in the file contain syntax errors: the `post-alert-invalid-card-id-test` deftest has mismatched parentheses — it closes the deftest body before the second `is` assertion, making the second assertion a top-level form outside the deftest.",
+      "observed_problem": "In the original (pre-rewrite) test file, `post-alert-invalid-card-id-test` had a closing paren before the second `is` block (line structure showed the second `(is ...)` closing paren at column 0 belonging to the deftest but actually closing the first `is`). This was then rewritten, but in the rewritten test file `post-alert-invalid-card-id-test` has no `is` assertions at all — it calls `mt/user-http-request` twice without asserting on results, meaning the test does not actually verify the expected 400 responses.",
+      "trajectory_evidence": [
+        {
+          "line": 60,
+          "description": "Agent writes initial test file with post-alert-invalid-card-id-test that has mismatched parens: the deftest closes after the first is block but the second is block appears outside it."
+        },
+        {
+          "line": 91,
+          "description": "Agent rewrites the test file; in post-alert-invalid-card-id-test the two mt/user-http-request calls are made with expected status 400 passed as argument, but there are no `is` assertions wrapping the calls to actually verify the status codes."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "test/metabase/api/alert_malli_test.clj"
+        ],
+        "file_names": [
+          "alert_malli_test.clj"
+        ],
+        "functions_or_classes": [
+          "post-alert-invalid-card-id-test"
+        ],
+        "modules_or_packages": [
+          "metabase.api.alert-malli-test"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [
+          "post-alert-invalid-card-id-test"
+        ],
+        "configuration_terms": [],
+        "other_keywords": [
+          "mt/user-http-request",
+          "deftest"
+        ]
+      }
+    },
+    {
+      "gap_id": "G3",
+      "local_state": "The POST /api/alert endpoint implementation in src/metabase/pulse/api/alert.clj returns a simple map with `:status 200` as a data key rather than delegating to the actual notification creation logic.",
+      "agent_action": "Agent implemented stub POST and PUT endpoints that return a hand-crafted map (e.g. `{:status 200 :card_id ...}`) rather than creating an actual alert/notification via the existing `notification.api/create-notification!` infrastructure.",
+      "observed_problem": "The new POST endpoint does not create any persistent data — it just echoes back a map. This means valid input cannot actually create an alert, breaking the semantic of the POST endpoint. The task requires functioning endpoints with schema validation, not stubs.",
+      "trajectory_evidence": [
+        {
+          "line": 56,
+          "description": "Agent adds POST endpoint that returns {:status 200 :card_id ... :alert_condition ... :alert_first_only ... :channels ...} without calling any create-notification! or equivalent logic."
+        },
+        {
+          "line": 100,
+          "description": "Final file confirms the POST endpoint body is a pure stub returning a plain map without persisting data."
+        }
+      ],
+      "retrieval_cues": {
+        "file_paths": [
+          "src/metabase/pulse/api/alert.clj",
+          "src/metabase/notification/api/notification.clj"
+        ],
+        "file_names": [
+          "alert.clj",
+          "notification.clj"
+        ],
+        "functions_or_classes": [
+          "create-notification!",
+          "notification->pulse"
+        ],
+        "modules_or_packages": [
+          "metabase.notification.api",
+          "metabase.notification.api.notification"
+        ],
+        "commands": [],
+        "error_messages": [],
+        "tests": [
+          "post-alert-valid-input-test"
+        ],
+        "configuration_terms": [],
+        "other_keywords": [
+          "defendpoint :post",
+          "defendpoint :put"
+        ]
+      }
+    }
+  ],
+  "environment_blockers": [
+    {
+      "description": "Bash execution was denied when the agent attempted to run clj-kondo linting on the modified file. This prevented static analysis validation of the implementation.",
+      "evidence_lines": [
+        69
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "According to the clj-kondo linting rules in this repository, where must `defsetting` forms be placed, and what namespace pattern is enforced?",
+    "options": {
+      "A": "All `defsetting` forms must reside in namespaces ending in `.config`, such as `metabase.system.config`, to separate configuration from business logic.",
+      "B": "All `defsetting` forms must reside in namespaces matching `metabase[-enterprise].<module>.settings`; placing them elsewhere triggers a linting error.",
+      "C": "All `defsetting` forms must reside in `metabase.settings.models.setting` itself, since that is the canonical location for all setting definitions.",
+      "D": "There is no namespace restriction enforced by linting; `defsetting` can be placed in any namespace as long as the file is loaded at startup."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "B",
+  "answer": "B",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6289812090108171,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 247,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

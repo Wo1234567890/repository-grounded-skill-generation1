@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "Looking at how existing Ghost Admin API controllers such as `actions.js` are structured, which statement best describes the relationship between `docName`, `permissions: true`, and role-based access control?",
+    "options": {
+      "A": "Role-based access is configured directly inside the `query` function, so `docName` and `permissions` settings are unrelated to each other.",
+      "B": "The `docName` value is only used for logging and has no effect on how `permissions: true` resolves access.",
+      "C": "The `docName` value must correspond to a resource name defined in Ghost's permissions fixtures or configuration for `permissions: true` to correctly enforce role-based access control.",
+      "D": "Setting `permissions: true` bypasses all role checks and grants access to any authenticated user regardless of `docName`."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "C",
+  "answer": "C",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6311672499869019,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 230,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

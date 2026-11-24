@@ -1,0 +1,35 @@
+{
+  "application_results": [
+    {
+      "target_id": "G1_KT1",
+      "application_state": "not_applied",
+      "reason": "The agent wrote `bases: - ../../base` in overlays/dev/kustomization.yaml (lines 6-7 of the created file, confirmed at trajectory line 52), despite repository evidence showing all kustomization files use `resources:` to reference both local files and base directories.",
+      "trajectory_lines": [
+        33,
+        52
+      ],
+      "evidence_ids": [
+        "G1_E1",
+        "G1_E3",
+        "G1_E5"
+      ],
+      "execution_guidance": "When writing `hack/gitops-demo/apps/overlays/dev/kustomization.yaml`, replace the deprecated `bases:` field with `resources:`. As seen in `manifests/openshift/kustomization.yaml`, `manifests/test/kustomization.yaml`, and `manifests/install/kustomization.yaml`, the correct syntax is:\n```yaml\nresources:\n  - ../../base\n```\nUse `resources:` instead of `bases:` to reference the parent directory.",
+      "guidance_id": "G1_KT1_EG1"
+    },
+    {
+      "target_id": "G1_KT2",
+      "application_state": "not_applied",
+      "reason": "The agent wrote `patchesStrategicMerge: - patch-replicas.yaml` in overlays/dev/kustomization.yaml (lines 9-10 of the created file, confirmed at trajectory line 52), despite repository evidence showing current kustomization files use `patches:` instead.",
+      "trajectory_lines": [
+        33,
+        52
+      ],
+      "evidence_ids": [
+        "G1_E2",
+        "G1_E4"
+      ],
+      "execution_guidance": "When writing `hack/gitops-demo/apps/overlays/dev/kustomization.yaml`, replace the deprecated `patchesStrategicMerge:` field with `patches:`. As seen in `manifests/openshift/kustomization.yaml` and `manifests/test/kustomization.yaml`, the correct syntax for a strategic merge patch file reference is:\n```yaml\npatches:\n  - path: patch-replicas.yaml\n```\nUse `patches:` with a `path:` key instead of `patchesStrategicMerge:` with a bare list entry.",
+      "guidance_id": "G1_KT2_EG1"
+    }
+  ]
+}

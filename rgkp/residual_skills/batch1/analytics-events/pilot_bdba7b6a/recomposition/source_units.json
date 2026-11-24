@@ -1,0 +1,9 @@
+{
+  "source_units": [
+    {
+      "source_id": "G1_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "When creating the test file, rename it to match the project convention. At the point of writing the test file (line 49), use `frontend/test/metabase/lib/analytics.unit.spec.ts` instead of `analytics.test.ts`. The Jest `testMatch` in `jest.config.js` only discovers `*.unit.spec.{js,jsx,ts,tsx}` files, so `analytics.test.ts` will never be run by `bun run test-unit`."
+    }
+  ]
+}

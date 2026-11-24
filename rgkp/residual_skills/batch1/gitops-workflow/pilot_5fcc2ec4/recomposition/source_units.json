@@ -1,0 +1,14 @@
+{
+  "source_units": [
+    {
+      "source_id": "G1_KT1_EG1",
+      "type": "execution_guidance",
+      "content": "When writing `hack/gitops-demo/apps/overlays/dev/kustomization.yaml`, replace the deprecated `bases:` field with `resources:`. As seen in `manifests/openshift/kustomization.yaml`, `manifests/test/kustomization.yaml`, and `manifests/install/kustomization.yaml`, the correct syntax is:\n```yaml\nresources:\n  - ../../base\n```\nUse `resources:` instead of `bases:` to reference the parent directory."
+    },
+    {
+      "source_id": "G1_KT2_EG1",
+      "type": "execution_guidance",
+      "content": "When writing `hack/gitops-demo/apps/overlays/dev/kustomization.yaml`, replace the deprecated `patchesStrategicMerge:` field with `patches:`. As seen in `manifests/openshift/kustomization.yaml` and `manifests/test/kustomization.yaml`, the correct syntax for a strategic merge patch file reference is:\n```yaml\npatches:\n  - path: patch-replicas.yaml\n```\nUse `patches:` with a `path:` key instead of `patchesStrategicMerge:` with a bare list entry."
+    }
+  ]
+}

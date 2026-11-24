@@ -1,0 +1,494 @@
+{
+  "instance_id": "batch1/creating-financial-models",
+  "repository_url": "https://github.com/lballabio/QuantLib",
+  "repository_commit": "d570a9170894671bfeac9e815977f7e26ad46c05",
+  "gap_evidence": [
+    {
+      "gap_id": "G1",
+      "evidence": [
+        {
+          "evidence_id": "G1_E1",
+          "file_path": "CMakeLists.txt",
+          "start_line": 13,
+          "end_line": 29,
+          "retrieval_score": 51.924,
+          "matched_cues": [
+            "cmake",
+            "cmake --build",
+            "ql_build_examples",
+            "ql_thread_libraries"
+          ],
+          "content": "13: set(PACKAGE_NAME          \"QuantLib\")\n14: set(PACKAGE_VERSION       \"1.42-dev\")\n15: set(PACKAGE_VERSION_HEX   \"0x01420000\")\n16: set(PACKAGE_STRING        \"${PACKAGE_NAME} ${PACKAGE_VERSION}\")\n17: set(PACKAGE_TARNAME       \"${PACKAGE_NAME}-${PACKAGE_VERSION}\")\n18: set(PACKAGE_BUGREPORT     \"https://github.com/lballabio/QuantLib/issues/\")\n19: \n20: # Default build type for single-config generators (set this before project() command)\n21: # For multi-config generators, such as Visual Studio, use: cmake --build . --config=<CONFIG>\n22: if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL \"\")\n23:     set(CMAKE_BUILD_TYPE \"Release\" CACHE\n24:         STRING \"Build type for single-config generators\" FORCE)\n25: endif()\n26: \n27: project(${PACKAGE_NAME} LANGUAGES CXX DESCRIPTION \"The QuantLib C++ Library\")\n28: \n29: # Path for package-local cmake modules",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E2",
+          "file_path": "CMakeLists.txt",
+          "start_line": 34,
+          "end_line": 50,
+          "retrieval_score": 51.924,
+          "matched_cues": [
+            "cmake",
+            "cmake --build",
+            "ql_build_examples",
+            "ql_thread_libraries"
+          ],
+          "content": "34: set(QL_INSTALL_LIBDIR \"lib\" CACHE STRING \"Installation directory for libraries\")\n35: set(QL_INSTALL_INCLUDEDIR \"include\" CACHE STRING \"Installation directory for headers\")\n36: set(QL_INSTALL_EXAMPLESDIR \"lib/QuantLib/examples\" CACHE STRING\n37:     \"Installation directory for examples\")\n38: set(QL_INSTALL_CMAKEDIR \"lib/cmake/${PACKAGE_NAME}\" CACHE STRING\n39:     \"Installation directory for CMake scripts\")\n40: \n41: # Options\n42: option(QL_BUILD_EXAMPLES \"Build examples\" ON)\n43: option(QL_BUILD_TEST_SUITE \"Build test suite\" ON)\n44: option(QL_BUILD_FUZZ_TEST_SUITE \"Build fuzz test suite\" OFF) \n45: option(QL_ENABLE_OPENMP \"Detect and use OpenMP\" OFF)\n46: option(QL_ENABLE_PARALLEL_UNIT_TEST_RUNNER \"Enable the parallel unit test runner\" OFF)\n47: option(QL_ENABLE_SESSIONS \"Singletons return different instances for different sessions\" OFF)\n48: option(QL_ENABLE_THREAD_SAFE_OBSERVER_PATTERN \"Enable the thread-safe observer pattern\" OFF)\n49: option(QL_ENABLE_TRACING \"Tracing messages should be allowed\" OFF)\n50: option(QL_ENABLE_DEFAULT_WARNING_LEVEL \"Enable the default warning level to pass the ci pipeline\" ON)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E3",
+          "file_path": "CMakeLists.txt",
+          "start_line": 249,
+          "end_line": 265,
+          "retrieval_score": 51.924,
+          "matched_cues": [
+            "cmake",
+            "cmake --build",
+            "ql_build_examples",
+            "ql_thread_libraries"
+          ],
+          "content": "249: # extension subdirectories if they exist (hook for external projects)\n250: foreach(extdir ${QL_EXTERNAL_SUBDIRECTORIES})\n251:     get_filename_component(name_without_dir \"${extdir}\" NAME)\n252:     add_subdirectory(${extdir} ${name_without_dir})\n253: endforeach()\n254: \n255: # Add subdirectories\n256: add_subdirectory(ql)\n257: if (QL_BUILD_EXAMPLES)\n258:     add_subdirectory(Examples)\n259: endif()\n260: if (QL_BUILD_TEST_SUITE)\n261:     add_subdirectory(test-suite)\n262: endif()\n263: \n264: if ('${CMAKE_CXX_COMPILER_ID}' MATCHES 'Clang' AND  QL_BUILD_FUZZ_TEST_SUITE)\n265:     add_subdirectory(fuzz-test-suite)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E4",
+          "file_path": "ql/CMakeLists.txt",
+          "start_line": 1208,
+          "end_line": 1224,
+          "retrieval_score": 27.552,
+          "matched_cues": [
+            "cmake",
+            "flatforward",
+            "ql_library",
+            "sensitivityanalysis"
+          ],
+          "content": "1208:     experimental/models/squarerootclvmodel.hpp\n1209:     experimental/processes/extendedblackscholesprocess.hpp\n1210:     experimental/processes/extendedornsteinuhlenbeckprocess.hpp\n1211:     experimental/processes/extouwithjumpsprocess.hpp\n1212:     experimental/processes/gemanroncoroniprocess.hpp\n1213:     experimental/processes/klugeextouprocess.hpp\n1214:     experimental/processes/vegastressedblackscholesprocess.hpp\n1215:     experimental/risk/creditriskplus.hpp\n1216:     experimental/risk/sensitivityanalysis.hpp\n1217:     experimental/shortrate/generalizedhullwhite.hpp\n1218:     experimental/shortrate/generalizedornsteinuhlenbeckprocess.hpp\n1219:     experimental/swaptions/haganirregularswaptionengine.hpp\n1220:     experimental/swaptions/irregularswap.hpp\n1221:     experimental/swaptions/irregularswaption.hpp\n1222:     experimental/termstructures/basisswapratehelpers.hpp\n1223:     experimental/termstructures/crosscurrencyratehelpers.hpp\n1224:     experimental/variancegamma/analyticvariancegammaengine.hpp",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E5",
+          "file_path": "ql/CMakeLists.txt",
+          "start_line": 2401,
+          "end_line": 2417,
+          "retrieval_score": 27.552,
+          "matched_cues": [
+            "cmake",
+            "flatforward",
+            "ql_library",
+            "sensitivityanalysis"
+          ],
+          "content": "2401: add_custom_command(OUTPUT ${QL_GENERATED_HEADERS}\n2402:     COMMAND ${CMAKE_COMMAND}\n2403:         -DSOURCE_DIR=${PROJECT_SOURCE_DIR}\n2404:         -DBINARY_DIR=${PROJECT_BINARY_DIR}\n2405:         -P ${PROJECT_SOURCE_DIR}/cmake/GenerateHeaders.cmake\n2406:     COMMENT \"Generating headers...\"\n2407:     WORKING_DIRECTORY ${PROJECT_BINARY_DIR})\n2408: \n2409: add_library(ql_library\n2410:     ${QL_SOURCES}\n2411:     ${QL_HEADERS}\n2412:     ${QL_CONFIGURED_HEADERS}\n2413:     ${QL_GENERATED_HEADERS})\n2414: \n2415: set_target_properties(ql_library PROPERTIES\n2416:     EXPORT_NAME ${PACKAGE_NAME}\n2417:     OUTPUT_NAME ${PACKAGE_NAME}",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E6",
+          "file_path": "ql/CMakeLists.txt",
+          "start_line": 2420,
+          "end_line": 2436,
+          "retrieval_score": 27.552,
+          "matched_cues": [
+            "cmake",
+            "flatforward",
+            "ql_library",
+            "sensitivityanalysis"
+          ],
+          "content": "2420: \n2421: target_compile_definitions(ql_library PRIVATE\n2422:     QL_COMPILATION)\n2423: \n2424: target_compile_options(ql_library PRIVATE\n2425:     ${OpenMP_CXX_FLAGS})\n2426: \n2427: # CMAKE_CXX_STANDARD is always set in top-level CMakeLists\n2428: target_compile_features(ql_library PUBLIC\n2429:     cxx_std_${CMAKE_CXX_STANDARD})  \n2430: \n2431: if(MSVC AND CMAKE_UNITY_BUILD)\n2432:     # for Unity builds, we need to add /bigobj\n2433:     target_compile_options(ql_library PRIVATE \"/bigobj\")\n2434: endif()\n2435: \n2436: if(NOT \"${QL_EXTRA_LINK_LIBRARIES}\" STREQUAL \"\")",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E7",
+          "file_path": "test-suite/CMakeLists.txt",
+          "start_line": 193,
+          "end_line": 209,
+          "retrieval_score": 22.066,
+          "matched_cues": [
+            "cmake",
+            "ql_library",
+            "ql_thread_libraries"
+          ],
+          "content": "193:     add_library(ql_test OBJECT ${QL_TEST_SOURCES} ${QL_TEST_HEADERS})\n194:     if (NOT Boost_USE_STATIC_LIBS)\n195:         target_compile_definitions(ql_test PUBLIC BOOST_ALL_DYN_LINK)\n196:     endif()\n197:     if(MSVC AND CMAKE_UNITY_BUILD)\n198:         # for Unity builds, we need to add /bigobj\n199:         target_compile_options(ql_test PUBLIC \"/bigobj\")\n200:     endif()\n201:     target_link_libraries(ql_test PUBLIC ql_library ${QL_THREAD_LIBRARIES})\n202: \n203: \n204:     add_executable(ql_test_suite quantlibtestsuite.cpp)\n205:     set_source_files_properties(quantlibtestsuite.cpp PROPERTIES SKIP_UNITY_BUILD_INCLUSION true)\n206:     set_target_properties(ql_test_suite PROPERTIES OUTPUT_NAME \"quantlib-test-suite\")\n207:     target_link_libraries(ql_test_suite PRIVATE ql_test) \n208: \n209:     if (QL_INSTALL_TEST_SUITE)",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G1_E8",
+          "file_path": "ChangeLog.txt",
+          "start_line": 2141,
+          "end_line": 2157,
+          "retrieval_score": 20.942,
+          "matched_cues": [
+            "cmake",
+            "npv",
+            "ql/cashflows/cashflows.hpp",
+            "sensitivityanalysis"
+          ],
+          "content": "2141:  .../mcbasket/longstaffschwartzmultipathpricer.hpp  |   2 +-\n2142:  ql/experimental/models/normalclvmodel.hpp          |   2 +-\n2143:  ql/experimental/models/squarerootclvmodel.hpp      |   2 +-\n2144:  .../processes/extendedornsteinuhlenbeckprocess.hpp |   2 +-\n2145:  ql/experimental/risk/Makefile.am                   |  28 +-\n2146:  ql/experimental/risk/all.hpp                       |   2 -\n2147:  ql/experimental/risk/creditriskplus.cpp            | 240 --------------\n2148:  ql/experimental/risk/creditriskplus.hpp            |  74 +----\n2149:  ql/experimental/risk/sensitivityanalysis.cpp       | 350 ---------------------\n2150:  ql/experimental/risk/sensitivityanalysis.hpp       | 198 +-----------\n2151:  .../generalizedornsteinuhlenbeckprocess.hpp        |   2 +-\n2152:  .../integralhestonvarianceoptionengine.cpp         |   2 +-\n2153:  ql/functional.hpp                                  |  50 +--\n2154:  ql/indexes/equityindex.cpp                         |  12 -\n2155:  ql/indexes/equityindex.hpp                         |  10 -\n2156:  ql/instruments/makeyoyinflationcapfloor.cpp        |   7 -\n2157:  ql/instruments/makeyoyinflationcapfloor.hpp        |  10 +-",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G2",
+      "evidence": [
+        {
+          "evidence_id": "G2_E1",
+          "file_path": "Examples/Bonds/Bonds.cpp",
+          "start_line": 28,
+          "end_line": 44,
+          "retrieval_score": 30.234,
+          "matched_cues": [
+            "euribor",
+            "ql/indexes/ibor/euribor.hpp"
+          ],
+          "content": "28: #endif\n29: #include <ql/instruments/bonds/zerocouponbond.hpp>\n30: #include <ql/instruments/bonds/floatingratebond.hpp>\n31: #include <ql/pricingengines/bond/discountingbondengine.hpp>\n32: #include <ql/cashflows/couponpricer.hpp>\n33: #include <ql/termstructures/yield/piecewiseyieldcurve.hpp>\n34: #include <ql/termstructures/yield/bondhelpers.hpp>\n35: #include <ql/termstructures/volatility/optionlet/constantoptionletvol.hpp>\n36: #include <ql/indexes/ibor/euribor.hpp>\n37: #include <ql/indexes/ibor/usdlibor.hpp>\n38: #include <ql/time/calendars/target.hpp>\n39: #include <ql/time/calendars/unitedstates.hpp>\n40: #include <ql/time/daycounters/actualactual.hpp>\n41: #include <ql/time/daycounters/actual360.hpp>\n42: #include <ql/time/daycounters/thirty360.hpp>\n43: \n44: #include <iostream>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E2",
+          "file_path": "Examples/Bonds/Bonds.cpp",
+          "start_line": 172,
+          "end_line": 188,
+          "retrieval_score": 30.234,
+          "matched_cues": [
+            "euribor",
+            "ql/indexes/ibor/euribor.hpp"
+          ],
+          "content": "172:         // the NPV, that is, the value as of today's date of holding\n173:         // the bond and receiving its payments.\n174: \n175:         auto bondDiscountingTermStructure = ext::make_shared<PiecewiseYieldCurve<Discount,LogLinear>>(\n176:                          todaysDate, bondHelpers, termStructureDayCounter);\n177: \n178: \n179:         /******************************************\n180:          * BUILDING THE EURIBOR FORECASTING CURVE *\n181:          ******************************************/\n182: \n183:         // 6m deposit\n184:         Rate d6mQuote=0.03385;\n185:         // swaps, fixed vs 6m\n186:         Rate s2yQuote=0.0295;\n187:         Rate s3yQuote=0.0323;\n188:         Rate s5yQuote=0.0359;",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E3",
+          "file_path": "Examples/Bonds/Bonds.cpp",
+          "start_line": 205,
+          "end_line": 221,
+          "retrieval_score": 30.234,
+          "matched_cues": [
+            "euribor",
+            "ql/indexes/ibor/euribor.hpp"
+          ],
+          "content": "205:                  6*Months, fixingDays,\n206:                  calendar, ModifiedFollowing,\n207:                  true, depositDayCounter);\n208: \n209:         // setup swaps\n210:         auto swFixedLegFrequency = Annual;\n211:         auto swFixedLegConvention = Unadjusted;\n212:         auto swFixedLegDayCounter = Thirty360(Thirty360::European);\n213:         auto swFloatingLegIndex = ext::make_shared<Euribor6M>();\n214: \n215:         auto s2y = ext::make_shared<SwapRateHelper>(\n216:                  Handle<Quote>(s2yRate), 2*Years,\n217:                  calendar, swFixedLegFrequency,\n218:                  swFixedLegConvention, swFixedLegDayCounter,\n219:                  swFloatingLegIndex);\n220:         auto s3y = ext::make_shared<SwapRateHelper>(\n221:                  Handle<Quote>(s3yRate), 3*Years,",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E4",
+          "file_path": "Examples/BermudanSwaption/BermudanSwaption.cpp",
+          "start_line": 29,
+          "end_line": 45,
+          "retrieval_score": 10.234,
+          "matched_cues": [
+            "euribor",
+            "ql/indexes/ibor/euribor.hpp"
+          ],
+          "content": "29: #include <ql/pricingengines/swaption/treeswaptionengine.hpp>\n30: #include <ql/pricingengines/swaption/jamshidianswaptionengine.hpp>\n31: #include <ql/pricingengines/swaption/g2swaptionengine.hpp>\n32: #include <ql/pricingengines/swaption/fdhullwhiteswaptionengine.hpp>\n33: #include <ql/pricingengines/swaption/fdg2swaptionengine.hpp>\n34: #include <ql/models/shortrate/calibrationhelpers/swaptionhelper.hpp>\n35: #include <ql/models/shortrate/onefactormodels/blackkarasinski.hpp>\n36: #include <ql/math/optimization/levenbergmarquardt.hpp>\n37: #include <ql/indexes/ibor/euribor.hpp>\n38: #include <ql/cashflows/coupon.hpp>\n39: #include <ql/quotes/simplequote.hpp>\n40: #include <ql/termstructures/yield/flatforward.hpp>\n41: #include <ql/time/calendars/target.hpp>\n42: #include <ql/time/daycounters/thirty360.hpp>\n43: #include <ql/utilities/dataformatters.hpp>\n44: \n45: #include <iostream>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E5",
+          "file_path": "Examples/BermudanSwaption/BermudanSwaption.cpp",
+          "start_line": 110,
+          "end_line": 126,
+          "retrieval_score": 10.234,
+          "matched_cues": [
+            "euribor",
+            "ql/indexes/ibor/euribor.hpp"
+          ],
+          "content": "110:         // Define the ATM/OTM/ITM swaps\n111:         Frequency fixedLegFrequency = Annual;\n112:         BusinessDayConvention fixedLegConvention = Unadjusted;\n113:         BusinessDayConvention floatingLegConvention = ModifiedFollowing;\n114:         DayCounter fixedLegDayCounter = Thirty360(Thirty360::European);\n115:         Frequency floatingLegFrequency = Semiannual;\n116:         Swap::Type type = Swap::Payer;\n117:         Rate dummyFixedRate = 0.03;\n118:         auto indexSixMonths = ext::make_shared<Euribor6M>(rhTermStructure);\n119: \n120:         Date startDate = calendar.advance(settlementDate,1,Years,\n121:                                           floatingLegConvention);\n122:         Date maturity = calendar.advance(startDate,5,Years,\n123:                                          floatingLegConvention);\n124:         Schedule fixedSchedule(startDate,maturity,Period(fixedLegFrequency),\n125:                                calendar,fixedLegConvention,fixedLegConvention,\n126:                                DateGeneration::Forward,false);",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E6",
+          "file_path": "Examples/CDS/CDS.cpp",
+          "start_line": 20,
+          "end_line": 36,
+          "retrieval_score": 10.234,
+          "matched_cues": [
+            "euribor",
+            "ql/indexes/ibor/euribor.hpp"
+          ],
+          "content": "20: \n21: #include <ql/qldefines.hpp>\n22: #if !defined(BOOST_ALL_NO_LIB) && defined(BOOST_MSVC)\n23: #  include <ql/auto_link.hpp>\n24: #endif\n25: #include <ql/cashflows/fixedratecoupon.hpp>\n26: #include <ql/cashflows/iborcoupon.hpp>\n27: #include <ql/instruments/creditdefaultswap.hpp>\n28: #include <ql/indexes/ibor/euribor.hpp>\n29: #include <ql/pricingengines/credit/midpointcdsengine.hpp>\n30: #include <ql/pricingengines/credit/isdacdsengine.hpp>\n31: #include <ql/termstructures/credit/piecewisedefaultcurve.hpp>\n32: #include <ql/termstructures/credit/defaultprobabilityhelpers.hpp>\n33: #include <ql/termstructures/credit/flathazardrate.hpp>\n34: #include <ql/termstructures/yield/flatforward.hpp>\n35: #include <ql/termstructures/yield/piecewiseyieldcurve.hpp>\n36: #include <ql/termstructures/yield/ratehelpers.hpp>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E7",
+          "file_path": "Examples/CDS/CDS.cpp",
+          "start_line": 244,
+          "end_line": 260,
+          "retrieval_score": 10.234,
+          "matched_cues": [
+            "euribor",
+            "ql/indexes/ibor/euribor.hpp"
+          ],
+          "content": "244:                                               false, Actual360());\n245:     auto dp9m = ext::make_shared<DepositRateHelper>(0.002560, 9 * Months, 2,\n246:                                               TARGET(), ModifiedFollowing,\n247:                                               false, Actual360());\n248:     auto dp12m = ext::make_shared<DepositRateHelper>(0.003370, 12 * Months, 2,\n249:                                               TARGET(), ModifiedFollowing,\n250:                                               false, Actual360());\n251: \n252:     // intentionally we do not provide a fixing for the euribor index used for\n253:     // bootstrapping in order to be compliant with the ISDA specification\n254: \n255:     auto euribor6m = ext::make_shared<Euribor>(Euribor(6 * Months));\n256: \n257:     DayCounter thirty360 = Thirty360(Thirty360::BondBasis);\n258: \n259:     auto sw2y = ext::make_shared<SwapRateHelper>(\n260:         0.002230, 2 * Years, TARGET(), Annual, ModifiedFollowing, thirty360,",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G2_E8",
+          "file_path": "Examples/CDS/CDS.cpp",
+          "start_line": 262,
+          "end_line": 278,
+          "retrieval_score": 10.234,
+          "matched_cues": [
+            "euribor",
+            "ql/indexes/ibor/euribor.hpp"
+          ],
+          "content": "262:     auto sw3y = ext::make_shared<SwapRateHelper>(\n263:         0.002760, 3 * Years, TARGET(), Annual, ModifiedFollowing, thirty360,\n264:         euribor6m);\n265:     auto sw4y = ext::make_shared<SwapRateHelper>(\n266:         0.003530, 4 * Years, TARGET(), Annual, ModifiedFollowing, thirty360,\n267:         euribor6m);\n268:     auto sw5y = ext::make_shared<SwapRateHelper>(\n269:         0.004520, 5 * Years, TARGET(), Annual, ModifiedFollowing, thirty360,\n270:         euribor6m);\n271:     auto sw6y = ext::make_shared<SwapRateHelper>(\n272:         0.005720, 6 * Years, TARGET(), Annual, ModifiedFollowing, thirty360,\n273:         euribor6m);\n274:     auto sw7y = ext::make_shared<SwapRateHelper>(\n275:         0.007050, 7 * Years, TARGET(), Annual, ModifiedFollowing, thirty360,\n276:         euribor6m);\n277:     auto sw8y = ext::make_shared<SwapRateHelper>(\n278:         0.008420, 8 * Years, TARGET(), Annual, ModifiedFollowing, thirty360,",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G3",
+      "evidence": [
+        {
+          "evidence_id": "G3_E1",
+          "file_path": "ql/termstructures/yield/flatforward.hpp",
+          "start_line": 13,
+          "end_line": 29,
+          "retrieval_score": 32.438,
+          "matched_cues": [
+            "flatforward",
+            "handle<quote>"
+          ],
+          "content": "13:  <quantlib-dev@lists.sf.net>. The license is also available online at\n14:  <https://www.quantlib.org/license.shtml>.\n15: \n16:  This program is distributed in the hope that it will be useful, but WITHOUT\n17:  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS\n18:  FOR A PARTICULAR PURPOSE.  See the license for more details.\n19: */\n20: \n21: /*! \\file flatforward.hpp\n22:     \\brief flat forward rate term structure\n23: */\n24: \n25: #ifndef quantlib_flat_forward_curve_hpp\n26: #define quantlib_flat_forward_curve_hpp\n27: \n28: #include <ql/patterns/lazyobject.hpp>\n29: #include <ql/termstructures/yieldtermstructure.hpp>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E2",
+          "file_path": "ql/termstructures/yield/flatforward.hpp",
+          "start_line": 33,
+          "end_line": 49,
+          "retrieval_score": 32.438,
+          "matched_cues": [
+            "flatforward",
+            "handle<quote>"
+          ],
+          "content": "33: \n34:     //! Flat interest-rate curve\n35:     /*! \\ingroup yieldtermstructures */\n36:     class FlatForward : public YieldTermStructure,\n37:                         public LazyObject {\n38:       public:\n39:         //! \\name Constructors\n40:         //@{\n41:         FlatForward(const Date& referenceDate,\n42:                     Handle<Quote> forward,\n43:                     const DayCounter& dayCounter,\n44:                     Compounding compounding = Continuous,\n45:                     Frequency frequency = Annual);\n46:         FlatForward(const Date& referenceDate,\n47:                     Rate forward,\n48:                     const DayCounter& dayCounter,\n49:                     Compounding compounding = Continuous,",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E3",
+          "file_path": "ql/termstructures/yield/flatforward.hpp",
+          "start_line": 89,
+          "end_line": 105,
+          "retrieval_score": 32.438,
+          "matched_cues": [
+            "flatforward",
+            "handle<quote>"
+          ],
+          "content": "89:         Handle<Quote> forward_;\n90:         Compounding compounding_;\n91:         Frequency frequency_;\n92:         mutable InterestRate rate_;\n93:     };\n94: \n95:     // inline definitions\n96: \n97:     inline void FlatForward::update() {\n98:         LazyObject::update();\n99:         YieldTermStructure::update();\n100:     }\n101: \n102:     inline DiscountFactor FlatForward::discountImpl(Time t) const {\n103:         calculate();\n104:         return rate_.discountFactor(t);\n105:     }",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E4",
+          "file_path": "test-suite/europeanoption.cpp",
+          "start_line": 29,
+          "end_line": 45,
+          "retrieval_score": 19.507,
+          "matched_cues": [
+            "discount rate",
+            "flatforward",
+            "handle<quote>",
+            "ql/termstructures/yield/flatforward.hpp"
+          ],
+          "content": "29: #include <ql/math/interpolations/bilinearinterpolation.hpp>\n30: #include <ql/pricingengines/vanilla/analyticeuropeanengine.hpp>\n31: #include <ql/pricingengines/vanilla/analyticdividendeuropeanengine.hpp>\n32: #include <ql/pricingengines/vanilla/binomialengine.hpp>\n33: #include <ql/pricingengines/vanilla/fdblackscholesvanillaengine.hpp>\n34: #include <ql/experimental/variancegamma/fftvanillaengine.hpp>\n35: #include <ql/pricingengines/vanilla/mceuropeanengine.hpp>\n36: #include <ql/pricingengines/vanilla/integralengine.hpp>\n37: #include <ql/termstructures/yield/flatforward.hpp>\n38: #include <ql/termstructures/yield/zerocurve.hpp>\n39: #include <ql/termstructures/yield/forwardcurve.hpp>\n40: #include <ql/termstructures/volatility/equityfx/blackconstantvol.hpp>\n41: #include <ql/termstructures/volatility/equityfx/blackvariancesurface.hpp>\n42: #include <ql/utilities/dataformatters.hpp>\n43: #include <map>\n44: \n45: using namespace QuantLib;",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E5",
+          "file_path": "test-suite/europeanoption.cpp",
+          "start_line": 1465,
+          "end_line": 1481,
+          "retrieval_score": 19.507,
+          "matched_cues": [
+            "discount rate",
+            "flatforward",
+            "handle<quote>",
+            "ql/termstructures/yield/flatforward.hpp"
+          ],
+          "content": "1465:     EuropeanOption option(payoff, exercise);\n1466:     Real npvSingleCurve, npvMultiCurve;\n1467:     option.setPricingEngine(engineSingleCurve);\n1468:     npvSingleCurve = option.NPV();\n1469:     option.setPricingEngine(engineMultiCurve);\n1470:     npvMultiCurve = option.NPV();\n1471:     // check that NPV is the same regardless of engine interface\n1472:     BOOST_CHECK_EQUAL(npvSingleCurve, npvMultiCurve);\n1473:     // check that NPV changes if discount rate is changed\n1474:     discRate->setValue(0.023);\n1475:     npvMultiCurve = option.NPV();\n1476:     BOOST_CHECK_NE(npvSingleCurve, npvMultiCurve);\n1477: }\n1478: \n1479: BOOST_AUTO_TEST_CASE(testPDESchemes) {\n1480:     BOOST_TEST_MESSAGE(\"Testing different PDE schemes to solve Black-Scholes PDEs...\");\n1481: ",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E6",
+          "file_path": "test-suite/europeanoption.cpp",
+          "start_line": 89,
+          "end_line": 105,
+          "retrieval_score": 19.507,
+          "matched_cues": [
+            "discount rate",
+            "flatforward",
+            "handle<quote>",
+            "ql/termstructures/yield/flatforward.hpp"
+          ],
+          "content": "89:                   FFT };\n90: \n91: ext::shared_ptr<GeneralizedBlackScholesProcess>\n92: makeProcess(const ext::shared_ptr<Quote>& u,\n93:             const ext::shared_ptr<YieldTermStructure>& q,\n94:             const ext::shared_ptr<YieldTermStructure>& r,\n95:             const ext::shared_ptr<BlackVolTermStructure>& vol) {\n96:     return ext::make_shared<BlackScholesMertonProcess>(\n97:            Handle<Quote>(u),\n98:            Handle<YieldTermStructure>(q),\n99:            Handle<YieldTermStructure>(r),\n100:            Handle<BlackVolTermStructure>(vol));\n101: }\n102: \n103: ext::shared_ptr<VanillaOption>\n104: makeOption(const ext::shared_ptr<StrikedTypePayoff>& payoff,\n105:            const ext::shared_ptr<Exercise>& exercise,",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E7",
+          "file_path": "Examples/BermudanSwaption/BermudanSwaption.cpp",
+          "start_line": 32,
+          "end_line": 48,
+          "retrieval_score": 11.91,
+          "matched_cues": [
+            "flatforward",
+            "handle<quote>",
+            "ql/termstructures/yield/flatforward.hpp"
+          ],
+          "content": "32: #include <ql/pricingengines/swaption/fdhullwhiteswaptionengine.hpp>\n33: #include <ql/pricingengines/swaption/fdg2swaptionengine.hpp>\n34: #include <ql/models/shortrate/calibrationhelpers/swaptionhelper.hpp>\n35: #include <ql/models/shortrate/onefactormodels/blackkarasinski.hpp>\n36: #include <ql/math/optimization/levenbergmarquardt.hpp>\n37: #include <ql/indexes/ibor/euribor.hpp>\n38: #include <ql/cashflows/coupon.hpp>\n39: #include <ql/quotes/simplequote.hpp>\n40: #include <ql/termstructures/yield/flatforward.hpp>\n41: #include <ql/time/calendars/target.hpp>\n42: #include <ql/time/daycounters/thirty360.hpp>\n43: #include <ql/utilities/dataformatters.hpp>\n44: \n45: #include <iostream>\n46: #include <iomanip>\n47: \n48: using namespace QuantLib;",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G3_E8",
+          "file_path": "Examples/BermudanSwaption/BermudanSwaption.cpp",
+          "start_line": 98,
+          "end_line": 114,
+          "retrieval_score": 11.91,
+          "matched_cues": [
+            "flatforward",
+            "handle<quote>",
+            "ql/termstructures/yield/flatforward.hpp"
+          ],
+          "content": "98:         Date todaysDate(15, February, 2002);\n99:         Calendar calendar = TARGET();\n100:         Date settlementDate(19, February, 2002);\n101:         Settings::instance().evaluationDate() = todaysDate;\n102: \n103:         // flat yield term structure impling 1x5 swap at 5%\n104:         auto flatRate = ext::make_shared<SimpleQuote>(0.04875825);\n105:         Handle<YieldTermStructure> rhTermStructure(\n106:             ext::make_shared<FlatForward>(\n107:                       settlementDate, Handle<Quote>(flatRate),\n108:                                       Actual365Fixed()));\n109: \n110:         // Define the ATM/OTM/ITM swaps\n111:         Frequency fixedLegFrequency = Annual;\n112:         BusinessDayConvention fixedLegConvention = Unadjusted;\n113:         BusinessDayConvention floatingLegConvention = ModifiedFollowing;\n114:         DayCounter fixedLegDayCounter = Thirty360(Thirty360::European);",
+          "line_truncated": false
+        }
+      ]
+    },
+    {
+      "gap_id": "G4",
+      "evidence": [
+        {
+          "evidence_id": "G4_E1",
+          "file_path": "test-suite/bonds.cpp",
+          "start_line": 36,
+          "end_line": 52,
+          "retrieval_score": 32.823,
+          "matched_cues": [
+            "cashflows::npv",
+            "fixedratecoupon",
+            "npv",
+            "ql/cashflows/cashflows.hpp",
+            "ql/cashflows/fixedratecoupon.hpp",
+            "ql/time/schedule.hpp",
+            "schedule"
+          ],
+          "content": "36: #include <ql/time/daycounters/actual360.hpp>\n37: #include <ql/time/daycounters/actualactual.hpp>\n38: #include <ql/time/daycounters/business252.hpp>\n39: #include <ql/indexes/ibor/audlibor.hpp>\n40: #include <ql/indexes/ibor/usdlibor.hpp>\n41: #include <ql/quotes/simplequote.hpp>\n42: #include <ql/utilities/dataformatters.hpp>\n43: #include <ql/time/schedule.hpp>\n44: #include <ql/cashflows/fixedratecoupon.hpp>\n45: #include <ql/cashflows/simplecashflow.hpp>\n46: #include <ql/cashflows/couponpricer.hpp>\n47: #include <ql/cashflows/cashflows.hpp>\n48: #include <ql/pricingengines/bond/discountingbondengine.hpp>\n49: #include <ql/pricingengines/bond/bondfunctions.hpp>\n50: #include <ql/termstructures/credit/flathazardrate.hpp>\n51: #include <ql/termstructures/yield/flatforward.hpp>\n52: #include <ql/currencies/europe.hpp>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E2",
+          "file_path": "test-suite/bonds.cpp",
+          "start_line": 1267,
+          "end_line": 1283,
+          "retrieval_score": 32.823,
+          "matched_cues": [
+            "cashflows::npv",
+            "fixedratecoupon",
+            "npv",
+            "ql/cashflows/cashflows.hpp",
+            "ql/cashflows/fixedratecoupon.hpp",
+            "ql/time/schedule.hpp",
+            "schedule"
+          ],
+          "content": "1267: \n1268:         Time duration = CashFlows::duration(leg, yield, dc, comp, freq, Duration::Modified, false,\n1269:                                             i.settlementDate);\n1270:         ASSERT_CLOSE(\"duration\", i.settlementDate, duration, i.duration, 1e-6);\n1271: \n1272:         Real convexity = CashFlows::convexity(leg, yield, dc, comp, freq, false, i.settlementDate);\n1273:         ASSERT_CLOSE(\"convexity\", i.settlementDate, convexity, i.convexity, 1e-6);\n1274: \n1275:         Real calcnpv = CashFlows::npv(leg, yield, dc, comp, freq, false, i.settlementDate);\n1276:         ASSERT_CLOSE(\"NPV from yield\", i.settlementDate, calcnpv, i.NPV, 1e-6);\n1277: \n1278:         Real calcprice = calcnpv - accrued;\n1279:         ASSERT_CLOSE(\"price from yield\", i.settlementDate, calcprice, i.testPrice, 1e-6);\n1280:     }\n1281: }\n1282: \n1283: BOOST_AUTO_TEST_CASE(testExCouponAustralianBond) {",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E3",
+          "file_path": "test-suite/bonds.cpp",
+          "start_line": 1395,
+          "end_line": 1411,
+          "retrieval_score": 32.823,
+          "matched_cues": [
+            "cashflows::npv",
+            "fixedratecoupon",
+            "npv",
+            "ql/cashflows/cashflows.hpp",
+            "ql/cashflows/fixedratecoupon.hpp",
+            "ql/time/schedule.hpp",
+            "schedule"
+          ],
+          "content": "1395: \n1396:         Time duration = CashFlows::duration(leg, yield, dc, comp, freq, Duration::Modified, false,\n1397:                                             i.settlementDate);\n1398:         ASSERT_CLOSE(\"duration\", i.settlementDate, duration, i.duration, 1e-5);\n1399: \n1400:         Real convexity = CashFlows::convexity(leg, yield, dc, comp, freq, false, i.settlementDate);\n1401:         ASSERT_CLOSE(\"convexity\", i.settlementDate, convexity, i.convexity, 1e-4);\n1402: \n1403:         Real calcnpv = CashFlows::npv(leg, yield, dc, comp, freq, false, i.settlementDate);\n1404:         ASSERT_CLOSE(\"NPV from yield\", i.settlementDate, calcnpv, i.NPV, 1e-3);\n1405: \n1406:         Real calcprice = calcnpv - accrued;\n1407:         ASSERT_CLOSE(\"price from yield\", i.settlementDate, calcprice, i.testPrice, 1e-3);\n1408:     }\n1409: }\n1410: \n1411: /// <summary>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E4",
+          "file_path": "test-suite/cashflows.cpp",
+          "start_line": 17,
+          "end_line": 33,
+          "retrieval_score": 32.823,
+          "matched_cues": [
+            "cashflows::npv",
+            "fixedratecoupon",
+            "npv",
+            "ql/cashflows/cashflows.hpp",
+            "ql/cashflows/fixedratecoupon.hpp",
+            "ql/time/schedule.hpp",
+            "schedule"
+          ],
+          "content": "17:  FOR A PARTICULAR PURPOSE.  See the license for more details.\n18: */\n19: \n20: #include \"preconditions.hpp\"\n21: #include \"toplevelfixture.hpp\"\n22: #include \"utilities.hpp\"\n23: #include <ql/cashflows/cashflows.hpp>\n24: #include <ql/cashflows/simplecashflow.hpp>\n25: #include <ql/cashflows/fixedratecoupon.hpp>\n26: #include <ql/cashflows/floatingratecoupon.hpp>\n27: #include <ql/cashflows/iborcoupon.hpp>\n28: #include <ql/cashflows/overnightindexedcoupon.hpp>\n29: #include <ql/cashflows/couponpricer.hpp>\n30: #include <ql/termstructures/volatility/optionlet/constantoptionletvol.hpp>\n31: #include <ql/quotes/simplequote.hpp>\n32: #include <ql/time/calendars/target.hpp>\n33: #include <ql/time/daycounters/actualactual.hpp>",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E5",
+          "file_path": "test-suite/cashflows.cpp",
+          "start_line": 151,
+          "end_line": 167,
+          "retrieval_score": 32.823,
+          "matched_cues": [
+            "cashflows::npv",
+            "fixedratecoupon",
+            "npv",
+            "ql/cashflows/cashflows.hpp",
+            "ql/cashflows/fixedratecoupon.hpp",
+            "ql/time/schedule.hpp",
+            "schedule"
+          ],
+          "content": "151:     CHECK_INCLUSION(2, 3, false);\n152: \n153: \n154:     // no discount to make calculations easier\n155:     InterestRate no_discount(0.0, Actual365Fixed(), Continuous, Annual);\n156: \n157:     #define CHECK_NPV(includeRef, expected)                             \\\n158:     do {                                                            \\\n159:         Real NPV = CashFlows::npv(leg, no_discount, includeRef, today); \\\n160:         if (std::fabs(NPV - expected) > 1e-6) {                         \\\n161:             BOOST_ERROR(\"NPV mismatch:\\n\"                               \\\n162:                         << \"    calculated: \" << NPV << \"\\n\"            \\\n163:                         << \"    expected: \" << expected);               \\\n164:         }                                                               \\\n165:     } while (false);\n166: \n167:     // no override",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E6",
+          "file_path": "test-suite/cashflows.cpp",
+          "start_line": 448,
+          "end_line": 464,
+          "retrieval_score": 32.823,
+          "matched_cues": [
+            "cashflows::npv",
+            "fixedratecoupon",
+            "npv",
+            "ql/cashflows/cashflows.hpp",
+            "ql/cashflows/fixedratecoupon.hpp",
+            "ql/time/schedule.hpp",
+            "schedule"
+          ],
+          "content": "448:         0.01, ActualActual(ActualActual::ISMA));\n449:     Leg leg3 = FixedRateLeg(schedule3).withNotionals(100.0).withCouponRates(\n450:         0.01, ActualActual(ActualActual::ISMA));\n451: \n452:     // check reference period of first and last coupon in all variants\n453:     // for the first two we expect a 6M reference period, for the\n454:     // third it can not be constructed, so should be equal to the\n455:     // respective schedule period\n456:     ext::shared_ptr<FixedRateCoupon> firstCpn =\n457:         ext::dynamic_pointer_cast<FixedRateCoupon>(leg.front());\n458:     ext::shared_ptr<FixedRateCoupon> lastCpn =\n459:         ext::dynamic_pointer_cast<FixedRateCoupon>(leg.back());\n460:     BOOST_REQUIRE(firstCpn != nullptr);\n461:     BOOST_REQUIRE(lastCpn != nullptr);\n462:     BOOST_CHECK_EQUAL(firstCpn->referencePeriodStart(), Date(25, Mar, 2017));\n463:     BOOST_CHECK_EQUAL(firstCpn->referencePeriodEnd(), Date(25, Sep, 2017));\n464:     BOOST_CHECK_EQUAL(lastCpn->referencePeriodStart(), Date(25, Sep, 2020));",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E7",
+          "file_path": "ql/cashflows/cashflows.hpp",
+          "start_line": 38,
+          "end_line": 54,
+          "retrieval_score": 28.449,
+          "matched_cues": [
+            "npv"
+          ],
+          "content": "38: \n39:     //! %cashflow-analysis functions\n40:     /*! \\todo add tests */\n41:     class CashFlows {\n42:       private:\n43:         class IrrFinder {\n44:           public:\n45:             IrrFinder(const Leg& leg,\n46:                       Real npv,\n47:                       DayCounter dayCounter,\n48:                       Compounding comp,\n49:                       Frequency freq,\n50:                       const ext::optional<bool>& includeSettlementDateFlows,\n51:                       Date settlementDate,\n52:                       Date npvDate);\n53: \n54:             Real operator()(Rate y) const;",
+          "line_truncated": false
+        },
+        {
+          "evidence_id": "G4_E8",
+          "file_path": "ql/cashflows/cashflows.hpp",
+          "start_line": 57,
+          "end_line": 73,
+          "retrieval_score": 28.449,
+          "matched_cues": [
+            "npv"
+          ],
+          "content": "57:             void checkSign() const;\n58: \n59:             const Leg& leg_;\n60:             Real npv_;\n61:             DayCounter dayCounter_;\n62:             Compounding compounding_;\n63:             Frequency frequency_;\n64:             ext::optional<bool> includeSettlementDateFlows_;\n65:             Date settlementDate_, npvDate_;\n66:         };\n67:       public:\n68:         CashFlows() = delete;\n69:         CashFlows(CashFlows&&) = delete;\n70:         CashFlows(const CashFlows&) = delete;\n71:         CashFlows& operator=(CashFlows&&) = delete;\n72:         CashFlows& operator=(const CashFlows&) = delete;\n73:         ~CashFlows() = default;",
+          "line_truncated": false
+        }
+      ]
+    }
+  ]
+}

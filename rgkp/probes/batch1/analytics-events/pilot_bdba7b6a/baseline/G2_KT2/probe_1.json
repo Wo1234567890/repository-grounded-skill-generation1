@@ -1,0 +1,32 @@
+{
+  "input": {
+    "question": "A developer writes a unit test file that directly imports from `frontend/src/metabase/lib/analytics.ts`. When running the tests, the entire test suite fails at import time before any test cases execute. Which of the following is the most likely cause based on the contents of `analytics.ts`?",
+    "options": {
+      "A": "The `analytics.ts` file uses ES module syntax (`import`/`export`), which Jest cannot process without a Babel or ts-jest transform configured.",
+      "B": "The `analytics.ts` file imports from `@snowplow/browser-tracker`, `metabase/env`, and `metabase/lib/settings`, which perform side effects or depend on runtime configuration not available in the test environment unless mocked.",
+      "C": "The `analytics.ts` file re-exports types from `metabase-types/analytics`, and Jest cannot handle `import type` declarations without special configuration.",
+      "D": "The `analytics.ts` file imports from `metabase/lib/settings`, which is a circular dependency that causes a module resolution error at import time."
+    }
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "raw_response": "B",
+  "answer": "B",
+  "valid": true,
+  "stop_reason": "end_turn",
+  "wall_time_sec": 0.6119310000212863,
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "not_available",
+    "input_tokens": 293,
+    "output_tokens": 4,
+    "output_tokens_details": null,
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "speed": "standard"
+  }
+}

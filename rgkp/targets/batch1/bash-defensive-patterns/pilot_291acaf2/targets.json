@@ -1,0 +1,116 @@
+{
+  "gap_results": [
+    {
+      "gap_id": "G1",
+      "assessment": "insufficient_evidence",
+      "assessment_reason": "The repository evidence consists entirely of ShellCheck's own internal Haskell source code (analytics, parser, shell support checks) and test properties. None of this evidence describes or prescribes what valid, warning-free Bash patterns look like in the shell scripts being created (safe_backup.sh, common_utils.sh). The evidence does not contain the content of these scripts, nor does it provide rules about how to write them to pass ShellCheck. The gap is fundamentally about an environment blocker (tool execution denied) preventing validation, not about missing knowledge of Bash patterns that could be derived from this repository's evidence.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G1_E1",
+          "type": "irrelevant",
+          "reason": "This is ShellCheck's internal Haskell logic for analyzing pipeline cleanup patterns, not guidance for writing shell scripts."
+        },
+        {
+          "evidence_id": "G1_E2",
+          "type": "irrelevant",
+          "reason": "These are Haskell property-based test cases for ShellCheck's unassigned reference checker, not guidance for writing shell scripts."
+        },
+        {
+          "evidence_id": "G1_E3",
+          "type": "irrelevant",
+          "reason": "These are Haskell test properties for unused assignment checking in ShellCheck internals, not guidance for writing shell scripts."
+        },
+        {
+          "evidence_id": "G1_E4",
+          "type": "irrelevant",
+          "reason": "These are ShellCheck test cases verifying bashism detection (e.g., export -f, readonly -a in sh scripts), not guidance for writing Bash scripts that pass ShellCheck."
+        },
+        {
+          "evidence_id": "G1_E5",
+          "type": "irrelevant",
+          "reason": "This is ShellCheck's internal allowed-flags configuration for POSIX shell builtins, not guidance for writing shell scripts."
+        },
+        {
+          "evidence_id": "G1_E6",
+          "type": "irrelevant",
+          "reason": "These are ShellCheck test properties for bashism detection, not guidance for writing Bash scripts."
+        },
+        {
+          "evidence_id": "G1_E7",
+          "type": "irrelevant",
+          "reason": "This is ShellCheck parser test data for annotation/directive parsing, not guidance for writing shell scripts."
+        },
+        {
+          "evidence_id": "G1_E8",
+          "type": "irrelevant",
+          "reason": "This is ShellCheck parser internals for modifier command suffix parsing, not guidance for writing shell scripts."
+        }
+      ],
+      "knowledge_targets": []
+    },
+    {
+      "gap_id": "G2",
+      "assessment": "grounded",
+      "assessment_reason": "The repository evidence shows that ShellCheck has built-in support for BATS test files, recognizing the .bats extension for shell type inference, parsing @test blocks as T_BatsTest AST nodes, and treating bats 'run' as a command wrapper. This establishes that a .bats file in the repository's test/ directory is a meaningful artifact that ShellCheck itself understands and can analyze.",
+      "evidence_classification": [
+        {
+          "evidence_id": "G2_E1",
+          "type": "descriptive",
+          "reason": "CHANGELOG entry confirms ShellCheck added support for checking files containing Bats tests, establishing that .bats files are a recognized file type in this repository's ecosystem."
+        },
+        {
+          "evidence_id": "G2_E2",
+          "type": "descriptive",
+          "reason": "CHANGELOG entry documents that .bats extension is used to infer shell type, showing how ShellCheck handles BATS files automatically."
+        },
+        {
+          "evidence_id": "G2_E3",
+          "type": "descriptive",
+          "reason": "The man page documents that ShellCheck deduces shell from .bats extension, confirming official support for BATS file analysis."
+        },
+        {
+          "evidence_id": "G2_E4",
+          "type": "descriptive",
+          "reason": "AST definition includes T_BatsTest as a first-class AST node, showing BATS test blocks are parsed and represented structurally by ShellCheck."
+        },
+        {
+          "evidence_id": "G2_E5",
+          "type": "irrelevant",
+          "reason": "Pattern synonym definitions; not directly informative about BATS file structure."
+        },
+        {
+          "evidence_id": "G2_E6",
+          "type": "irrelevant",
+          "reason": "Pattern completeness pragma; not informative about BATS file creation."
+        },
+        {
+          "evidence_id": "G2_E7",
+          "type": "descriptive",
+          "reason": "Shows that ShellCheck's ASTLib recognizes 'run' as a BATS-specific command wrapper, indicating awareness of BATS test conventions."
+        },
+        {
+          "evidence_id": "G2_E8",
+          "type": "descriptive",
+          "reason": "Documents that T_BatsTest is treated like a function for scoping purposes (e.g., local variables), establishing the semantic treatment of BATS @test blocks."
+        }
+      ],
+      "knowledge_targets": [
+        {
+          "knowledge_target": "BATS test files use the `.bats` extension and define tests using `@test 'description' { ... }` blocks. ShellCheck recognizes this extension for shell type inference and treats `@test` blocks as function-like scopes. The BATS `run` command is treated as a command wrapper similar to `builtin` or `command`.",
+          "target_descriptor": "The structure and conventions of BATS test files as understood and supported by ShellCheck, including file extension, test block syntax, and special command handling.",
+          "evidence_ids": [
+            "G2_E1",
+            "G2_E2",
+            "G2_E3",
+            "G2_E4",
+            "G2_E7",
+            "G2_E8"
+          ],
+          "rationale": "The agent never created test_scripts.bats. Understanding that ShellCheck natively supports .bats files and the conventions for writing them (using @test blocks and the run command) is necessary to create a valid BATS test suite that also passes ShellCheck analysis.",
+          "target_id": "G2_KT1"
+        }
+      ]
+    }
+  ],
+  "repository_commit": "cd41f794383b6159757575c9debbf198426b21aa"
+}

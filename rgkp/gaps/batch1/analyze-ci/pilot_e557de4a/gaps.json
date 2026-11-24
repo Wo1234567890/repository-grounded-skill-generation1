@@ -1,0 +1,12 @@
+{
+  "execution_gaps": [],
+  "environment_blockers": [
+    {
+      "description": "The agent was denied permission to execute Bash commands in 'don't ask mode', preventing verification that the script runs successfully, exits with code 0, and produces valid JSON output with the required fields (failed_tests, error_type, stack_summary).",
+      "evidence_lines": [
+        16,
+        18
+      ]
+    }
+  ]
+}

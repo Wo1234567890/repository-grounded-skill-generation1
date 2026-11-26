@@ -110,9 +110,7 @@ def process(task, budget):
             if state["budget"] != budget:
                 raise RuntimeError("Budget mismatch")
 
-            if state.get("status") in (
-                "completed", "empty_residual"
-            ):
+            if state.get("status") == "completed":
                 print(f"[SKIP] {task_id}", flush=True)
                 return state["result"]
 
@@ -187,8 +185,7 @@ def process(task, budget):
         result["pipeline"] = pipeline
 
         if pipeline["status"] == "empty_residual":
-            result["status"] = "empty_residual"
-            result["with_skill"] = None
+            raise RuntimeError("Non-empty skill required")
 
         elif pipeline["status"] == "completed":
             matches = []

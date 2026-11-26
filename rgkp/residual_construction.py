@@ -8,6 +8,7 @@ from anthropic import Anthropic
 from dotenv import load_dotenv
 
 from utils.json_parser import parse_json_object
+from rgkp.fallback_skill import construct_fallback
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -302,10 +303,18 @@ def main():
 
     skill_path = output_dir / "SKILL.md"
 
+
     if not units:
 
-        if skill_path.exists():
-            raise ValueError("Unexpected existing SKILL.md")
+        print("No residual units. Generating fallback skill.")
+
+        skill, mode, fallback_count = construct_fallback(
+            relative, model
+        )
+
+        skill_path.write_text(
+            skill, encoding="utf-8"
+        )
 
         save_json(
             recompose_dir / "residual_units.json",
@@ -315,14 +324,23 @@ def main():
         save_json(
             output_dir / "manifest.json",
             {
-                "status": "empty_residual",
-                "skill_file": None,
+                "status": "generated",
+                "generation_mode": mode,
+                "model": model,
+                "validated_knowledge_units": 0,
+                "execution_guidance_units": 0,
                 "source_units": 0,
-                "residual_units": 0
+                "residual_units": 0,
+                "fallback_units": fallback_count,
+                "skill_file": str(skill_path.relative_to(ROOT)),
+                "skill_characters": len(skill)
             }
         )
 
-        print("No residual units. No API call.")
+        print("Generation mode:", mode)
+        print("Skill saved to:", skill_path)
+        print(skill)
+
         return
 
     print("Recomposing residual skill...", flush=True)
@@ -349,6 +367,7 @@ def main():
         output_dir / "manifest.json",
         {
             "status": "generated",
+            "generation_mode": "residual",
             "model": model,
             "validated_knowledge_units": knowledge_count,
             "execution_guidance_units": guidance_count,

@@ -293,11 +293,15 @@ def run_pipeline(args):
 
         summary["residual_status"] = manifest["status"]
 
+        summary["generation_mode"] = manifest.get(
+            "generation_mode", "residual"
+        )
+
         if manifest["status"] == "empty_residual":
 
-            print("\nEmpty residual. Skipping pilot execution.")
-
-            summary["status"] = "empty_residual"
+            raise RuntimeError(
+                "Empty residual must be regenerated with fallback"
+            )
 
         elif manifest["status"] == "generated":
 
